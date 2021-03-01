@@ -1,0 +1,85 @@
+body {
+	overflow: hidden;
+}
+
+/*Navbar*/
+.navbar {
+	z-index: 1;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+}
+
+.navbar .navbar-brand {
+	color: #018786;
+	font-size: 28px;
+	font-family: 'Gergogia';
+	font-style: italic;
+	letter-spacing: 2px;
+}	
+	
+.nav-item {
+	font-size: 20px;
+	width: 50px;
+	height: 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: #121212;
+	border-radius: 50%;
+	padding: 5px;
+	margin: 0 5px; 
+}
+
+/*End Navbar*/
+
+/*Sidebar*/
+.sidebar {
+	position: fixed;
+	left: 0;
+	width: 20%;
+	height: 100vh;
+	background: #343a40;
+	overflow-y: auto; 
+	border-right: 3px solid #212121;
+}
+
+.sidebar-title {
+	margin-left: 10px;
+	color: rgba(255,255,255,.5);
+}
+
+.sidebar-menu {
+	width: 100%;
+	list-style: none;
+	margin: 20px 0;
+}
+
+.sidebar-item {
+	padding: 10px;
+	/*border-right: 3px solid #018786;*/
+	font-size: 18px;
+}
+
+.sidebar-item.active {
+	background: #018786;
+}
+
+a.sidebar-link svg{
+	color: rgba(255,255,255,.5);
+}
+
+a.sidebar-link {
+	color: #fff;
+	text-decoration: none;
+}
+/*End Sidebar*/
+
+.wrapper {
+	margin-left: auto; 
+	width: 80%;
+	padding: 50px;
+	height: 100vh;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background: #212121;
+	color: white;
+}
