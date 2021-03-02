@@ -14,7 +14,11 @@ body {
 	font-family: 'Gergogia';
 	font-style: italic;
 	letter-spacing: 2px;
-}	
+}
+
+.navbar-brand:hover {
+	color: #018778 !important;
+}
 	
 .nav-item {
 	font-size: 20px;
@@ -59,6 +63,10 @@ body {
 	font-size: 18px;
 }
 
+.sidebar-item:hover{
+	background: #018786;
+}
+
 .sidebar-item.active {
 	background: #018786;
 }
@@ -68,6 +76,7 @@ a.sidebar-link svg{
 }
 
 a.sidebar-link {
+	padding: 10px 110px 10px 0px;
 	color: #fff;
 	text-decoration: none;
 }
@@ -76,10 +85,49 @@ a.sidebar-link {
 .wrapper {
 	margin-left: auto; 
 	width: 80%;
-	padding: 50px;
+	padding: 20px 50px 50px 50px;
 	height: 100vh;
 	overflow-x: hidden;
 	overflow-y: auto;
 	background: #212121;
+	color: white;
+}
+
+.asrt-page-length .input-group-addon {
+    background: #343a40 !important;
+}
+
+.asrt-page-length .form-control {
+	background: #343a40;
+	color: white;
+	border-radius: 5px !important;
+}
+
+.asrt-page-length .input-group-addon .input-group-text {
+	color:white;
+}
+
+.table_filter .form-control {
+	background: #343a40;
+	color: white;
+}
+
+
+.table_filter .form-control::placeholder {
+	color: white;
+}
+
+.asrt-pagination .disabled.page-item .page-link{
+	background: #343a40;
+	color: rgba(255,255,255,.5);
+}
+
+.asrt-pagination .page-item .page-link{
+	background: #343a40;
+	color: white;
+}
+
+.asrt-pagination .page-item .page-link input {
+	background: #343a40;
 	color: white;
 }

@@ -25,5 +25,8 @@ Route::post('/send-login', 'App\Http\Controllers\AuthController@login');
 
 // Nasabah
 Route::get('/nasabah', 'App\Http\Controllers\NasabahController@index');
+Route::get('/where-nasabah/{id}', 'App\Http\Controllers\NasabahController@show');
 Route::post('/tambah-nasabah', 'App\Http\Controllers\NasabahController@tambah');
+Route::post('/update-nasabah', 'App\Http\Controllers\NasabahController@update');
+Route::delete('/delete-nasabah/{kd_nasabah}', 'App\Http\Controllers\NasabahController@hapus');
 
