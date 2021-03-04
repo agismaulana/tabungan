@@ -17,7 +17,7 @@ class Layout extends Component {
 	}
 
 	componentDidMount() {
-		if(sessionStorage.length == 0) {
+		if(sessionStorage.length == 0 && sessionStorage.level == "") {
 			this.setState({
 				redirect: true,
 			})

@@ -227,7 +227,7 @@ class Nasabah extends React.Component{
 
 					<div className="card bg-dark mt-2">
 						<div className="card-header d-flex justify-content-between align-items-center">
-							<h5>Data Nasabah</h5>
+							<h4>Data Nasabah</h4>
 							<TambahNasabah
 								tambahNasabah={this.tambahNasabah}
 								onChangeHandler={this.onChangeHandler}

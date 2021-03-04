@@ -6,7 +6,9 @@ import Layout from './component/Layout';
 import Login from './auth/Login';
 import Logout from './auth/Logout';
 import Home from './home/Home';
+import Pegawai from './pegawai/Pegawai';
 import Nasabah from './nasabah/Nasabah';
+import Users from './users/Users';
 
 class Routing extends Component {
 	render() {
@@ -22,6 +24,8 @@ class Routing extends Component {
 						</Route>
 						<Layout>
 							<Route exact path="/home" component={Home} />
+							<Route exact path="/pegawai" component={Pegawai} />
+							<Route exact path="/users" component={Users} />
 							<Route exact path="/nasabah" component={Nasabah}/>
 						</Layout>
 					</Switch>

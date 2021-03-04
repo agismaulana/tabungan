@@ -25,8 +25,17 @@ Route::post('/send-login', 'App\Http\Controllers\AuthController@login');
 
 // Nasabah
 Route::get('/nasabah', 'App\Http\Controllers\NasabahController@index');
-Route::get('/where-nasabah/{id}', 'App\Http\Controllers\NasabahController@show');
+Route::get('/where-nasabah/{kd_nasabah}', 'App\Http\Controllers\NasabahController@show');
 Route::post('/tambah-nasabah', 'App\Http\Controllers\NasabahController@tambah');
 Route::post('/update-nasabah', 'App\Http\Controllers\NasabahController@update');
 Route::delete('/delete-nasabah/{kd_nasabah}', 'App\Http\Controllers\NasabahController@hapus');
+
+// Pegawai
+Route::get('/pegawai', 'App\Http\Controllers\PegawaiController@index');
+Route::get('/where-pegawai/{kd_pegawai}', 'App\Http\Controllers\PegawaiController@show');
+Route::post('/tambah-pegawai', 'App\Http\Controllers\PegawaiController@tambah');
+Route::post('/update-pegawai', 'App\Http\Controllers\PegawaiController@update');
+Route::delete('/delete-pegawai/{kd_pegawai}', 'App\Http\Controllers\PegawaiController@hapus');
+
+
 

@@ -3,13 +3,16 @@ import {Link} from 'react-router-dom';
 import {faSignOutAlt, faUser} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import './component.css';
+
+import img from '../../image/ilustrasi/logo.svg';
+
 class Navbar extends Component {
 	render() {
 		return(
 			<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 				<div className="container">
 					<Link to="/home" className="navbar-brand">
-						MyWallet
+						<img src={img} alt="logo" className="logo-image"/> MyDeposits
 					</Link>	
 				</div>
 				<ul className="navbar-nav ml-auto">

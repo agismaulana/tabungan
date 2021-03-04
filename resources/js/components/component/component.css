@@ -11,9 +11,14 @@ body {
 .navbar .navbar-brand {
 	color: #018786;
 	font-size: 28px;
+	font-weight: 800;
 	font-family: 'Gergogia';
 	font-style: italic;
 	letter-spacing: 2px;
+}
+
+.navbar-brand .logo-image {
+	height: 7vh;
 }
 
 .navbar-brand:hover {

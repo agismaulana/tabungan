@@ -11,40 +11,40 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 class Sidebar extends Component {
 
-	compoentDidMount () { 
-		console.log('oke');
+	constructor(props) {
+		super(props);
 	}
 
 	render() {
 		if(sessionStorage.length > 0) {
-			if(sessionStorage.level == "admin") {
+			if(sessionStorage.level == "administrator") {
 				return(
 					<div className="sidebar">
 						<ul className="sidebar-menu">
 							<span className="sidebar-title">Home</span>
-							<li className="sidebar-item active">
+							<li className={window.location.pathname == "/home" ? 'sidebar-item active' : 'sidebar-item'}>
 								<Link to="/home" className="sidebar-link">
 									<FontAwesomeIcon icon={faHome} /> Home
 								</Link>
 							</li>
 							<span className="sidebar-title">Management</span>
-							<li className="sidebar-item">
-								<Link to="/operator" className="sidebar-link">
-									<FontAwesomeIcon icon={faUserTie} /> Operator
+							<li className={window.location.pathname == "/pegawai" ? 'sidebar-item active' : 'sidebar-item'}>
+								<Link to="/pegawai" className="sidebar-link">
+									<FontAwesomeIcon icon={faUserTie} /> Pegawai
 								</Link>
 							</li>
-							<li className="sidebar-item">
+							<li className={window.location.pathname == "/nasabah" ? 'sidebar-item active' : 'sidebar-item'}>
 								<Link to="/nasabah" className="sidebar-link">
 									<FontAwesomeIcon icon={faFileInvoice} /> Nasabah
 								</Link>
 							</li>
-							<li className="sidebar-item">
+							<li className={window.location.pathname == "/users" ? 'sidebar-item active' : 'sidebar-item'}>
 								<Link to="/users" className="sidebar-link">
 									<FontAwesomeIcon icon={faUsers} /> Users
 								</Link>
 							</li>
 							<span className="sidebar-title">Entri</span>
-							<li className="sidebar-item">
+							<li className={window.location.pathname == "/rekening" ? 'sidebar-item active' : 'sidebar-item'}>
 								<Link to="/rekening" className="sidebar-link">
 									<FontAwesomeIcon icon={faCreditCard} /> Rekening
 								</Link>

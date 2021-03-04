@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Redirect, Link} from 'react-router-dom';
 import './auth.css';
+import img from '../../image/ilustrasi/logo.svg';
 
 const axios = require('axios');
 
@@ -15,6 +16,8 @@ class Login extends Component {
                 password: "",
             },
             redirect: false,
+            status: "",
+            message: "",
         }
 
         this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -52,6 +55,17 @@ class Login extends Component {
         })
     }
 
+    timeStatus() {
+        if(this.state.status != "") {
+            setTimeout(()=>{
+                this.setState({
+                    status: "",
+                    message: "",
+                })
+            }, 3000)
+        }
+    }
+
     handleSubmit(e) {
         e.preventDefault();
         const login = {
@@ -85,19 +99,30 @@ class Login extends Component {
                     dataLogin: {
                         username: "",
                         password: "",
-                    }
-                })
+                    },
+                    status: response.data.status,
+                    message: response.data.message,
+                }, () => this.timeStatus())
             }
         });
     }
 
     render() {
-        const {dataLogin} = this.state;
+        const {dataLogin, status, message} = this.state;
 
         if(sessionStorage.length > 0) {
             if(this.state.redirect) {
                 return <Redirect to="/home"/>
             }
+        }
+
+        let sendMessage = "";
+        if(status == 200) {
+            sendMessage = <div className="alert alert-success" role="alert">{message}</div>
+        } else if(status == "failed") {
+            sendMessage = <div className="alert alert-danger" role="alert">{message}</div>
+        } else {
+            sendMessage = "";
         }
 
         return (
@@ -108,9 +133,10 @@ class Login extends Component {
                             <div className="col-md-12">
                                 <div className="card-body">
                                     <h2 className="text-center font-weight-bold mb-5 text-white">
-                                        MyWallet
+                                        <img src={img} alt="logo" style={{height:'80px'}}/> MyDeposits
                                     </h2>
                                     <form onSubmit={this.handleSubmit}>
+                                    {sendMessage}
                                     <div className="form-group">
                                         <input
                                             className="form-control bg-dark text-white" 

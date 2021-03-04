@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tabungan</title>
+	<title>My Deposits</title>
+	<link rel="icon" href="{{ asset('images/logo.ico') }}" type="image/x-icon" />
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
 </head>
 <body>

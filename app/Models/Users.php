@@ -13,4 +13,8 @@ class Users extends Model
     public function Nasabah() {
     	return $this->belongsTo(Nasabah::class);
     }
+
+    public function Pegawai() {
+    	return $this->belongsTo(Pegawai::class);
+    }
 }
