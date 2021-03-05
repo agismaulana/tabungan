@@ -9,12 +9,14 @@ class Users extends Model
 {
     use HasFactory;
     protected $table = 'users';
+    public $timestamps = false;
+    protected $fillable = ['id_users', 'username', 'password', 'level'];
 
     public function Nasabah() {
-    	return $this->belongsTo(Nasabah::class);
+    	return $this->belongsToMany(Nasabah::class);
     }
 
     public function Pegawai() {
-    	return $this->belongsTo(Pegawai::class);
+    	return $this->belongsToMany(Pegawai::class);
     }
 }

@@ -8,7 +8,7 @@ import Logout from './auth/Logout';
 import Home from './home/Home';
 import Pegawai from './pegawai/Pegawai';
 import Nasabah from './nasabah/Nasabah';
-import Users from './users/Users';
+import Rekening from './rekening/Rekening';
 
 class Routing extends Component {
 	render() {
@@ -25,8 +25,8 @@ class Routing extends Component {
 						<Layout>
 							<Route exact path="/home" component={Home} />
 							<Route exact path="/pegawai" component={Pegawai} />
-							<Route exact path="/users" component={Users} />
-							<Route exact path="/nasabah" component={Nasabah}/>
+							<Route exact path="/nasabah" component={Nasabah} />
+							<Route exact path="/rekening" component={Rekening} />
 						</Layout>
 					</Switch>
 				</Router>

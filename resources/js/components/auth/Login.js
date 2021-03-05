@@ -87,6 +87,7 @@ class Login extends Component {
             })
 
             if(response.data.status == 200) {
+                sessionStorage.setItem('id_users', response.data.user.id_users);
                 sessionStorage.setItem('nama', response.data.user.username);
                 sessionStorage.setItem('level', response.data.user.level);
                 if(sessionStorage.length > 0) {

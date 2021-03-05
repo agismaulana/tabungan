@@ -86,6 +86,13 @@ class Nasabah extends React.Component{
 				alamat: "",
 				id_users: "",
 			},
+			dataUsersBaru: {
+				id_users: "",
+				username: "",
+				password: "",
+				level: "",
+				pin: "",
+			},
 			editNasabah : {
 				kd_nasabah: "",
 				nm_nasabah: "",
@@ -122,24 +129,26 @@ class Nasabah extends React.Component{
 
 		if(this.state.status != "") {
 			setTimeout(() => {
-				location.reload(true);
+				this.setState({
+					status: "",
+					message: "",
+				})
 			}, 1500)
 		}
 	}
 
 	onChangeHandler = (e) => {
-		let {dataNasabahBaru} = this.state;
-		dataNasabahBaru[e.target.name] = e.target.value;
-		this.setState({dataNasabahBaru});
+		let {dataNasabahBaru, dataUsersBaru} = this.state;
+		dataNasabahBaru[e.target.name] 	= e.target.value;
+		dataUsersBaru[e.target.name]	= e.target.value;
+		this.setState({dataNasabahBaru, dataUsersBaru});
 	}
 
 	tambahNasabah = () => {
-		let {dataNasabahBaru} = this.state;
+		let {dataNasabahBaru, dataUsersBaru} = this.state;
 
-		axios.post("http://127.0.0.1:8000/api/tambah-nasabah", this.state.dataNasabahBaru)
+		axios.post("http://127.0.0.1:8000/api/tambah-nasabah", dataNasabahBaru, dataUsersBaru)
 		.then((response) => {
-			const {nasabah} = this.state;
-			const nasabahBaru = [...nasabah];
 			this.setState({
 				dataNasabahBaru: {
 					kd_nasabah: "",
@@ -149,6 +158,13 @@ class Nasabah extends React.Component{
 					email: "",
 					alamat: "",
 					id_users: "",
+				},
+				dataUsersBaru: {
+					id_users: "",
+					username: "",
+					password: "",
+					level: "",
+					pin: "",
 				},
 				status: response.status,
 				message: response.data.message
@@ -167,13 +183,13 @@ class Nasabah extends React.Component{
 		.then((response)=>{
 			this.setState({
 				editNasabah: {
-					kd_nasabah: response.data.data[0].kd_nasabah,
-					nm_nasabah: response.data.data[0].nm_nasabah,
-					jk: response.data.data[0].jk,
-					no_hp: response.data.data[0].no_hp,
-					email: response.data.data[0].email,
-					alamat: response.data.data[0].alamat,
-					id_users: response.data.data[0].id_users,
+					kd_nasabah: response.data.data.kd_nasabah,
+					nm_nasabah: response.data.data.nm_nasabah,
+					jk: response.data.data.jk,
+					no_hp: response.data.data.no_hp,
+					email: response.data.data.email,
+					alamat: response.data.data.alamat,
+					id_users: response.data.data.id_users,
 				}
 			});
 		})
@@ -201,7 +217,7 @@ class Nasabah extends React.Component{
 	}
 
 	render() {
-		const {dataNasabahBaru, status, message} = this.state;
+		const {dataNasabahBaru, dataUsersBaru, status, message} = this.state;
 
 		let sendMessage = "";
 		if(status == 200) {
@@ -232,6 +248,7 @@ class Nasabah extends React.Component{
 								tambahNasabah={this.tambahNasabah}
 								onChangeHandler={this.onChangeHandler}
 								dataNasabahBaru={dataNasabahBaru}
+								dataUsersBaru={dataUsersBaru}
 							/>
 
 						</div>

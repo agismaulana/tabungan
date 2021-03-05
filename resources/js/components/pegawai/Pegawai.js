@@ -8,6 +8,9 @@ import TambahPegawai from './TambahPegawai';
 import EditPegawai from './EditPegawai';
 
 class Pegawai extends Component {
+
+	_isMounted = false;
+
 	constructor(props) {
 		super(props);
 
@@ -86,6 +89,12 @@ class Pegawai extends Component {
 				alamat: "",
 				id_users: "",
 			},
+			dataUsersBaru: {
+				id_users: "",
+				username: "",
+				password: "",
+				level: "",
+			},
 			editPegawai: {
 				kd_pegawai: "",
 				nm_pegawai: "",
@@ -101,7 +110,14 @@ class Pegawai extends Component {
 	}
 
 	componentDidMount() {
-		this.getPegawai();
+		this._isMounted = true;
+		if(this._isMounted){
+			this.getPegawai();
+		}
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false;
 	}
 
 	getPegawai() {
@@ -122,21 +138,25 @@ class Pegawai extends Component {
 
 		if(this.state.status != "") {
 			setTimeout(() => {
-				location.reload(true);
+				this.setState({
+					status: "",
+					message: "",
+				})
 			}, 1500)
 		}
 	}
 
 	onChangeHandler = (e) => {
-		let {dataPegawaiBaru} = this.state;
+		let {dataPegawaiBaru, dataUsersBaru} = this.state;
 		dataPegawaiBaru[e.target.name] = e.target.value;
-		this.setState({dataPegawaiBaru});
+		dataUsersBaru[e.target.name] = e.target.value;
+		this.setState({dataPegawaiBaru, dataUsersBaru});
 	} 
 
 	tambahPegawai = (e) => {
-		let {dataPegawaiBaru} = this.state;
-		
-		axios.post('http://127.0.0.1:8000/api/tambah-pegawai', dataPegawaiBaru)
+		let {dataPegawaiBaru, dataUsersBaru} = this.state;
+
+		axios.post('http://127.0.0.1:8000/api/tambah-pegawai', dataPegawaiBaru, dataUsersBaru)
 		.then((response) => {
 			this.setState({
 				dataPegawaiBaru: {
@@ -147,6 +167,12 @@ class Pegawai extends Component {
 					email: "",
 					alamat: "",
 					id_users: "",
+				},
+				dataUsersBaru: {
+					id_users: "",
+					username: "",
+					password: "",
+					level: "",
 				},
 				status: response.status,
 				message: response.data.message,
@@ -159,13 +185,13 @@ class Pegawai extends Component {
 		.then((response) => {
 			this.setState({
 				editPegawai: {
-					kd_pegawai: response.data.data[0].kd_pegawai,
-					nm_pegawai: response.data.data[0].nm_pegawai,
-					jk: response.data.data[0].jk,
-					no_hp: response.data.data[0].no_hp,
-					email: response.data.data[0].email,
-					alamat: response.data.data[0].alamat,
-					id_users: response.data.data[0].id_users,
+					kd_pegawai: response.data.data.kd_pegawai,
+					nm_pegawai: response.data.data.nm_pegawai,
+					jk: response.data.data.jk,
+					no_hp: response.data.data.no_hp,
+					email: response.data.data.email,
+					alamat: response.data.data.alamat,
+					id_users: response.data.data.id_users,
 				}
 			})
 		})
@@ -202,7 +228,7 @@ class Pegawai extends Component {
 
 	render() {
 
-		const {dataPegawaiBaru, status, message} = this.state;
+		const {dataPegawaiBaru, dataUsersBaru, status, message} = this.state;
 
 		let sendMessage = "";
 		if(status == 200) {
@@ -213,7 +239,7 @@ class Pegawai extends Component {
 			sendMessage = "";
 		}
 
-		if(sessionStorage.level == "pegawai" && sessionStorage.level == "operator") {
+		if(sessionStorage.level == "Operator" || sessionStorage.level == "Nasabah") {
 			return <Redirect to="/home" />
 		}
 
@@ -231,6 +257,7 @@ class Pegawai extends Component {
 						<TambahPegawai 
 							tambahPegawai={this.tambahPegawai}
 							dataPegawaiBaru={dataPegawaiBaru}
+							dataUsersBaru={dataUsersBaru}
 							onChangeHandler={this.onChangeHandler}
 						/>
 					</div>
@@ -248,6 +275,7 @@ class Pegawai extends Component {
 							config={this.config}
 							columns={this.columns}
 							records={this.state.pegawai}
+							key={this.state.pegawai.kd_pegawai}
 						/>
 					</div>
 				</div>

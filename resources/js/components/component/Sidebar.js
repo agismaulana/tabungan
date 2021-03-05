@@ -17,7 +17,7 @@ class Sidebar extends Component {
 
 	render() {
 		if(sessionStorage.length > 0) {
-			if(sessionStorage.level == "administrator") {
+			if(sessionStorage.level == "Administrator") {
 				return(
 					<div className="sidebar">
 						<ul className="sidebar-menu">
@@ -38,11 +38,6 @@ class Sidebar extends Component {
 									<FontAwesomeIcon icon={faFileInvoice} /> Nasabah
 								</Link>
 							</li>
-							<li className={window.location.pathname == "/users" ? 'sidebar-item active' : 'sidebar-item'}>
-								<Link to="/users" className="sidebar-link">
-									<FontAwesomeIcon icon={faUsers} /> Users
-								</Link>
-							</li>
 							<span className="sidebar-title">Entri</span>
 							<li className={window.location.pathname == "/rekening" ? 'sidebar-item active' : 'sidebar-item'}>
 								<Link to="/rekening" className="sidebar-link">
@@ -52,7 +47,7 @@ class Sidebar extends Component {
 						</ul>
 					</div>
 				)
-			} else if(sessionStorage.level == "operator") {
+			} else if(sessionStorage.level == "Operator") {
 				return(
 					<div className="sidebar">
 						<ul className="sidebar-menu">
@@ -66,11 +61,6 @@ class Sidebar extends Component {
 							<li className="sidebar-item">
 								<Link to="/nasabah" className="sidebar-link">
 									<FontAwesomeIcon icon={faFileInvoice} /> Nasabah
-								</Link>
-							</li>
-							<li className="sidebar-item">
-								<Link to="/users" className="sidebar-link">
-									<FontAwesomeIcon icon={faUsers} /> Users
 								</Link>
 							</li>
 							<span className="sidebar-title">Entri</span>

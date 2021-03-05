@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Nasabah;
+use App\Models\Users;
+use App\Models\Rekening;
 
 class NasabahController extends Controller
 {
@@ -18,7 +20,7 @@ class NasabahController extends Controller
     }
 
     public function show($kd_nasabah) {
-    	$where = Nasabah::where("kd_nasabah", $kd_nasabah)->get();
+    	$where = Nasabah::where("kd_nasabah", $kd_nasabah)->first();
     
     	return response()->json(["status"=>200, "success"=>true, "data" => $where]);
     }
@@ -26,25 +28,52 @@ class NasabahController extends Controller
     public function tambah(Request $request) {
 
     	if($request->all() != null) {
-	    	$nama 	= $request->nm_nasabah;
-	    	$jk	  	= $request->jk;
-	    	$no_hp	= $request->no_hp;
-	    	$email	= $request->email;
-	    	$alamat = $request->alamat;
+	    	// data users
+            $id_users = date('Ymd').random_int(0, 100);
+            $username = $request->username;
+            $password = $request->password;
 
-	    	$data = [
-	    		'kd_nasabah' => (int)date('Ymd').random_int(0,100),
+            // data Nasabah
+            $kd_nasabah  = (int)date('Ymd').random_int(0,100);
+            $nama 	     = $request->nm_nasabah;
+	    	$jk	  	     = $request->jk;
+	    	$no_hp	     = $request->no_hp;
+	    	$email	     = $request->email;
+	    	$alamat      = $request->alamat;
+
+            // data Rekening 
+            $pin = $request->pin;
+
+	    	$dataNasabah = [
+	    		'kd_nasabah' => $kd_nasabah,
 	    		'nm_nasabah' => $nama,
 	    		'jk'		 => $jk,
 	    		'no_hp'		 => $no_hp,
 	    		'email'		 => $email,
 	    		'alamat'	 => $alamat,
-	    		'id_users'	 => 0,
+	    		'id_users'	 => $id_users,
 	    	];
 
-	    	$tambah = Nasabah::create($data);
-	    	if(!is_null($tambah)) {
-		    	return response()->json(["status"=>200, "success" => true, "message"=>"Data Berhasil Ditambahkan"]);
+            $dataUsers = [
+                'id_users'   => $id_users,
+                'username'   => $username,
+                'password'   => password_hash($password, PASSWORD_DEFAULT),
+                'level'      => 'Nasabah',
+            ];
+
+            $dataRekening = [
+                'no_rekening' => (string)date('Ymd').rand(),
+                'pin'         => password_hash($pin, PASSWORD_DEFAULT),
+                'kd_nasabah'  => $kd_nasabah,
+            ];
+
+	    	$tambahNasabah  = Nasabah::create($dataNasabah);
+            $tambahUsers    = Users::create($dataUsers);
+	    	if(!is_null($tambahNasabah) && !is_null($tambahUsers)) {
+                $tambahRekening = Rekening::create($dataRekening);
+                if(!is_null($tambahRekening)){
+    		    	return response()->json(["status"=>200, "success" => true, "message"=>"Data Berhasil Ditambahkan"]);
+                }
 	    	} else {
 	    		return response()->json(["status"=>"failed", "success" => false,"message"=>"Data Gagal Ditambahkan"]);
 	    	}
@@ -78,9 +107,11 @@ class NasabahController extends Controller
     }
 
     public function hapus($kd_nasabah) {
-    	$nasabah = Nasabah::where("kd_nasabah", $kd_nasabah)->get();
+    	$nasabah = Nasabah::where("kd_nasabah", $kd_nasabah)->first();
     	if(!is_null($nasabah)) {
-    		$delete = Nasabah::where("kd_nasabah", $kd_nasabah)->delete();
+    		$delete = Nasabah::where("kd_nasabah", $kd_nasabah)->delete() 
+                      && Users::where('id_users',$nasabah->id_users)->delete()
+                      && Rekening::where("kd_nasabah", $kd_nasabah)->delete();
     		if($delete == 1) {
     			return response()->json(["status"=>200, "success" => true, "message" => "Data Berhasil Dihapus"]);
     		} else {

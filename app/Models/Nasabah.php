@@ -15,4 +15,8 @@ class Nasabah extends Model
     public function Users() {
     	return $this->hasMany(Users::class, 'id_users');
     }
+
+    public function Rekening() {
+    	return $this->hasMany(Rekening::class, 'kd_nasabah');
+    }
 }

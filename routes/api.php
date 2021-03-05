@@ -19,9 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // Auth
-Route::get('/users', 'App\Http\Controllers\AuthController@users');
 Route::post('/send-login', 'App\Http\Controllers\AuthController@login');
-
 
 // Nasabah
 Route::get('/nasabah', 'App\Http\Controllers\NasabahController@index');
@@ -37,5 +35,8 @@ Route::post('/tambah-pegawai', 'App\Http\Controllers\PegawaiController@tambah');
 Route::post('/update-pegawai', 'App\Http\Controllers\PegawaiController@update');
 Route::delete('/delete-pegawai/{kd_pegawai}', 'App\Http\Controllers\PegawaiController@hapus');
 
-
-
+// Rekening
+Route::get('/rekening', 'App\Http\Controllers\RekeningController@index');
+Route::get('/where-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@show');
+Route::post('/edit-rekening', 'App\Http\Controllers\RekeningController@update');
+Route::post('/transaksi', 'App\Http\Controllers\RekeningController@transaksi');

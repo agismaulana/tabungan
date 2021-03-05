@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pegawai;
+use App\Models\Users;
 
 class PegawaiController extends Controller
 {
@@ -21,24 +22,43 @@ class PegawaiController extends Controller
 
 	public function tambah(Request $request) {
 		if($request->all() != "") {
+			// data users
+			$id_users = date('Ymd').random_int(0, 100);
+			$username = $request->username;
+			$password = $request->password;
+			if($request->nm_pegawai == 'Admin') {
+				$level = "Administrator";
+			} else {
+				$level = "Operator";
+			}
+
+			// data pegawai
 			$nama 	= $request->nm_pegawai;
 			$jk		= $request->jk;
 			$no_hp	= $request->no_hp;
 			$email	= $request->email;
 			$alamat = $request->alamat;
 
-			$data = [
+			$dataPegawai = [
 				'kd_pegawai' => date('Ymd').random_int(0, 100),
 				'nm_pegawai' => $nama,
 				'jk'		 => $jk,
 				'no_hp'		 => $no_hp,
 				'email'		 => $email,
 				'alamat'	 => $alamat,
-				'id_users'	 => 0,
+				'id_users'	 => $id_users,
 			];
 
-			$tambah = Pegawai::create($data);
-			if(!is_null($tambah)) {
+			$dataUsers = [
+				'id_users' 	=> $id_users,
+				'username' 	=> $username,
+				'password' 	=> password_hash($password, PASSWORD_DEFAULT),
+				'level'		=> $level,
+			];
+
+			$tambahPegawai  = Pegawai::create($dataPegawai);
+			$tambahUsers	= Users::create($dataUsers);
+			if(!is_null($tambahPegawai) && !is_null($tambahUsers)) {
 				return response()->json(["status" => 200, "success" => true, "message" => "Data Berhasil Ditambahkan"]);
 			} else {
 				return response()->json(["status"=>"failed", "success" => false, "message" => "Data Gagal Ditambahkan"]);
@@ -49,7 +69,7 @@ class PegawaiController extends Controller
 	}
 
 	public function show($kd_pegawai) {
-		$where = Pegawai::where("kd_pegawai", $kd_pegawai)->get();
+		$where = Pegawai::where("kd_pegawai", $kd_pegawai)->first();
 
 		return response()->json(["status"=>200, "success"=>true, "data" => $where]);
 	}
@@ -80,9 +100,9 @@ class PegawaiController extends Controller
 	}
 
 	public function hapus($kd_pegawai) {
-		$pegawai = Pegawai::where("kd_pegawai", $kd_pegawai)->get();
+		$pegawai = Pegawai::where("kd_pegawai", $kd_pegawai)->first();
     	if(!is_null($pegawai)) {
-    		$delete = Pegawai::where("kd_pegawai", $kd_pegawai)->delete();
+    		$delete = Pegawai::where('kd_pegawai',$kd_pegawai)->delete() && Users::where('id_users', $pegawai->id_users)->delete();
     		if($delete == 1) {
     			return response()->json(["status"=>200, "success" => true, "message" => "Data Berhasil Dihapus"]);
     		} else {
