@@ -4,7 +4,6 @@ import {faEdit, faInfo, faMoneyBill} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import ReactDatatable from '@ashvin27/react-datatable';
 
-import Transaksi from './Transaksi';
 import EditRekening from './EditRekening';
 
 class Rekening extends Component {
@@ -30,13 +29,14 @@ class Rekening extends Component {
 				cell: (record, index) => {
 					return(
 						<div>
-							<button
+
+							<a
+								href={'buka-rekening/'+record.no_rekening}
 								className="btn btn-primary btn-md ml-2"
-								data-target="#modalTransaksi" data-toggle="modal"
-								onClick={() => {this.detailRekening(record.no_rekening)}}
 							>
-								<FontAwesomeIcon icon={faMoneyBill} />
-							</button>
+								<FontAwesomeIcon icon={faMoneyBill}/>
+							</a>
+							
 							<button
 								className="btn btn-success btn-md ml-2"
 								data-target="#modalEdit" data-toggle="modal"
@@ -87,7 +87,7 @@ class Rekening extends Component {
 
 	getRekening() {
 		if(sessionStorage.level != "Nasabah") {
-			axios.get("http://127.0.0.1:8000/api/rekening")
+			axios.get(`http://${window.location.host}/api/rekening`)
 			.then((response) => {
 				if(response.status == 200) {
 					this.setState({
@@ -111,11 +111,7 @@ class Rekening extends Component {
 		}
 	}
 
-	onChangeTransaksiHandler = (e) => {
-		let {dataTransaksi} = this.state;
-		dataTransaksi[e.target.name] = e.target.value;
-		this.setState({dataTransaksi});
-	}
+	
 
 	onChangeEditHandler = (e) => {
 		let {editRekening} = this.state;
@@ -123,21 +119,8 @@ class Rekening extends Component {
 		this.setState({editRekening});	
 	}
 
-
-	detailRekening = (no_rekening) => {
-		axios.get('http://127.0.0.1:8000/api/where-rekening/' + no_rekening)
-		.then((response) => {
-			this.setState({
-				dataTransaksi: {
-					no_rekening: response.data.data.no_rekening,
-					nm_nasabah: response.data.data.nm_nasabah,
-				}
-			})
-		});
-	}
-
 	editRekening = (no_rekening) => {
-		axios.get('http://127.0.0.1:8000/api/where-rekening/' + no_rekening)
+		axios.get(`http://${window.location.host}/api/where-rekening/${no_rekening}`)
 		.then((response) => {
 			this.setState({
 				editRekening: {
@@ -150,36 +133,13 @@ class Rekening extends Component {
 	updateRekening = () => {
 		let {editRekening} = this.state;
 
-		axios.post('http://127.0.0.1:8000/api/edit-rekening', editRekening)
+		axios.post(`http://${window.location.host}/api/edit-rekening`, editRekening)
 		.then((response) => {
 			this.setState({
 				status: response.data.status,
 				message: response.data.message,
 			}, () => this.getRekening());
 		})
-	}
-
-	handleTransaksi = () => {
-		let {dataTransaksi} = this.state;
-		axios.post('http://127.0.0.1:8000/api/transaksi', dataTransaksi)
-		.then((response) => {
-			this.setState({
-				dataTransaksi: {
-					nm_nasabah: "",
-					id_transaksi: "",
-					waktu: "",
-					nominal: "",
-					jenis_transaksi: "",
-					no_rekening: "",
-					kirim_tabungan: "",
-					jenis_pembayaran: "",
-					keterangan: "",
-					status: "",
-				},
-				status: response.data.status,
-				message: response.data.message,
-			}, () => {this.getRekening()});
-		});
 	}
 
 	render() {
@@ -205,12 +165,6 @@ class Rekening extends Component {
 						<h3>Rekening Page</h3>
 					</div>
 				</div>
-
-				<Transaksi 
-					handleTransaksi={this.handleTransaksi}
-					onChangeTransaksiHandler={this.onChangeTransaksiHandler}
-					dataTransaksi={dataTransaksi}
-				/>
 
 				<EditRekening
 					updateRekening={this.updateRekening}

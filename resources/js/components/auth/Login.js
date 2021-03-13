@@ -73,7 +73,7 @@ class Login extends Component {
             password: this.state.dataLogin.password,
         }
 
-        axios.post("http://127.0.0.1:8000/api/send-login", 
+        axios.post(`http://${window.location.host}/api/send-login`, 
                     login)
         .then((response) => {
             let {login} = this.state;

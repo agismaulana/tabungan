@@ -48,7 +48,7 @@ class Nasabah extends React.Component{
 				text: "Action",
 				cell: (record, index) => {
 					return(
-						<div>
+						<div className="d-flex">
 							<button
 								className="btn btn-success btn-sm"
 								data-target="#modalEdit" data-toggle="modal"
@@ -112,7 +112,7 @@ class Nasabah extends React.Component{
 	}
 
 	getNasabah() {
-		axios.get("http://127.0.0.1:8000/api/nasabah")
+		axios.get(`http://${window.location.host}/api/nasabah`)
 		.then((response) => {
 			if(response.status == 200) {
 				this.setState({
@@ -147,7 +147,7 @@ class Nasabah extends React.Component{
 	tambahNasabah = () => {
 		let {dataNasabahBaru, dataUsersBaru} = this.state;
 
-		axios.post("http://127.0.0.1:8000/api/tambah-nasabah", dataNasabahBaru, dataUsersBaru)
+		axios.post(`http://${window.location.host}/api/tambah-nasabah`, dataNasabahBaru, dataUsersBaru)
 		.then((response) => {
 			this.setState({
 				dataNasabahBaru: {
@@ -179,7 +179,7 @@ class Nasabah extends React.Component{
 	}
 
 	editNasabah = (kd_nasabah) => {
-		axios.get('http://127.0.0.1:8000/api/where-nasabah/' + kd_nasabah)
+		axios.get(`http://${window.location.host}/api/where-nasabah/${kd_nasabah}`)
 		.then((response)=>{
 			this.setState({
 				editNasabah: {
@@ -197,7 +197,7 @@ class Nasabah extends React.Component{
 
 	updateNasabah = () => {
 		let {editNasabah} = this.state;
-		axios.post("http://127.0.0.1:8000/api/update-nasabah", editNasabah)
+		axios.post(`http://${window.location.host}/api/update-nasabah`, editNasabah)
 		.then((response) => {
 			this.setState({
 				status:response.status,
@@ -207,7 +207,7 @@ class Nasabah extends React.Component{
 	}
 
 	hapusNasabah = (kd_nasabah) => {
-		axios.delete('http://127.0.0.1:8000/api/delete-nasabah/' + kd_nasabah)
+		axios.delete(`http://${window.location.host}/api/delete-nasabah/${kd_nasabah}`)
 		.then((response) => {
 			this.setState({
 				status: response.status,

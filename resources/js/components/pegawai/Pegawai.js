@@ -121,7 +121,7 @@ class Pegawai extends Component {
 	}
 
 	getPegawai() {
-		axios.get("http://127.0.0.1:8000/api/pegawai")
+		axios.get(`http://${window.location.host}/api/pegawai`)
 		.then((response) => {
 			if(response.status == 200) {
 				this.setState({
@@ -156,7 +156,7 @@ class Pegawai extends Component {
 	tambahPegawai = (e) => {
 		let {dataPegawaiBaru, dataUsersBaru} = this.state;
 
-		axios.post('http://127.0.0.1:8000/api/tambah-pegawai', dataPegawaiBaru, dataUsersBaru)
+		axios.post(`http://${window.location.host}/api/tambah-pegawai`, dataPegawaiBaru, dataUsersBaru)
 		.then((response) => {
 			this.setState({
 				dataPegawaiBaru: {
@@ -181,7 +181,7 @@ class Pegawai extends Component {
 	}
 
 	editPegawai = (kd_pegawai) => {
-		axios.get('http://127.0.0.1:8000/api/where-pegawai/' + kd_pegawai)
+		axios.get(`http://${window.location.host}/api/where-pegawai/${kd_pegawai}`)
 		.then((response) => {
 			this.setState({
 				editPegawai: {
@@ -205,7 +205,7 @@ class Pegawai extends Component {
 
 	updatePegawai = () => {
 		let {editPegawai} = this.state;
-		axios.post('http://127.0.0.1:8000/api/update-pegawai', editPegawai)
+		axios.post(`http://${window.location.host}/api/update-pegawai`, editPegawai)
 		.then((response) => {
 			this.setState({
 				status: response.status,
@@ -216,7 +216,7 @@ class Pegawai extends Component {
 
 
 	hapusPegawai = (kd_pegawai) => {
-		axios.delete('http://127.0.0.1:8000/api/delete-pegawai/' + kd_pegawai)
+		axios.delete(`http://${window.location.host}/api/delete-pegawai/${kd_pegawai}`)
 		.then((response) => {
 			this.setState({
 				status: response.status,

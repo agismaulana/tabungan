@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Rekening;
 use App\Models\Transaksi;
 use App\Models\Transfer;
@@ -24,6 +26,27 @@ class RekeningController extends Controller
     				->where('no_rekening', $no_rekening)->first();
 
     	return response()->json(['status' => 200, 'success' => true, 'data'=>$rekening]);
+    }
+
+    public function getDataRekening($no_rekening) {
+        $rekening = Rekening::select(
+                        DB::raw('*,
+                                 ((saldo_setor + saldo_transfer_tabungan) - (saldo_tarik + saldo_transfer)) as saldo'))
+                    ->where('rekening.no_rekening', $no_rekening)
+                    ->leftJoin(
+                        DB::raw("(select 
+                                  sum(if(jenis_transaksi='setor', nominal, 0)) as saldo_setor, 
+                                  sum(if(jenis_transaksi='tarik', nominal, 0)) as saldo_tarik, 
+                                  sum(if(jenis_transaksi='transfer' && jenis_pembayaran='tabungan' && status='berhasil', nominal, 0)) as saldo_transfer,
+                                  sum(if(transfer.no_rekening = ".$no_rekening." && transfer.status = 'berhasil', nominal, 0)) as saldo_transfer_tabungan, 
+                                  transaksi.no_rekening as transaksi_rekening 
+                                  from transaksi 
+                                  left join transfer on transfer.id_transaksi = transaksi.id_transaksi 
+                                  where transaksi.no_rekening = ".$no_rekening.") b")
+                        ,'b.transaksi_rekening','=','rekening.no_rekening')
+                    ->leftJoin("nasabah", "nasabah.kd_nasabah", "=", "rekening.kd_nasabah")
+                    ->first();
+        return response()->json(['status'=>200, 'success'=>true, 'data' => $rekening]);
     }
 
     public function transaksi(Request $request) {
@@ -54,7 +77,7 @@ class RekeningController extends Controller
     				'jenis_pembayaran'  => $jenisPembayaran,
     				'keterangan'		=> $keterangan,
     				'id_transaksi'		=> $idTransaksi,
-    				'no_rekening'		=> $noRekening,
+    				'no_rekening'		=> $kirimTabungan,
     				'status'			=> 'menunggu konfirmasi',
     			];
 

@@ -9,6 +9,7 @@ import Home from './home/Home';
 import Pegawai from './pegawai/Pegawai';
 import Nasabah from './nasabah/Nasabah';
 import Rekening from './rekening/Rekening';
+import BukaRekening from './rekening/BukaRekening';
 
 class Routing extends Component {
 	render() {
@@ -27,6 +28,7 @@ class Routing extends Component {
 							<Route exact path="/pegawai" component={Pegawai} />
 							<Route exact path="/nasabah" component={Nasabah} />
 							<Route exact path="/rekening" component={Rekening} />
+							<Route exact path="/buka-rekening/:no_rekening" component={BukaRekening} />
 						</Layout>
 					</Switch>
 				</Router>

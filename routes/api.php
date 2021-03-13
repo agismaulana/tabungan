@@ -21,6 +21,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Auth
 Route::post('/send-login', 'App\Http\Controllers\AuthController@login');
 
+//Home
+Route::get('/jumlah', 'App\Http\Controllers\HomeController@getCount');
+
 // Nasabah
 Route::get('/nasabah', 'App\Http\Controllers\NasabahController@index');
 Route::get('/where-nasabah/{kd_nasabah}', 'App\Http\Controllers\NasabahController@show');
@@ -35,8 +38,20 @@ Route::post('/tambah-pegawai', 'App\Http\Controllers\PegawaiController@tambah');
 Route::post('/update-pegawai', 'App\Http\Controllers\PegawaiController@update');
 Route::delete('/delete-pegawai/{kd_pegawai}', 'App\Http\Controllers\PegawaiController@hapus');
 
+// Users
+
+// Data User
+Route::get('/join-nasabah/{id_users}', 'App\Http\Controllers\UsersController@joinNasabah');
+Route::get('/join-pegawai/{id_users}', 'App\Http\Controllers\UsersController@joinPegawai');
+Route::get('/no-rekening/{kd_nasabah}', 'App\http\Controllers\UsersController@getNoRekening');
+
 // Rekening
 Route::get('/rekening', 'App\Http\Controllers\RekeningController@index');
 Route::get('/where-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@show');
 Route::post('/edit-rekening', 'App\Http\Controllers\RekeningController@update');
 Route::post('/transaksi', 'App\Http\Controllers\RekeningController@transaksi');
+
+// Buka Rekening
+Route::get('/buka-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@getDataRekening');
+Route::get('/transaksi', 'App\Http\Controllers\TransaksiController@index');
+Route::get('/where-history-transaksi/{no_rekening}', 'App\Http\Controllers\TransaksiController@getWhereTransaksi');

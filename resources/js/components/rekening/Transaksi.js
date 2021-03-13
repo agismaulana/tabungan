@@ -13,62 +13,6 @@ class Transaksi extends Component {
 			        				value={this.props.dataTransaksi.nominal}
 			        				onChange={this.props.onChangeTransaksiHandler}/>
 			        		</div>;
-		} else if(this.props.dataTransaksi.jenis_transaksi == "Transfer") {
-			opsiTransaksi = <div>
-								<div className="form-group">
-				        			<label htmlFor="kirim_tabungan">Kirim Bank</label>
-				        			<input 
-				        				className="form-control bg-dark text-white" 
-				        				placeholder="09875432345678"
-				        				name="kirim_tabungan"
-				        				value={this.props.dataTransaksi.kirim_tabungan}
-				        				onChange={this.props.onChangeTransaksiHandler}/>
-				        		</div>
-				        		<div className="form-group d-flex">
-									<div className="form-check mr-3">
-					        			<input
-					        				type="radio"
-					        				name="jenis_pembayaran"
-					        				className="form-check-input"
-					        				value="Cash"
-					        				onChange={this.props.onChangeTransaksiHandler}
-					        				checked={this.props.dataTransaksi.jenis_pembayaran == "Cash" ? 'checked' : ''}
-					        			/>
-					        			<label className="form-check-label">Cash</label>
-				        			</div>
-				        			<div className="form-check">
-					        			<input
-					        				type="radio"
-					        				name="jenis_pembayaran"
-					        				className="form-check-input"
-					        				value="Tabungan"
-					        				onChange={this.props.onChangeTransaksiHandler}
-					        				checked={this.props.dataTransaksi.jenis_pembayaran == "Tabungan" ? 'checked' : ''}
-					        			/>
-					        			<label className="form-check-label">Tabungan</label>
-				        			</div>
-								</div>
-				        		<div className="form-group">
-				        			<label htmlFor="nominal">Nominal</label>
-				        			<input 
-				        				className="form-control bg-dark text-white" 
-				        				placeholder="nominal"
-				        				name="nominal"
-				        				value={this.props.dataTransaksi.nominal}
-				        				onChange={this.props.onChangeTransaksiHandler}/>
-				        		</div>
-				        		<div className="form-group">
-				        			<label htmlFor="keterangan">Keterangan</label>
-				        			<textarea 
-				        				className="form-control bg-dark text-white" 
-				        				placeholder="Keterangan"
-				        				name="keterangan"
-				        				value={this.props.dataTransaksi.keterangan}
-				        				onChange={this.props.onChangeTransaksiHandler}>
-				        			</textarea>
-				        		</div>
-
-							</div>;
 		} else {
 			opsiTransaksi = "";
 		}
@@ -129,17 +73,6 @@ class Transaksi extends Component {
 						        				checked={this.props.dataTransaksi.jenis_transaksi == "Tarik" ? 'checked' : ''}
 						        			/>
 						        			<label className="form-check-label">Tarik</label>
-					        			</div>
-					        			<div className="form-check">
-						        			<input
-						        				type="radio"
-						        				name="jenis_transaksi"
-						        				className="form-check-input"
-						        				value="Transfer"
-						        				onChange={this.props.onChangeTransaksiHandler}
-						        				checked={this.props.dataTransaksi.jenis_transaksi== "Transfer" ? 'checked' : ''}
-						        			/>
-						        			<label className="form-check-label">Transfer</label>
 					        			</div>
 				        			</div>
 				        		</div>

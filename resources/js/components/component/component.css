@@ -83,9 +83,20 @@ a.sidebar-link svg{
 }
 
 a.sidebar-link {
-	padding: 10px 100px 10px 0px;
 	color: #fff;
 	text-decoration: none;
+}
+
+.icon {
+	display: flex;
+	align-items: center;
+	padding-right: 5px;
+}
+
+.icon .sidebar-icon-box {
+	width: 20px;
+	margin-right: 8px;	
+	font-size: 20px;
 }
 /*End Sidebar*/
 

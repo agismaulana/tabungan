@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Nasabah;
 use App\Models\Users;
 use App\Models\Rekening;
@@ -10,7 +11,7 @@ use App\Models\Rekening;
 class NasabahController extends Controller
 {
     public function index(){
-    	$nasabah = Nasabah::all();
+    	$nasabah = DB::select('call NASABAH()');
 
     	if(count($nasabah) > 0) {
 	    	return response()->json(["status" => 200, "success" => true, "data"=> $nasabah]);
@@ -109,9 +110,7 @@ class NasabahController extends Controller
     public function hapus($kd_nasabah) {
     	$nasabah = Nasabah::where("kd_nasabah", $kd_nasabah)->first();
     	if(!is_null($nasabah)) {
-    		$delete = Nasabah::where("kd_nasabah", $kd_nasabah)->delete() 
-                      && Users::where('id_users',$nasabah->id_users)->delete()
-                      && Rekening::where("kd_nasabah", $kd_nasabah)->delete();
+    		$delete = Nasabah::where("kd_nasabah", $kd_nasabah)->delete();
     		if($delete == 1) {
     			return response()->json(["status"=>200, "success" => true, "message" => "Data Berhasil Dihapus"]);
     		} else {
