@@ -7,6 +7,7 @@ import './component.css';
 import img from '../../image/ilustrasi/logo.svg';
 
 class Navbar extends Component {
+
 	render() {
 		return(
 			<div>

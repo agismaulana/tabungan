@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
-import {faUser, faAddressCard, faMoneyBill} from '@fortawesome/free-solid-svg-icons';
+import {faUser, faAddressCard, faMoneyBill, faFilePdf, faFileExcel} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import ReactDatatable from '@ashvin27/react-datatable';
 import './Rekening.css';
@@ -300,6 +300,27 @@ class BukaRekening extends Component {
 			buttonTransaksi, transaksi = "";
 		}
 
+		let buttonLaporan = "";
+		if(sessionStorage.level != "Nasabah") {
+			buttonLaporan = <div className="d-flex">
+								<a 
+									className="btn btn-success btn-md mr-2"
+									href={'http://' + window.location.host + '/api/exportExcelTransaksi/' + params.no_rekening}
+								>
+									<FontAwesomeIcon icon={faFileExcel}/> Export Excel
+								</a>
+
+								<a
+									className="btn btn-danger btn-md"
+									href={'http://' + window.location.host + '/api/exportPdfTransaksi/' + params.no_rekening}
+								>
+									<FontAwesomeIcon icon={faFilePdf}/> Export PDF
+								</a>
+							</div>
+		} else {
+			buttonLaporan = "";
+		}
+
 		return(
 			<div>
 				<div className="d-flex justify-content-center">
@@ -346,7 +367,10 @@ class BukaRekening extends Component {
 						<div className="card-header">
 							<div className="d-flex justify-content-between">
 								<h4>Transaksi Terakhir</h4>
-								{buttonTransaksi}
+								<div className="d-flex">
+									{buttonLaporan}
+									{buttonTransaksi}
+								</div>
 							</div>
 						</div>
 						<div className="card-body">

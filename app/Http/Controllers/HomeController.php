@@ -19,8 +19,11 @@ class HomeController extends Controller
     	$jumlahPegawai 		= Pegawai::all()->count();
     	$jumlahTransaksi	= Transaksi::all()->count();
     	$saldoTransaksi 	= Transaksi::select(
-    							DB::raw('sum(if(jenis_transaksi != "Tarik", nominal, 0)) as saldo'))
-    					    	->first();
+    							          DB::raw(
+                              "(sum(if(jenis_transaksi != 'Tarik', nominal, 0)) - sum(if(jenis_transaksi = 'Tarik', nominal, 0))) as saldo"
+                            )
+                          )
+    					    	      ->first();
 
   		$data = [
   			'jumlahNasabah' 	=> $jumlahNasabah,

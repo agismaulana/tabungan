@@ -77,6 +77,16 @@ class Sidebar extends Component {
 									</div>
 								</Link>
 							</li>
+							<li className={window.location.pathname == "/user" ? 'sidebar-item active' : 'sidebar-item'}>
+								<Link to="/user" className="sidebar-link">
+									<div className="icon"> 
+										<div className="sidebar-icon-box">
+											<FontAwesomeIcon icon={faUsers}/> 
+										</div>
+										<span>User</span>
+									</div>
+								</Link>
+							</li>
 							<span className="sidebar-title">Entri</span>
 							<li 
 								className=

@@ -29,4 +29,38 @@ class UsersController extends Controller
     			   ->first();
     	return response()->json(['status'=>200, 'succes'=>true, 'data'=>$nasabah]);
     }
+
+    public function index() {
+        $users = Users::where('level', '!=', 'Administrator')->get();
+
+        return response()->json(['status'=>200, 'success'=>true, 'data'=>$users]);
+    }
+
+    public function show($id_users) {
+        $users = Users::where('id_users', $id_users)->first();
+    
+        return response()->json(['status'=>200, 'success'=>true, 'data'=>$users]);
+    }
+
+    public function update(Request $request) {
+        if($request->all() != "") {
+            $id = $request->id_users;
+            $username = $request->username;
+            $password = $request->password;
+        
+            $data = [
+                'username' => $username,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+            ];
+
+            $update = Users::where('id_users', $id)->update($data);
+            if(!is_null($update)) {
+                return response()->json(['status' => 200, 'success' => true, 'message' => 'Data Berhasil Diupdate']);
+            } else {
+                return response()->json(['status' => 'failed', 'success' => false, 'message' => 'Data Gagal Diupdate']);
+            }
+        } else {
+            return response()->json(['status' => 'failed', 'success' => false, 'message' => 'Data Tidak Ada']);
+        }
+    }
 }

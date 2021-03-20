@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Exports\TransaksiExport;
 
 use App\Models\Rekening;
 use App\Models\Transaksi;
 use App\Models\Transfer;
+
+// use PhpOffice\PhpSpreadsheet\Spreadsheet;
+// use PhpOffice\PhpSpreadsheet\IOFactory;
+// use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class RekeningController extends Controller
 {
@@ -121,5 +128,87 @@ class RekeningController extends Controller
     	} else {
     		return response()->json(['status'=>"failed", 'success'=>false, 'message'=>"Data Tidak Boleh Kosong"]);
     	}
+    }
+
+    public function exportExcel($no_rekening) {
+
+        $transaksi = new TransaksiExport($no_rekening);
+
+        $download = Excel::download(
+                $transaksi, 
+                'transaksi-'.$no_rekening.'.xlsx');
+        if($download) {
+            return $download;
+            return response()->json(['status' => 200, 'success'=>true, 'message' => 'Export Excel Berhasil']);
+        } else {
+            return response()->json(['status' => 200, 'success'=>true, 'message' => 'Export Excel Gagal']); 
+        }
+    }
+
+    public function exportPdf($no_rekening) {
+        require_once base_path('vendor/autoload.php');
+
+        $mpdf = new \Mpdf\Mpdf();
+
+        $transaksi = Transaksi::where('no_rekening', $no_rekening)->get();
+        $saldoTambah = Transaksi::select(
+                             DB::raw("(sum(if(jenis_transaksi = 'Setor', nominal, 0)) 
+                                      + sum(if(transfer.no_rekening = ".$no_rekening." && status = 'berhasil', nominal, 0))) as saldo_tambah")
+                            )
+                            ->leftJoin('transfer', 
+                                    'transfer.id_transaksi', 
+                                    '=', 
+                                    'transaksi.id_transaksi')
+                            ->where('transaksi.no_rekening', $no_rekening)
+                            ->first();
+
+        $saldoKurang = Transaksi::select(
+                            DB::raw("
+                                        (sum(if(jenis_transaksi = 'Tarik', nominal, 0)) + 
+                                         sum(if(jenis_transaksi = 'Transfer' && jenis_pembayaran = 'Tabungan' && status = 'Berhasil', nominal, 0))
+                                        ) as saldo_kurang
+                                   ")
+                            )
+                            ->leftJoin('transfer', 
+                                    'transfer.id_transaksi', 
+                                    '=', 
+                                    'transaksi.id_transaksi')
+                            ->where('transaksi.no_rekening', $no_rekening)
+                            ->first();
+        
+        $recordtransaksi = "";
+        foreach($transaksi as $trans) {
+            $recordtransaksi .= "<tr>
+                                    <td>".$trans->id_transaksi."</td>
+                                    <td>".$trans->waktu."</td>
+                                    <td>".$trans->jenis_transaksi."</td>
+                                    <td>Rp.".$trans->nominal."</td>
+                                </tr>";
+        }
+
+        $html = "<div>
+                    <center>
+                        <h1 align='center'>Laporan Transaksi</h1>
+                        <h4 align='center'>No Rekening</h4>
+                        <h3 align='center'>".$no_rekening."<h3>
+                    </center>
+                    <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
+                        <tr>
+                            <td>Id Transaksi</td>
+                            <td>Waktu Transaksi</td>
+                            <td>Jenis Transaksi</td>
+                            <td>Nominal</td>
+                        </tr>
+                        ".$recordtransaksi."
+                        <tr>
+                            <td colspan='3'>Saldo Tabungan</td>
+                            <td>Rp.".$saldoTambah->saldo_tambah - $saldoKurang->saldo_kurang."</td>
+                        </tr>
+                    </table>
+                </div>";
+
+        $mpdf->writeHTML($html);
+        $mpdf->output();
+
     }
 }

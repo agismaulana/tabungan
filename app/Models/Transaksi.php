@@ -19,4 +19,10 @@ class Transaksi extends Model
     public function Transfer() {
     	return $this->hasMany(Transfer::class);
     }
+
+    public function collection() {
+
+    }
 }
+
+?>

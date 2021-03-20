@@ -39,6 +39,9 @@ Route::post('/update-pegawai', 'App\Http\Controllers\PegawaiController@update');
 Route::delete('/delete-pegawai/{kd_pegawai}', 'App\Http\Controllers\PegawaiController@hapus');
 
 // Users
+Route::get('/users', 'App\Http\Controllers\UsersController@index');
+Route::get('/where-users/{id_users}', 'App\Http\Controllers\UsersController@show');
+Route::post('/update-users', 'App\Http\Controllers\UsersController@update');
 
 // Data User
 Route::get('/join-nasabah/{id_users}', 'App\Http\Controllers\UsersController@joinNasabah');
@@ -50,6 +53,9 @@ Route::get('/rekening', 'App\Http\Controllers\RekeningController@index');
 Route::get('/where-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@show');
 Route::post('/edit-rekening', 'App\Http\Controllers\RekeningController@update');
 Route::post('/transaksi', 'App\Http\Controllers\RekeningController@transaksi');
+Route::get('/exportPdfTransaksi/{no_rekening}', 'App\Http\Controllers\RekeningController@exportPdf');
+Route::get('/exportExcelTransaksi/{no_rekening}', 'App\Http\Controllers\RekeningController@exportExcel');
+
 
 // Buka Rekening
 Route::get('/buka-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@getDataRekening');
