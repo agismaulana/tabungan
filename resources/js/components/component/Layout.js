@@ -17,7 +17,7 @@ class Layout extends Component {
 	}
 
 	componentDidMount() {
-		if(sessionStorage.length == 0 && sessionStorage.level == "") {
+		if(localStorage.length == 0 && localStorage.level == "") {
 			this.setState({
 				redirect: true,
 			})
@@ -25,7 +25,7 @@ class Layout extends Component {
 	}
 
 	render() {
-		if(sessionStorage.length == 0) {
+		if(localStorage.length == 0) {
 			if(this.state.redirect) {
 				return <Redirect to="/logout"/>
 			}

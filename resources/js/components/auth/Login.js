@@ -26,7 +26,7 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        if(sessionStorage.length > 0) {
+        if(localStorage.length > 0) {
             this.setState({
                 redirect: true,
             })
@@ -87,10 +87,10 @@ class Login extends Component {
             })
 
             if(response.data.status == 200) {
-                sessionStorage.setItem('id_users', response.data.user.id_users);
-                sessionStorage.setItem('nama', response.data.user.username);
-                sessionStorage.setItem('level', response.data.user.level);
-                if(sessionStorage.length > 0) {
+                localStorage.setItem('id_users', response.data.user.id_users);
+                localStorage.setItem('nama', response.data.user.username);
+                localStorage.setItem('level', response.data.user.level);
+                if(localStorage.length > 0) {
                     this.setState({
                         redirect: true,
                     })
@@ -111,7 +111,7 @@ class Login extends Component {
     render() {
         const {dataLogin, status, message} = this.state;
 
-        if(sessionStorage.length > 0) {
+        if(localStorage.length > 0) {
             if(this.state.redirect) {
                 return <Redirect to="/home"/>
             }
@@ -157,7 +157,6 @@ class Login extends Component {
 
                                     <button type="submit" className="btn btn-primary btn-block mb-3">Login</button>
                                     </form>
-                                    <Link to="/forgot">Lupa Password?</Link>
                                 </div>
                             </div>
                         </div>

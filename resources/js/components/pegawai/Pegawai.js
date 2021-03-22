@@ -239,7 +239,7 @@ class Pegawai extends Component {
 			sendMessage = "";
 		}
 
-		if(sessionStorage.level == "Operator" || sessionStorage.level == "Nasabah") {
+		if(localStorage.level == "Operator" || localStorage.level == "Nasabah") {
 			return <Redirect to="/home" />
 		}
 

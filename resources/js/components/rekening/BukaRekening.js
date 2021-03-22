@@ -282,7 +282,7 @@ class BukaRekening extends Component {
 
 
 		let buttonTransaksi, transaksi = "";
-		if(sessionStorage.level != 'Nasabah') {
+		if(localStorage.level != 'Nasabah') {
 			buttonTransaksi = 	<button
 									className="btn btn-primary btn-md ml-2"
 									data-target="#modalTransaksi" data-toggle="modal"
@@ -301,7 +301,7 @@ class BukaRekening extends Component {
 		}
 
 		let buttonLaporan = "";
-		if(sessionStorage.level != "Nasabah") {
+		if(localStorage.level == "Administrator") {
 			buttonLaporan = <div className="d-flex">
 								<a 
 									className="btn btn-success btn-md mr-2"

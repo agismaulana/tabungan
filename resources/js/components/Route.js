@@ -12,6 +12,7 @@ import User from './user/User';
 import Profile from './user/Profile';
 import Rekening from './rekening/Rekening';
 import BukaRekening from './rekening/BukaRekening';
+import History from './history/History';
 
 class Routing extends Component {
 	render() {
@@ -32,6 +33,7 @@ class Routing extends Component {
 							<Route exact path="/user" component={User} />
 							<Route exact path="/rekening" component={Rekening} />
 							<Route exact path="/profile/" component={Profile} />
+							<Route exact path="/history" component={History} />
 							<Route exact path="/buka-rekening/:no_rekening" component={BukaRekening} />
 						</Layout>
 					</Switch>

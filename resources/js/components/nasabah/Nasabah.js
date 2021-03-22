@@ -203,7 +203,7 @@ class Nasabah extends React.Component{
 				status:response.status,
 				message:response.data.message,
 			}, ()=>this.getNasabah())
-		})
+		})	
 	}
 
 	hapusNasabah = (kd_nasabah) => {
@@ -228,7 +228,7 @@ class Nasabah extends React.Component{
 			sendMessage = "";
 		}
 
-		if(sessionStorage.level == "nasabah") {
+		if(localStorage.level == "nasabah") {
 			return <Redirect to="/home" />
 		}
 

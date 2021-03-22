@@ -98,6 +98,14 @@ a.sidebar-link {
 	margin-right: 8px;	
 	font-size: 20px;
 }
+
+.sidebar .footer {
+	position: fixed;
+	bottom: 0;
+	font-size: 18px;
+	color: white;
+	margin: 20px;
+}
 /*End Sidebar*/
 
 .wrapper {

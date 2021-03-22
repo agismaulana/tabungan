@@ -131,7 +131,7 @@ class User extends Component {
 			sendMessage = "";
 		}
 
-		if(sessionStorage.level != 'Administrator') {
+		if(localStorage.level != 'Administrator') {
 			return <Redirect to="/home"/>
 		}
 

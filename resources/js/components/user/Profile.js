@@ -11,6 +11,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
+import EditProfile from './EditProfile';
+
 
 class Profile extends Component {
 
@@ -20,8 +22,10 @@ class Profile extends Component {
 			dataUsers: {
 				id_users: "",
 				username: "",
-				password: "",
+				password_lama: "",
+				password_baru: "",
 				nm_users: "",
+				kd_users: "",
 				email: "",
 				jk: "",
 				alamat: "",
@@ -38,14 +42,15 @@ class Profile extends Component {
 	}
 
 	getProfile() {
-		let id_users = sessionStorage.id_users;
-		if(sessionStorage.level == "Nasabah") {
+		let id_users = localStorage.id_users;
+		if(localStorage.level == "Nasabah") {
 			axios.get(`http://${window.location.host}/api/join-nasabah/${id_users}`)
 			.then((response) => {
 				this.setState({
 					dataUsers: {
 						id_users: response.data.data.id_users,
 						username: response.data.data.username,
+						kd_users: response.data.data.kd_nasabah,
 						nm_users: response.data.data.nm_nasabah,
 						email: response.data.data.email,
 						jk: response.data.data.jk,
@@ -53,8 +58,8 @@ class Profile extends Component {
 						no_hp: response.data.data.no_hp,
 						level: response.data.data.level,
 					}
-				})	
-			})
+				});	
+			});
 		} else {
 			axios.get(`http://${window.location.host}/api/join-pegawai/${id_users}`)
 			.then((response) => {
@@ -62,6 +67,7 @@ class Profile extends Component {
 					dataUsers: {
 						id_users: response.data.data.id_users,
 						username: response.data.data.username,
+						kd_users: response.data.data.kd_pegawai,
 						nm_users: response.data.data.nm_pegawai,
 						email: response.data.data.email,
 						jk: response.data.data.jk,
@@ -72,10 +78,60 @@ class Profile extends Component {
 				})	
 			})
 		}
+
+		if(this.state.status != "") {
+			setTimeout(()=>{
+				this.setState({
+					status: "",
+					message: "",
+				})
+			}, 1500)
+		}
+	}
+
+
+	// Ubah Password
+	onChangeUbahPassword = (e) => {
+		let {dataUsers} = this.state;
+		dataUsers[e.target.name] = e.target.value;
+		this.setState({dataUsers});
+	}
+
+	ubahPassword = () => {
+		let {dataUsers} = this.state
+		axios.post(`http://${window.location.host}/api/ubah-password`, dataUsers)
+		.then((response)=>{
+			this.setState({
+				dataUsers: {
+					password_lama: "",
+					password_baru: "",
+				},
+				status: response.data.status,
+				message: response.data.message
+			}, () => this.getProfile());
+		})
+	}
+
+	// Edit Profile
+	onChangeEditHandler = (e) => {
+		let {dataUsers} = this.state;
+		dataUsers[e.target.name] = e.target.value;
+		this.setState({dataUsers})
+	}
+
+	updateProfile = () => {
+		let {dataUsers} = this.state;
+		axios.post(`http://${window.location.host}/api/update-profile`, dataUsers)
+		.then((response)=>{
+			this.setState({
+				status: response.data.status,
+				message: response.data.message,
+			}, () => this.getProfile())
+		})
 	}
 
 	render() {
-		const {dataUsers} = this.state;
+		const {dataUsers, status, message} = this.state;
 
 		let gender = "";
 		if(dataUsers.jk == 'Laki-Laki') {
@@ -84,17 +140,26 @@ class Profile extends Component {
 			gender = faVenus;
 		}
 
+		let sendMessage = "";
+		if(status == 200) {
+			sendMessage = <div className="alert alert-success" role="alert">{message}</div>
+		} else if(status == 'failed') {
+			sendMessage = <div className="alert alert-danger" role="alert">{message}</div>
+		} else {
+			sendMessage = "";
+		}
+
 		return(
 			<div className="row justify-content-center">
 				<div className="card bg-dark col-12 mb-5">
 					<div className="card-body">
+						{sendMessage}
 						<div className="d-flex justify-content-center align-items-center">
 							<FontAwesomeIcon icon={faUser} className="fa-4x"/>
 						</div>
 						<div className="text-center">
 							<h1 className="mt-2">{dataUsers.nm_users}</h1>
 							<p>{dataUsers.level}</p>
-
 							<div className="d-flex justify-content-around">
 								<div>
 									<FontAwesomeIcon icon={faEnvelope} className="fa-2x"/>
@@ -124,12 +189,16 @@ class Profile extends Component {
 									<input 
 										className="form-control bg-dark text-white"
 										value={dataUsers.username}
+										onChange={this.onChangeUbahPassword}
 									/> 
 								</div>
 								<div className="form-group">
 									<label>Password Lama</label>
 									<input 
 										type="password"
+										name="password_lama"
+										value={dataUsers.password_lama}
+										onChange={this.onChangeUbahPassword}
 										className="form-control bg-dark text-white"
 									/>
 								</div>
@@ -137,14 +206,27 @@ class Profile extends Component {
 									<label>Password Baru</label>
 									<input 
 										type="password"
+										name="password_baru"
+										value={dataUsers.password_baru}
+										onChange={this.onChangeUbahPassword}
 										className="form-control bg-dark text-white"
 									/>
 								</div>
-								<button
-									className="btn btn-primary"
-								>
-									Simpan
-								</button>
+								<div className="d-flex">
+									<button
+										className="btn btn-primary mr-1"
+										onClick={()=>{this.ubahPassword()}}
+									>
+										Simpan
+									</button>
+									<EditProfile 
+										updateProfile={this.updateProfile}
+										dataUsers={dataUsers}
+										editProfile={this.editProfile}
+										onChangeEditHandler={this.onChangeEditHandler}
+									/>
+								</div>
+
 							</div>
 						</div>
 					</div>				

@@ -11,14 +11,14 @@ class Logout extends Component {
 	}
 
 	componentDidMount() {
-		sessionStorage.clear();
+		localStorage.clear();
 		this.setState({
 			redirect: true,
 		})
 	}
 
 	render() {
-		if(sessionStorage.length == 0) {
+		if(localStorage.length == 0) {
 			if(this.state.redirect) {
 				return <Redirect to="/"/>
 			}

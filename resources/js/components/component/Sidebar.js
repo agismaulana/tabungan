@@ -6,6 +6,7 @@ import {
 	faUsers,
 	faUserTie,
 	faCreditCard,
+	faHistory,
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
@@ -20,8 +21,8 @@ class Sidebar extends Component {
 	}
 
 	componentDidMount() {
-		if(sessionStorage.level == "Nasabah") {
-			this.getNasabah(sessionStorage.id_users)
+		if(localStorage.level == "Nasabah") {
+			this.getNasabah(localStorage.id_users)
 		}
 	}
 
@@ -40,8 +41,8 @@ class Sidebar extends Component {
 		const {no_rekening} = this.state;
 		const url = window.location.pathname.split('/');
 
-		if(sessionStorage.length > 0) {
-			if(sessionStorage.level == "Administrator") {
+		if(localStorage.length > 0) {
+			if(localStorage.level == "Administrator") {
 				return(
 					<div className="sidebar">
 						<ul className="sidebar-menu">
@@ -104,10 +105,24 @@ class Sidebar extends Component {
 									</div>
 								</Link>
 							</li>
+							<li className={window.location.pathname == "/history" ? 'sidebar-item active' : 'sidebar-item'}>
+								<Link to="/history" className="sidebar-link">
+									<div className="icon"> 
+										<div className="sidebar-icon-box">
+											<FontAwesomeIcon icon={faHistory}/> 
+										</div>
+										<span>History Transaksi</span>
+									</div>
+								</Link>
+							</li>
 						</ul>
+
+						<p className="footer">
+							copyright&copy;MyDeposits2021
+						</p>
 					</div>
 				)
-			} else if(sessionStorage.level == "Operator") {
+			} else if(localStorage.level == "Operator") {
 				return(
 					<div className="sidebar">
 						<ul className="sidebar-menu">
@@ -144,7 +159,22 @@ class Sidebar extends Component {
 									</div>
 								</Link>
 							</li>
+
+							<li className={window.location.pathname == "/history" ? 'sidebar-item active' : 'sidebar-item'}>
+								<Link to="/history" className="sidebar-link">
+									<div className="icon"> 
+										<div className="sidebar-icon-box">
+											<FontAwesomeIcon icon={faHistory}/> 
+										</div>
+										<span>History</span>
+									</div>
+								</Link>
+							</li>
 						</ul>
+
+						<p className="footer">
+							copyright&copy;MyDeposits2021
+						</p>
 					</div>
 				)
 			} else {
@@ -174,6 +204,10 @@ class Sidebar extends Component {
 								</Link>
 							</li>
 						</ul>
+
+						<p className="footer">
+							copyright&copy;MyDeposits2021
+						</p>
 					</div>
 				)
 			}

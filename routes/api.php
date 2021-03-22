@@ -43,10 +43,12 @@ Route::get('/users', 'App\Http\Controllers\UsersController@index');
 Route::get('/where-users/{id_users}', 'App\Http\Controllers\UsersController@show');
 Route::post('/update-users', 'App\Http\Controllers\UsersController@update');
 
-// Data User
+// Data Profile
 Route::get('/join-nasabah/{id_users}', 'App\Http\Controllers\UsersController@joinNasabah');
 Route::get('/join-pegawai/{id_users}', 'App\Http\Controllers\UsersController@joinPegawai');
 Route::get('/no-rekening/{kd_nasabah}', 'App\http\Controllers\UsersController@getNoRekening');
+Route::post('/update-profile', 'App\Http\Controllers\UsersController@updateProfile');
+Route::post('/ubah-password', 'App\Http\Controllers\UsersController@ubahPassword');
 
 // Rekening
 Route::get('/rekening', 'App\Http\Controllers\RekeningController@index');
@@ -56,8 +58,12 @@ Route::post('/transaksi', 'App\Http\Controllers\RekeningController@transaksi');
 Route::get('/exportPdfTransaksi/{no_rekening}', 'App\Http\Controllers\RekeningController@exportPdf');
 Route::get('/exportExcelTransaksi/{no_rekening}', 'App\Http\Controllers\RekeningController@exportExcel');
 
-
 // Buka Rekening
 Route::get('/buka-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@getDataRekening');
 Route::get('/transaksi', 'App\Http\Controllers\TransaksiController@index');
 Route::get('/where-history-transaksi/{no_rekening}', 'App\Http\Controllers\TransaksiController@getWhereTransaksi');
+
+// History
+Route::post('/change-status/{id_transfer}', 'App\Http\Controllers\TransaksiController@changeStatus');
+Route::get('/exportExcelHistory', 'App\Http\Controllers\TransaksiController@exportExcel');
+Route::get('/exportPdfHistory', 'App\Http\Controllers\TransaksiController@exportPdf');

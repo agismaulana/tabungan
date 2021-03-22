@@ -86,7 +86,7 @@ class Rekening extends Component {
 	}
 
 	getRekening() {
-		if(sessionStorage.level != "Nasabah") {
+		if(localStorage.level != "Nasabah") {
 			axios.get(`http://${window.location.host}/api/rekening`)
 			.then((response) => {
 				if(response.status == 200) {
@@ -154,7 +154,7 @@ class Rekening extends Component {
 			sendMessage = "";
 		}
 
-		if(sessionStorage.level == "nasabah") {
+		if(localStorage.level == "nasabah") {
 			return <Redirect to="/home" />
 		}
 

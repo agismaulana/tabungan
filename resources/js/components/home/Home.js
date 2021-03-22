@@ -19,22 +19,25 @@ class Home extends Component {
 				jumlahTransaksi: "",
 				saldoTransaksi: "",
 			},
-			curTime: new Date().toLocaleString(),
+			date: "",
 		}
 	}
 
 	componentDidMount() {
 		this.getUsers();
-		if(sessionStorage.level != "Nasabah") {
+		setInterval(() => {
+			this.getTime();
+		}, 1000)
+		if(localStorage.level != "Nasabah") {
 			this.getCount();
 		}
 	}
 
 	getUsers() {
 
-		const idUsers = sessionStorage.id_users;
+		const idUsers = localStorage.id_users;
 
-		if(sessionStorage.level == "Nasabah") {
+		if(localStorage.level == "Nasabah") {
 			axios.get(`http://${window.location.host}/api/join-nasabah/${idUsers}`)
 			.then((response) => {
 				this.setState({
@@ -71,12 +74,20 @@ class Home extends Component {
 		})
 	}
 
+	getTime = () => {
+		let date = new Date().toLocaleString();
+
+		this.setState({
+			date: date,
+		})
+	}
+
 	render() {
 
-		const {dataUsers, dataCount, curTime} = this.state;
+		const {dataUsers, dataCount, date} = this.state;
 
 		let dashboard;
-		if(sessionStorage.level == 'Administrator') {
+		if(localStorage.level == 'Administrator') {
 			dashboard = <div className="d-flex justify-content-around">
 							<div className="card col-md-3 bg-primary mr-2">
 								<div className="card-body">
@@ -119,7 +130,7 @@ class Home extends Component {
 								</div>
 							</div>
 						</div>
-		} else if(sessionStorage.level == 'Operator') {
+		} else if(localStorage.level == 'Operator') {
 			dashboard = <div className="d-flex justify-content-around">
 							<div className="card col-md-4 bg-primary mr-2">
 								<div className="card-body">
@@ -164,7 +175,7 @@ class Home extends Component {
 							<hr/>
 							<div className="d-flex justify-content-between">
 								<p>Selamat Menggunakan Aplikasi MyDeposits</p>
-								<p>{curTime}</p>
+								<p>{date}</p>
 							</div>
 						</div>
 					</div>
