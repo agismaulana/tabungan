@@ -57,7 +57,7 @@ class Pegawai extends Component {
 								data-target="#modalEdit" data-toggle="modal"
 								onClick={() => {this.editPegawai(record.kd_pegawai)}}
 							>
-								<FontAwesomeIcon icon={faEdit} />
+								<FontAwesomeIcon icon={faEdit} /> Edit
 							</button>
 							<div>
 								<button
@@ -65,7 +65,7 @@ class Pegawai extends Component {
 									data-target="#modalHapus"
 									data-toggle="modal"
 								>
-									<FontAwesomeIcon icon={faTrash} />
+									<FontAwesomeIcon icon={faTrash} /> Hapus
 								</button>
 
 								<div className="modal fade" id="modalHapus" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

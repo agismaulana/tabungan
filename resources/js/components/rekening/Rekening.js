@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
-import {faEdit, faInfo, faMoneyBill} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faInfo, faBookOpen} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import ReactDatatable from '@ashvin27/react-datatable';
 
@@ -34,7 +34,7 @@ class Rekening extends Component {
 								href={'buka-rekening/'+record.no_rekening}
 								className="btn btn-primary btn-md ml-2"
 							>
-								<FontAwesomeIcon icon={faMoneyBill}/>
+								<FontAwesomeIcon icon={faBookOpen}/> Buka Rekening
 							</a>
 							
 							<button
@@ -42,7 +42,7 @@ class Rekening extends Component {
 								data-target="#modalEdit" data-toggle="modal"
 								onClick={() => {this.editRekening(record.no_rekening)}}
 							>
-								<FontAwesomeIcon icon={faEdit} />
+								<FontAwesomeIcon icon={faEdit} /> Edit
 							</button>
 						</div>
 					)

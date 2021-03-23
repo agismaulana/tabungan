@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
 
+
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+
 class TambahPegawai extends Component {
 	render() {
 		return(
 			<div>
 				<button className="btn btn-primary" data-target="#modalTambah" data-toggle="modal">
-					Tambah Data Pegawai
+					<FontAwesomeIcon icon={faPlus}/> Tambah Data Pegawai
 				</button>
 
 				<div className="modal fade" id="modalTambah" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -108,14 +112,14 @@ class TambahPegawai extends Component {
 				      		<div className="modal-footer">
 				        		<button 
 				        			type="button" 
-				        			className="btn btn-secondary" 
+				        			className="btn btn-danger" 
 				        			data-dismiss="modal"
 				        		>
-				        			Close
+				        			Tidak
 				        		</button>
 				        		<button 
 				        			type="button" 
-				        			className="btn btn-primary" 
+				        			className="btn btn-success" 
 				        			onClick={()=>this.props.tambahPegawai()}
 				        			data-dismiss="modal"
 				        		>

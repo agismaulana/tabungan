@@ -54,7 +54,7 @@ class Nasabah extends React.Component{
 								data-target="#modalEdit" data-toggle="modal"
 								onClick={() => {this.editNasabah(record.kd_nasabah)}}
 							>
-								<FontAwesomeIcon icon={faEdit} />
+								<FontAwesomeIcon icon={faEdit} /> Edit
 							</button>
 							<div>
 								<button
@@ -62,7 +62,7 @@ class Nasabah extends React.Component{
 									data-target="#modalHapus"
 									data-toggle="modal"
 								>
-									<FontAwesomeIcon icon={faTrash} />
+									<FontAwesomeIcon icon={faTrash} /> Hapus
 								</button>
 
 

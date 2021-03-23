@@ -159,36 +159,13 @@ class BukaRekening extends Component {
 	handleTransaksi = () => {
 		let {dataTransaksi, dataRekening} = this.state;
 
-		if(dataTransaksi.jenis_transaksi == "Tarik") {
-			if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
-				this.setState({
-					status: "failed",
-					message: "Saldo Anda Tidak Mencukupi",
-				}, () => {this.getRekening();this.getHistory()})
-			} else {
-				axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
-				.then((response) => {
-					this.setState({
-						dataTransaksi: {
-							nm_nasabah: "",
-							id_transaksi: "",
-							waktu: "",
-							nominal: "",
-							jenis_transaksi: "",
-							no_rekening: "",
-							kirim_tabungan: "",
-							jenis_pembayaran: "",
-							keterangan: "",
-							status: "",
-							pin: "",
-						},
-						status: response.data.status,
-						message: response.data.message,
-					}, () => {this.getRekening();this.getHistory()});
-				});
-			}
-		} else if(dataTransaksi.jenis_transaksi == "Transfer") {
-			if(dataTransaksi.jenis_pembayaran == "Tabungan") {
+		if(dataTransaksi.nominal == "") {
+			this.setState({
+				status: "failed",
+				message: "Transaksi Gagal",
+			}, () => {this.getRekening();this.getHistory()})
+		} else {
+			if(dataTransaksi.jenis_transaksi == "Tarik") {
 				if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
 					this.setState({
 						status: "failed",
@@ -216,49 +193,79 @@ class BukaRekening extends Component {
 						}, () => {this.getRekening();this.getHistory()});
 					});
 				}
-			} else {
-				axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
-					.then((response) => {
+			} else if(dataTransaksi.jenis_transaksi == "Transfer") {
+				if(dataTransaksi.jenis_pembayaran == "Tabungan") {
+					if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
 						this.setState({
-							dataTransaksi: {
-								nm_nasabah: "",
-								id_transaksi: "",
-								waktu: "",
-								nominal: "",
-								jenis_transaksi: "",
-								no_rekening: "",
-								kirim_tabungan: "",
-								jenis_pembayaran: "",
-								keterangan: "",
-								status: "",
-								pin: "",
-							},
-							status: response.data.status,
-							message: response.data.message,
-						}, () => {this.getRekening();this.getHistory()});
-					});
+							status: "failed",
+							message: "Saldo Anda Tidak Mencukupi",
+						}, () => {this.getRekening();this.getHistory()})
+					} else {
+						axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
+						.then((response) => {
+							this.setState({
+								dataTransaksi: {
+									nm_nasabah: "",
+									id_transaksi: "",
+									waktu: "",
+									nominal: "",
+									jenis_transaksi: "",
+									no_rekening: "",
+									kirim_tabungan: "",
+									jenis_pembayaran: "",
+									keterangan: "",
+									status: "",
+									pin: "",
+								},
+								status: response.data.status,
+								message: response.data.message,
+							}, () => {this.getRekening();this.getHistory()});
+						});
+					}
+				} else {
+					axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
+						.then((response) => {
+							this.setState({
+								dataTransaksi: {
+									nm_nasabah: "",
+									id_transaksi: "",
+									waktu: "",
+									nominal: "",
+									jenis_transaksi: "",
+									no_rekening: "",
+									kirim_tabungan: "",
+									jenis_pembayaran: "",
+									keterangan: "",
+									status: "",
+									pin: "",
+								},
+								status: response.data.status,
+								message: response.data.message,
+							}, () => {this.getRekening();this.getHistory()});
+						});
+				}
+			} else  {
+				axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
+				.then((response) => {
+					this.setState({
+						dataTransaksi: {
+							nm_nasabah: "",
+							id_transaksi: "",
+							waktu: "",
+							nominal: "",
+							jenis_transaksi: "",
+							no_rekening: "",
+							kirim_tabungan: "",
+							jenis_pembayaran: "",
+							keterangan: "",
+							status: "",
+							pin: "",
+						},
+						status: response.data.status,
+						message: response.data.message,
+					}, () => {this.getRekening();this.getHistory()});
+				});
 			}
-		} else  {
-			axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
-			.then((response) => {
-				this.setState({
-					dataTransaksi: {
-						nm_nasabah: "",
-						id_transaksi: "",
-						waktu: "",
-						nominal: "",
-						jenis_transaksi: "",
-						no_rekening: "",
-						kirim_tabungan: "",
-						jenis_pembayaran: "",
-						keterangan: "",
-						status: "",
-						pin: "",
-					},
-					status: response.data.status,
-					message: response.data.message,
-				}, () => {this.getRekening();this.getHistory()});
-			});
 		}
 	}
 
@@ -324,6 +331,7 @@ class BukaRekening extends Component {
 					<input 
 						className="form-control bg-dark text-white" 
 						name="pin"
+						maxLength="6"
 						value={dataTransaksi.pin}
 						onChange={this.onChangeTransaksiHandler}
 					/>

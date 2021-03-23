@@ -73,12 +73,12 @@ class History extends Component {
 				cell: (record, index) => {
 					if(record.status == "menunggu konfirmasi") {
 						return <button 
-									className="btn btn-primary btn-sm"
+									className="btn btn-primary btn-md"
 									onClick={()=>{this.konfirmasi(record.id_transfer)}}>
 										Konfirmasi
 								</button>
 					} else {
-						return <div className="badge badge-success badge-sm">Berhasil</div>
+						return <div className="badge badge-success badge-md p-2">Berhasil</div>
 					}
 				}
 			}
@@ -156,7 +156,7 @@ class History extends Component {
 									<FontAwesomeIcon icon={faFileExcel}/> Export Excel
 								</a>
 								<a href={"http://"+window.location.host+"/api/exportPdfHistory"} className="btn btn-danger btn-md">
-									<FontAwesomeIcon icon={faFilePdf}/> Print Pdf
+									<FontAwesomeIcon icon={faFilePdf}/> Export Pdf
 								</a>
 							</div>;
 		} else {
@@ -179,6 +179,7 @@ class History extends Component {
 								className="table table-dark table-bordered table-responsive"
 								records={transaksi}
 								columns={this.columns}
+								config={this.config}
 							/>
 						</div>
 					</div>

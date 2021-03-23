@@ -38,7 +38,7 @@ class User extends Component {
 								data-target="#modalEdit" data-toggle="modal"
 								onClick={() => {this.editUsers(record.id_users)}}
 							>
-								<FontAwesomeIcon icon={faEdit} />
+								<FontAwesomeIcon icon={faEdit} /> Edit
 							</button>
 						</div>
 					)

@@ -8,6 +8,7 @@ import {
 	faEnvelope,
 	faVenus,
 	faMars,
+	faSave,
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
@@ -217,7 +218,7 @@ class Profile extends Component {
 										className="btn btn-primary mr-1"
 										onClick={()=>{this.ubahPassword()}}
 									>
-										Simpan
+										<FontAwesomeIcon icon={faSave} /> Simpan
 									</button>
 									<EditProfile 
 										updateProfile={this.updateProfile}

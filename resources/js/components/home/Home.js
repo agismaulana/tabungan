@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import './home.css';
 
 import {faUsers, faUserTie, faMoneyBill} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';

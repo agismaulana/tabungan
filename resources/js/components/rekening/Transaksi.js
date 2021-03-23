@@ -81,14 +81,14 @@ class Transaksi extends Component {
 				      		<div className="modal-footer">
 				        		<button 
 				        			type="button" 
-				        			className="btn btn-secondary" 
+				        			className="btn btn-danger" 
 				        			data-dismiss="modal"
 				        		>
-				        			Close
+				        			Tidak
 				        		</button>
 				        		<button 
 				        			type="button" 
-				        			className="btn btn-primary" 
+				        			className="btn btn-success" 
 				        			onClick={()=>this.props.handleTransaksi()}
 				        			data-dismiss="modal"
 				        		>

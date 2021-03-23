@@ -1,10 +1,14 @@
 import React, {Component, Fragment} from 'react';
 
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+
 class TambahNasabah extends React.Component {
 	render() {
 		return(
 			<div>
-				<button className="btn btn-primary" data-toggle="modal" data-target="#modalTambah">Tambah Nasabah
+				<button className="btn btn-primary" data-toggle="modal" data-target="#modalTambah">
+					<FontAwesomeIcon icon={faPlus}/> Tambah Data Nasabah
 				</button>
 				<div className="modal fade" id="modalTambah" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				  	<div className="modal-dialog">
@@ -109,7 +113,7 @@ class TambahNasabah extends React.Component {
 				        				className="form-control bg-dark text-white" 
 				        				placeholder="*******"
 				        				name="pin"
-				        				maxLength="12"
+				        				maxLength="6"
 				        				value={this.props.dataUsersBaru.pin}
 				        				onChange={this.props.onChangeHandler}/>
 				        		</div>
@@ -117,14 +121,14 @@ class TambahNasabah extends React.Component {
 				      		<div className="modal-footer">
 				        		<button 
 				        			type="button" 
-				        			className="btn btn-secondary" 
+				        			className="btn btn-danger" 
 				        			data-dismiss="modal"
 				        		>
-				        			Close
+				        			Tidak
 				        		</button>
 				        		<button 
 				        			type="button" 
-				        			className="btn btn-primary" 
+				        			className="btn btn-success" 
 				        			onClick={()=>this.props.tambahNasabah()}
 				        			data-dismiss="modal"
 				        		>
