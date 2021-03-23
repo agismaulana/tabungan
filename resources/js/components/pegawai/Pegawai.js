@@ -51,7 +51,7 @@ class Pegawai extends Component {
 				text: "Action",
 				cell: (record, index) => {
 					return(
-						<div>
+						<div className="d-flex">
 							<button
 								className="btn btn-success btn-sm"
 								data-target="#modalEdit" data-toggle="modal"
@@ -59,12 +59,45 @@ class Pegawai extends Component {
 							>
 								<FontAwesomeIcon icon={faEdit} />
 							</button>
-							<button
-								className="btn btn-danger btn-sm ml-2"
-								onClick={() => {this.hapusPegawai(record.kd_pegawai)}}
-							>
-								<FontAwesomeIcon icon={faTrash} />
-							</button>
+							<div>
+								<button
+									className="btn btn-danger btn-sm ml-2"
+									data-target="#modalHapus"
+									data-toggle="modal"
+								>
+									<FontAwesomeIcon icon={faTrash} />
+								</button>
+
+								<div className="modal fade" id="modalHapus" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								  	<div className="modal-dialog">
+								    	<div className="modal-content bg-dark">
+								      		<div className="modal-header">
+								        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">Hapus Data Nasabah</h5>
+								      		</div>
+								      		<div className="modal-body">
+								      			<h5>Yakin Data Akan Dihapus?</h5>
+								      		</div>
+								      		<div className="modal-footer">
+								        		<button 
+								        			type="button" 
+								        			className="btn btn-danger" 
+								        			data-dismiss="modal"
+								        		>
+								        			Close
+								        		</button>
+								        		<button 
+								        			type="button" 
+								        			className="btn btn-success" 
+								        			onClick={()=>this.hapusPegawai(record.kd_pegawai)}
+								        			data-dismiss="modal"
+								        		>
+								        			Hapus
+								        		</button>
+								      		</div>
+								    	</div>
+								  	</div>
+								</div>
+							</div>
 						</div>
 					)
 				}

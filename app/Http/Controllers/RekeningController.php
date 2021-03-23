@@ -65,40 +65,84 @@ class RekeningController extends Controller
     		$kirimTabungan	= $request->kirim_tabungan;
     		$jenisPembayaran= $request->jenis_pembayaran;
     		$keterangan		= $request->keterangan;
+            $level          = $request->level;
+            $pin            = $request->pin;
 
-			$dataTransaksi = [
-				'id_transaksi' 		=> $idTransaksi,
-				'waktu'		   		=> $waktu,
-				'nominal'	   		=> $nominal,
-				'jenis_transaksi'	=> $jenisTransaksi,
-				'no_rekening'		=> $noRekening,
-			];
+            if($level == "Nasabah") {
+                $rekening = Rekening::where('no_rekening', $noRekening)->first();
+            
+                if(password_verify($pin, $rekening['pin'])) {
+                    $dataTransaksi = [
+                        'id_transaksi'      => $idTransaksi,
+                        'waktu'             => $waktu,
+                        'nominal'           => $nominal,
+                        'jenis_transaksi'   => $jenisTransaksi,
+                        'no_rekening'       => $noRekening,
+                    ];
 
-    		if($jenisTransaksi == "Transfer") {
-    			$dataTransfer = [
-    				'id_transfer' 		=> date('YmdHis').random_int(0, 100),
-    				'jenis_pembayaran'  => $jenisPembayaran,
-    				'keterangan'		=> $keterangan,
-    				'id_transaksi'		=> $idTransaksi,
-    				'no_rekening'		=> $kirimTabungan,
-    				'status'			=> 'menunggu konfirmasi',
+                    if($jenisTransaksi == "Transfer") {
+                        $dataTransfer = [
+                            'id_transfer'       => date('YmdHis').random_int(0, 100),
+                            'jenis_pembayaran'  => $jenisPembayaran,
+                            'keterangan'        => $keterangan,
+                            'id_transaksi'      => $idTransaksi,
+                            'no_rekening'       => $kirimTabungan,
+                            'status'            => 'menunggu konfirmasi',
+                        ];
+
+                        $createTransfer = Transfer::create($dataTransfer);
+                        if(!is_null($createTransfer)) {
+                            $create = Transaksi::create($dataTransaksi);
+                            return response()->json(['status' => 200, 'success' => true, 'message' => "Transfer Berhasil"]);
+                        } else {
+                            return response()->json(['status' => "failed", 'success' => false, 'message' => "Transfer Gagal"]);
+                        }
+                    } else {
+                        $create = Transaksi::create($dataTransaksi);
+                        if(!is_null($create)) {
+                            return response()->json(['status' => 200, 'success' => true, 'message' => "Transaksi Berhasil"]);
+                        } else {
+                            return response()->json(['status'=>"failed", 'success' => false, 'message' => "Transaksi Gagal"]);
+                        }
+                    }
+                } else {
+                    return response()->json(['status' => 'failed', 'success' => false, 'message' => 'Pin Salah']);
+                }
+            } else {
+    			$dataTransaksi = [
+    				'id_transaksi' 		=> $idTransaksi,
+    				'waktu'		   		=> $waktu,
+    				'nominal'	   		=> $nominal,
+    				'jenis_transaksi'	=> $jenisTransaksi,
+    				'no_rekening'		=> $noRekening,
     			];
 
-    			$createTransfer = Transfer::create($dataTransfer);
-    			if(!is_null($createTransfer)) {
-	    			$create = Transaksi::create($dataTransaksi);
-	    			return response()->json(['status' => 200, 'success' => true, 'message' => "Transfer Berhasil"]);
-    			} else {
-    				return response()->json(['status' => "failed", 'success' => false, 'message' => "Transfer Gagal"]);
-    			}
-    		} else {
-    			$create = Transaksi::create($dataTransaksi);
-    			if(!is_null($create)) {
-    				return response()->json(['status' => 200, 'success' => true, 'message' => "Transaksi Berhasil"]);
-    			} else {
-    				return response()->json(['status'=>"failed", 'success' => false, 'message' => "Transaksi Gagal"]);
-    			}
-    		}
+        		if($jenisTransaksi == "Transfer") {
+                    $dataTransfer = [
+        				'id_transfer' 		=> date('YmdHis').random_int(0, 100),
+        				'jenis_pembayaran'  => $jenisPembayaran,
+        				'keterangan'		=> $keterangan,
+        				'id_transaksi'		=> $idTransaksi,
+        				'no_rekening'		=> $kirimTabungan,
+        				'status'			=> 'menunggu konfirmasi',
+        			];
+
+        			$createTransfer = Transfer::create($dataTransfer);
+        			if(!is_null($createTransfer)) {
+    	    			$create = Transaksi::create($dataTransaksi);
+    	    			return response()->json(['status' => 200, 'success' => true, 'message' => "Transfer Berhasil"]);
+        			} else {
+        				return response()->json(['status' => "failed", 'success' => false, 'message' => "Transfer Gagal"]);
+        			}
+        		} else {
+        			$create = Transaksi::create($dataTransaksi);
+        			if(!is_null($create)) {
+        				return response()->json(['status' => 200, 'success' => true, 'message' => "Transaksi Berhasil"]);
+        			} else {
+        				return response()->json(['status'=>"failed", 'success' => false, 'message' => "Transaksi Gagal"]);
+        			}
+        		}
+            }
     	} else {
     		return response()->json(['status'=>"failed", 'success'=>false, 'message'=>'Data Tidak Boleh Kosong']);
     	}
@@ -146,7 +190,9 @@ class RekeningController extends Controller
 
         $mpdf = new \Mpdf\Mpdf();
 
-        $transaksi = Transaksi::where('no_rekening', $no_rekening)->get();
+        $transaksi = Transaksi::where('transaksi.no_rekening', $no_rekening)
+                     ->orderby('waktu', 'DESC')
+                     ->get();
         $saldoTambah = Transaksi::select(
                              DB::raw("(sum(if(jenis_transaksi = 'Setor', nominal, 0)) 
                                       + sum(if(transfer.no_rekening = ".$no_rekening." && status = 'berhasil', nominal, 0))) as saldo_tambah")
@@ -171,7 +217,7 @@ class RekeningController extends Controller
                                     'transaksi.id_transaksi')
                             ->where('transaksi.no_rekening', $no_rekening)
                             ->first();
-        
+    
         $recordtransaksi = "";
         foreach($transaksi as $trans) {
             $recordtransaksi .= "<tr>
@@ -182,12 +228,18 @@ class RekeningController extends Controller
                                 </tr>";
         }
 
+        $nasabah = Rekening::where('rekening.no_rekening', $no_rekening)
+                   ->join('nasabah', 'nasabah.kd_nasabah', '=', 'rekening.kd_nasabah')
+                   ->first();
+
         $html = "<div>
                     <center>
+                        <p align='center'>My Deposits</p>
                         <h1 align='center'>Laporan Transaksi</h1>
-                        <h4 align='center'>No Rekening</h4>
-                        <h3 align='center'>".$no_rekening."<h3>
                     </center>
+                    <h4>No Rekening : ".$no_rekening."</h4>
+                    <h4>Nama Nasabah : ".$nasabah->nm_nasabah."</h4>
+                    <h4>Tanggal : ".date('d-m-Y')."</h4>
                     <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
                         <tr>
                             <td>Id Transaksi</td>

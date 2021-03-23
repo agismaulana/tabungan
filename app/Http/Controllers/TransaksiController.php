@@ -64,6 +64,10 @@ class TransaksiController extends Controller
                      ->leftJoin('transfer', 'transaksi.id_transaksi', '=', 'transfer.id_transaksi')
                      ->get();;
         
+        $saldo = Transaksi::select(DB::raw("sum(nominal) as total"))
+                 ->leftJoin('transfer', 'transaksi.id_transaksi', '=', 'transfer.id_transaksi')
+                 ->first();;
+
         $recordtransaksi = "";
         foreach($transaksi as $trans) {
             if($trans->no_rekening != null) {
@@ -80,13 +84,17 @@ class TransaksiController extends Controller
                                     <td>".$trans->jenis_transaksi."</td>
                                     <td>".$jenis_pembayaran."</td>
                                     <td>".$trans_rekening."</td>
+                                    <td>Rp.".$trans->nominal."</td>
                                 </tr>";
         }
+
+        $date = date('D d-m-Y');
 
         $html = "<div>
                     <center>
                         <h1 align='center'>Laporan History Transaksi</h1>
                     </center>
+                    <p>Tanggal : ".$date."</p>
                     <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
                         <tr>
                             <td>Id Transaksi</td>
@@ -95,8 +103,13 @@ class TransaksiController extends Controller
                             <td>Jenis Transaksi</td>
                             <td>Jenis Pembayaran</td>
                             <td>Transfer Rekening</td>
+                            <td>Nominal</td>
                         </tr>
                         ".$recordtransaksi."
+                        <tr>
+                            <td colspan='6'>Total Transaksi</td>
+                            <td>Rp.".$saldo->total."</td>
+                        </tr>
                     </table>
                 </div>";
 

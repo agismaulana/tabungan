@@ -56,12 +56,46 @@ class Nasabah extends React.Component{
 							>
 								<FontAwesomeIcon icon={faEdit} />
 							</button>
-							<button
-								className="btn btn-danger btn-sm ml-2"
-								onClick={() => {this.hapusNasabah(record.kd_nasabah)}}
-							>
-								<FontAwesomeIcon icon={faTrash} />
-							</button>
+							<div>
+								<button
+									className="btn btn-danger btn-sm ml-2"
+									data-target="#modalHapus"
+									data-toggle="modal"
+								>
+									<FontAwesomeIcon icon={faTrash} />
+								</button>
+
+
+								<div className="modal fade" id="modalHapus" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								  	<div className="modal-dialog">
+								    	<div className="modal-content bg-dark">
+								      		<div className="modal-header">
+								        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">Hapus Data Nasabah</h5>
+								      		</div>
+								      		<div className="modal-body">
+								      			<h5>Yakin Data Akan Dihapus?</h5>
+								      		</div>
+								      		<div className="modal-footer">
+								        		<button 
+								        			type="button" 
+								        			className="btn btn-danger" 
+								        			data-dismiss="modal"
+								        		>
+								        			Close
+								        		</button>
+								        		<button 
+								        			type="button" 
+								        			className="btn btn-success" 
+								        			onClick={()=>this.hapusNasabah(record.kd_nasabah)}
+								        			data-dismiss="modal"
+								        		>
+								        			Hapus
+								        		</button>
+								      		</div>
+								    	</div>
+								  	</div>
+								</div>
+							</div>
 						</div>
 					)
 				}

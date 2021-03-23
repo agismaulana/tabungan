@@ -15377,14 +15377,56 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faEdit
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
-            className: "btn btn-danger btn-sm ml-2",
-            onClick: function onClick() {
-              _this.hapusNasabah(record.kd_nasabah);
-            },
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faTrash
-            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
+              className: "btn btn-danger btn-sm ml-2",
+              "data-target": "#modalHapus",
+              "data-toggle": "modal",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
+                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faTrash
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+              className: "modal fade",
+              id: "modalHapus",
+              tabIndex: "-1",
+              "aria-labelledby": "exampleModalLabel",
+              "aria-hidden": "true",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                className: "modal-dialog",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+                  className: "modal-content bg-dark",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                    className: "modal-header",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h5", {
+                      className: "modal-title font-weigth-bold",
+                      id: "exampleModalLabel",
+                      children: "Hapus Data Nasabah"
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                    className: "modal-body",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h5", {
+                      children: "Yakin Data Akan Dihapus?"
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+                    className: "modal-footer",
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-danger",
+                      "data-dismiss": "modal",
+                      children: "Close"
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-success",
+                      onClick: function onClick() {
+                        return _this.hapusNasabah(record.kd_nasabah);
+                      },
+                      "data-dismiss": "modal",
+                      children: "Hapus"
+                    })]
+                  })]
+                })
+              })
+            })]
           })]
         });
       }
@@ -16151,6 +16193,7 @@ var Pegawai = /*#__PURE__*/function (_Component) {
       text: "Action",
       cell: function cell(record, index) {
         return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+          className: "d-flex",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
             className: "btn btn-success btn-sm",
             "data-target": "#modalEdit",
@@ -16161,14 +16204,56 @@ var Pegawai = /*#__PURE__*/function (_Component) {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faEdit
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
-            className: "btn btn-danger btn-sm ml-2",
-            onClick: function onClick() {
-              _this.hapusPegawai(record.kd_pegawai);
-            },
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faTrash
-            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
+              className: "btn btn-danger btn-sm ml-2",
+              "data-target": "#modalHapus",
+              "data-toggle": "modal",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
+                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faTrash
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+              className: "modal fade",
+              id: "modalHapus",
+              tabIndex: "-1",
+              "aria-labelledby": "exampleModalLabel",
+              "aria-hidden": "true",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                className: "modal-dialog",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+                  className: "modal-content bg-dark",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                    className: "modal-header",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h5", {
+                      className: "modal-title font-weigth-bold",
+                      id: "exampleModalLabel",
+                      children: "Hapus Data Nasabah"
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                    className: "modal-body",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h5", {
+                      children: "Yakin Data Akan Dihapus?"
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+                    className: "modal-footer",
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-danger",
+                      "data-dismiss": "modal",
+                      children: "Close"
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-success",
+                      onClick: function onClick() {
+                        return _this.hapusPegawai(record.kd_pegawai);
+                      },
+                      "data-dismiss": "modal",
+                      children: "Hapus"
+                    })]
+                  })]
+                })
+              })
+            })]
           })]
         });
       }
@@ -16615,15 +16700,6 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this, props);
 
-    _this.resetTransfer = function () {
-      _this.setState({
-        dataTransaksi: {
-          kirim_tabungan: "",
-          keterangan: ""
-        }
-      });
-    };
-
     _this.detailRekening = function (no_rekening) {
       axios.get("http://".concat(window.location.host, "/api/where-rekening/").concat(no_rekening)).then(function (response) {
         _this.setState({
@@ -16644,15 +16720,12 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       _this.setState({
         dataTransaksi: dataTransaksi
       });
-
-      console.log(dataTransaksi);
     };
 
     _this.handleTransaksi = function () {
       var _this$state = _this.state,
           dataTransaksi = _this$state.dataTransaksi,
           dataRekening = _this$state.dataRekening;
-      console.log(dataTransaksi);
 
       if (dataTransaksi.jenis_transaksi == "Tarik") {
         if (dataRekening.saldo == 0 || dataRekening.saldo - dataTransaksi.nominal < 0) {
@@ -16677,7 +16750,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                 kirim_tabungan: "",
                 jenis_pembayaran: "",
                 keterangan: "",
-                status: ""
+                status: "",
+                pin: ""
               },
               status: response.data.status,
               message: response.data.message
@@ -16712,7 +16786,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   kirim_tabungan: "",
                   jenis_pembayaran: "",
                   keterangan: "",
-                  status: ""
+                  status: "",
+                  pin: ""
                 },
                 status: response.data.status,
                 message: response.data.message
@@ -16736,7 +16811,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                 kirim_tabungan: "",
                 jenis_pembayaran: "",
                 keterangan: "",
-                status: ""
+                status: "",
+                pin: ""
               },
               status: response.data.status,
               message: response.data.message
@@ -16760,7 +16836,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
               kirim_tabungan: "",
               jenis_pembayaran: "",
               keterangan: "",
-              status: ""
+              status: "",
+              pin: ""
             },
             status: response.data.status,
             message: response.data.message
@@ -16823,6 +16900,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         saldo: ""
       },
       dataTransaksi: {
+        level: "",
         nm_nasabah: "",
         id_transaksi: "",
         waktu: "",
@@ -16832,7 +16910,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         kirim_tabungan: "",
         jenis_pembayaran: "",
         keterangan: "",
-        status: ""
+        status: "",
+        pin: ""
       },
       status: "",
       message: ""
@@ -16864,6 +16943,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             saldo: response.data.data.saldo ? response.data.data.saldo : 0
           },
           dataTransaksi: {
+            level: localStorage.level,
             nm_nasabah: response.data.data.nm_nasabah,
             id_transaksi: "",
             waktu: "",
@@ -16873,7 +16953,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             kirim_tabungan: "",
             jenis_pembayaran: "",
             keterangan: "",
-            status: ""
+            status: "",
+            pin: ""
           }
         });
       });
@@ -16974,6 +17055,25 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         });
       } else {
         buttonLaporan = "";
+      }
+
+      var pin = "";
+
+      if (localStorage.level == "Nasabah") {
+        pin = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+          className: "form-group",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("label", {
+            htmlFor: "pin",
+            children: "PIN"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("input", {
+            className: "form-control bg-dark text-white",
+            name: "pin",
+            value: dataTransaksi.pin,
+            onChange: this.onChangeTransaksiHandler
+          })]
+        });
+      } else {
+        pin = "";
       }
 
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
@@ -17141,24 +17241,18 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   value: dataTransaksi.keterangan,
                   onChange: this.onChangeTransaksiHandler
                 })]
-              })]
+              }), pin]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
               className: "card-footer",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
                 className: "ml-auto",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
-                  className: "btn btn-secondary mr-2",
-                  onClick: function onClick() {
-                    _this4.resetTransfer();
-                  },
-                  children: "Reset"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
                   className: "btn btn-primary",
                   onClick: function onClick() {
                     _this4.handleTransaksi();
                   },
                   children: "Transfer"
-                })]
+                })
               })
             })]
           })]

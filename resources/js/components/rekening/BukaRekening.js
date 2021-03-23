@@ -62,6 +62,7 @@ class BukaRekening extends Component {
 				saldo: "",
 			}, 
 			dataTransaksi: {
+				level: "",
 				nm_nasabah: "",
 				id_transaksi: "",
 				waktu: "",
@@ -72,6 +73,7 @@ class BukaRekening extends Component {
 				jenis_pembayaran: "",
 				keterangan: "",
 				status: "",
+				pin: "",
 			},
 			status: "",
 			message: "",
@@ -99,6 +101,7 @@ class BukaRekening extends Component {
 					saldo: response.data.data.saldo ? response.data.data.saldo : 0,
 				},
 				dataTransaksi: {
+					level: localStorage.level,
 					nm_nasabah: response.data.data.nm_nasabah,
 					id_transaksi: "",
 					waktu: "",
@@ -108,7 +111,8 @@ class BukaRekening extends Component {
 					kirim_tabungan: "",
 					jenis_pembayaran: "",
 					keterangan: "",
-					status: "", 
+					status: "",
+					pin: "", 
 				}
 			})
 		})
@@ -134,15 +138,6 @@ class BukaRekening extends Component {
 		})
 	}
 
-	resetTransfer = () => {
-		this.setState({
-			dataTransaksi: {
-				kirim_tabungan: "",
-				keterangan: "",
-			}
-		})
-	}
-
 	detailRekening = (no_rekening) => {
 		axios.get(`http://${window.location.host}/api/where-rekening/${no_rekening}`)
 		.then((response) => {
@@ -159,13 +154,10 @@ class BukaRekening extends Component {
 		let {dataTransaksi} = this.state;
 		dataTransaksi[e.target.name] = e.target.value;
 		this.setState({dataTransaksi});
-		console.log(dataTransaksi);
 	}
 
 	handleTransaksi = () => {
 		let {dataTransaksi, dataRekening} = this.state;
-
-		console.log(dataTransaksi);
 
 		if(dataTransaksi.jenis_transaksi == "Tarik") {
 			if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
@@ -188,6 +180,7 @@ class BukaRekening extends Component {
 							jenis_pembayaran: "",
 							keterangan: "",
 							status: "",
+							pin: "",
 						},
 						status: response.data.status,
 						message: response.data.message,
@@ -216,6 +209,7 @@ class BukaRekening extends Component {
 								jenis_pembayaran: "",
 								keterangan: "",
 								status: "",
+								pin: "",
 							},
 							status: response.data.status,
 							message: response.data.message,
@@ -237,6 +231,7 @@ class BukaRekening extends Component {
 								jenis_pembayaran: "",
 								keterangan: "",
 								status: "",
+								pin: "",
 							},
 							status: response.data.status,
 							message: response.data.message,
@@ -258,6 +253,7 @@ class BukaRekening extends Component {
 						jenis_pembayaran: "",
 						keterangan: "",
 						status: "",
+						pin: "",
 					},
 					status: response.data.status,
 					message: response.data.message,
@@ -319,6 +315,21 @@ class BukaRekening extends Component {
 							</div>
 		} else {
 			buttonLaporan = "";
+		}
+
+		let pin = "";
+		if(localStorage.level == "Nasabah") {
+			pin = <div className="form-group">
+					<label htmlFor="pin">PIN</label>
+					<input 
+						className="form-control bg-dark text-white" 
+						name="pin"
+						value={dataTransaksi.pin}
+						onChange={this.onChangeTransaksiHandler}
+					/>
+				  </div>;
+		} else {
+			pin = "";
 		}
 
 		return(
@@ -463,10 +474,11 @@ class BukaRekening extends Component {
 									onChange={this.onChangeTransaksiHandler}
 								></textarea>
 							</div>
+
+							{pin}
 						</div>
 						<div className="card-footer">
 							<div className="ml-auto">
-								<button className="btn btn-secondary mr-2" onClick={()=>{this.resetTransfer()}}>Reset</button>
 								<button className="btn btn-primary" onClick={() => {this.handleTransaksi()}}>Transfer</button>
 							</div>
 						</div>
