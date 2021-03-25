@@ -160,12 +160,6 @@ class Rekening extends Component {
 
 		return(
 			<div>
-				<div className="card bg-dark mb-2">
-					<div className="card-header">
-						<h3>Rekening Page</h3>
-					</div>
-				</div>
-
 				<EditRekening
 					updateRekening={this.updateRekening}
 					onChangeEditHandler={this.onChangeEditHandler}

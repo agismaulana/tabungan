@@ -118,7 +118,7 @@ class Sidebar extends Component {
 						</ul>
 
 						<p className="footer">
-							copyright&copy;MyDeposits2021
+							copyright &copy; MyDeposits2021
 						</p>
 					</div>
 				)
@@ -173,7 +173,7 @@ class Sidebar extends Component {
 						</ul>
 
 						<p className="footer">
-							copyright&copy;MyDeposits2021
+							copyright &copy; MyDeposits2021
 						</p>
 					</div>
 				)
@@ -206,7 +206,7 @@ class Sidebar extends Component {
 						</ul>
 
 						<p className="footer">
-							copyright&copy;MyDeposits2021
+							copyright &copy; MyDeposits2021
 						</p>
 					</div>
 				)

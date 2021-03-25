@@ -102,7 +102,7 @@ class PegawaiController extends Controller
 	public function hapus($kd_pegawai) {
 		$pegawai = Pegawai::where("kd_pegawai", $kd_pegawai)->first();
     	if(!is_null($pegawai)) {
-    		$delete = Pegawai::where('kd_pegawai',$kd_pegawai)->delete() && Users::where('id_users', $pegawai->id_users)->delete();
+    		$delete = Pegawai::where('kd_pegawai',$kd_pegawai)->delete();
     		if($delete == 1) {
     			return response()->json(["status"=>200, "success" => true, "message" => "Data Berhasil Dihapus"]);
     		} else {

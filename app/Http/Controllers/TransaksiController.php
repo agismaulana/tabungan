@@ -23,7 +23,8 @@ class TransaksiController extends Controller
     }
 
     public function getWhereTransaksi($no_rekening) {
-		$transaksi = Transaksi::leftJoin('transfer', 'transaksi.id_transaksi', '=', 
+        $transaksi = Transaksi::select(DB::raw('*,transaksi.id_transaksi as transaksi_id, transaksi.no_rekening as transaksi_rekening, transfer.no_rekening as transfer_rekening'))
+                     ->leftJoin('transfer', 'transaksi.id_transaksi', '=', 
 										 'transfer.id_transaksi')
 					 ->where('transaksi.no_rekening', $no_rekening)
 					 ->orderBy('waktu', 'DESC')
@@ -114,6 +115,6 @@ class TransaksiController extends Controller
                 </div>";
 
         $mpdf->writeHTML($html);
-        $mpdf->output();
+        $mpdf->output("history-transaksi.pdf", "D");
     }
 }

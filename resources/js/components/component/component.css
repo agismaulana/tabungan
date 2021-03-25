@@ -5,7 +5,7 @@ body {
 /*Navbar*/
 .navbar {
 	z-index: 1;
-	box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+	box-shadow: 3px 3px 3px rgba(0,0,0,0.2);
 }
 
 .navbar .navbar-brand {
@@ -101,10 +101,10 @@ a.sidebar-link {
 
 .sidebar .footer {
 	position: fixed;
+	transform: translateX(15%);
 	bottom: 0;
-	font-size: 18px;
+	font-size: 16px;
 	color: white;
-	margin: 20px;
 }
 /*End Sidebar*/
 

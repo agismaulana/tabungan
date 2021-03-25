@@ -14256,7 +14256,7 @@ var Sidebar = /*#__PURE__*/function (_Component) {
               })]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
               className: "footer",
-              children: "copyright\xA9MyDeposits2021"
+              children: "copyright \xA9 MyDeposits2021"
             })]
           });
         } else if (localStorage.level == "Operator") {
@@ -14344,7 +14344,7 @@ var Sidebar = /*#__PURE__*/function (_Component) {
               })]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
               className: "footer",
-              children: "copyright\xA9MyDeposits2021"
+              children: "copyright \xA9 MyDeposits2021"
             })]
           });
         } else {
@@ -14395,7 +14395,7 @@ var Sidebar = /*#__PURE__*/function (_Component) {
               })]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
               className: "footer",
-              children: "copyright\xA9MyDeposits2021"
+              children: "copyright \xA9 MyDeposits2021"
             })]
           });
         }
@@ -15254,7 +15254,7 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       });
     };
 
-    _this.tambahNasabah = function () {
+    _this.tambahNasabah = function (e) {
       var _this$state2 = _this.state,
           dataNasabahBaru = _this$state2.dataNasabahBaru,
           dataUsersBaru = _this$state2.dataUsersBaru;
@@ -15322,6 +15322,7 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
     };
 
     _this.hapusNasabah = function (kd_nasabah) {
+      console.log(kd_nasabah);
       axios["delete"]("http://".concat(window.location.host, "/api/delete-nasabah/").concat(kd_nasabah)).then(function (response) {
         _this.setState({
           status: response.status,
@@ -15362,6 +15363,7 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       className: "action",
       text: "Action",
       cell: function cell(record, index) {
+        var kd_nasabah = record.kd_nasabah;
         return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
           className: "d-flex",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
@@ -15369,61 +15371,19 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
             "data-target": "#modalEdit",
             "data-toggle": "modal",
             onClick: function onClick() {
-              _this.editNasabah(record.kd_nasabah);
+              _this.editNasabah(kd_nasabah);
             },
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faEdit
             }), " Edit"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
-              className: "btn btn-danger btn-sm ml-2",
-              "data-target": "#modalHapus",
-              "data-toggle": "modal",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faTrash
-              }), " Hapus"]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-              className: "modal fade",
-              id: "modalHapus",
-              tabIndex: "-1",
-              "aria-labelledby": "exampleModalLabel",
-              "aria-hidden": "true",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-                className: "modal-dialog",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                  className: "modal-content bg-dark",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-                    className: "modal-header",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
-                      className: "modal-title font-weigth-bold",
-                      id: "exampleModalLabel",
-                      children: "Hapus Data Nasabah"
-                    })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-                    className: "modal-body",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
-                      children: "Yakin Data Akan Dihapus?"
-                    })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                    className: "modal-footer",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
-                      type: "button",
-                      className: "btn btn-danger",
-                      "data-dismiss": "modal",
-                      children: "Close"
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
-                      type: "button",
-                      className: "btn btn-success",
-                      onClick: function onClick() {
-                        return _this.hapusNasabah(record.kd_nasabah);
-                      },
-                      "data-dismiss": "modal",
-                      children: "Hapus"
-                    })]
-                  })]
-                })
-              })
-            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+            className: "btn btn-danger btn-sm ml-2",
+            onClick: function onClick() {
+              _this.hapusNasabah(kd_nasabah);
+            },
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faTrash
+            }), " Hapus"]
           })]
         });
       }
@@ -15533,17 +15493,9 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       }
 
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "container mb-5",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-            className: "card bg-dark",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-              className: "card-header",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h2", {
-                children: "Nasabah Page"
-              })
-            })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
             className: "card bg-dark mt-2",
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
               className: "card-header d-flex justify-content-between align-items-center",
@@ -15568,7 +15520,7 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
                 records: this.state.nasabah
               })]
             })]
-          })]
+          })
         })
       });
     }
@@ -16207,56 +16159,16 @@ var Pegawai = /*#__PURE__*/function (_Component) {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faEdit
             }), " Edit"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
               className: "btn btn-danger btn-sm ml-2",
-              "data-target": "#modalHapus",
-              "data-toggle": "modal",
+              onClick: function onClick() {
+                _this.hapusPegawai(record.kd_pegawai);
+              },
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
                 icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faTrash
               }), " Hapus"]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-              className: "modal fade",
-              id: "modalHapus",
-              tabIndex: "-1",
-              "aria-labelledby": "exampleModalLabel",
-              "aria-hidden": "true",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-                className: "modal-dialog",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                  className: "modal-content bg-dark",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-                    className: "modal-header",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
-                      className: "modal-title font-weigth-bold",
-                      id: "exampleModalLabel",
-                      children: "Hapus Data Nasabah"
-                    })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-                    className: "modal-body",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
-                      children: "Yakin Data Akan Dihapus?"
-                    })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                    className: "modal-footer",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
-                      type: "button",
-                      className: "btn btn-danger",
-                      "data-dismiss": "modal",
-                      children: "Close"
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
-                      type: "button",
-                      className: "btn btn-success",
-                      onClick: function onClick() {
-                        return _this.hapusPegawai(record.kd_pegawai);
-                      },
-                      "data-dismiss": "modal",
-                      children: "Hapus"
-                    })]
-                  })]
-                })
-              })
-            })]
+            })
           })]
         });
       }
@@ -16373,16 +16285,8 @@ var Pegawai = /*#__PURE__*/function (_Component) {
         });
       }
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-          className: "card bg-dark mb-2",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-            className: "card-header",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h2", {
-              children: "Pegawai Page"
-            })
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
           className: "card bg-dark",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
             className: "card-header d-flex justify-content-between align-items-center",
@@ -16407,7 +16311,7 @@ var Pegawai = /*#__PURE__*/function (_Component) {
               records: this.state.pegawai
             }, this.state.pegawai.kd_pegawai)]
           })]
-        })]
+        })
       });
     }
   }]);
@@ -16668,6 +16572,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -16724,11 +16634,14 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
     };
 
     _this.onChangeTransaksiHandler = function (e) {
+      var newDataTransaksi = _objectSpread({}, _this.state.dataTransaksi);
+
       var dataTransaksi = _this.state.dataTransaksi;
-      dataTransaksi[e.target.name] = e.target.value;
+      newDataTransaksi[e.target.name] = e.target.value;
+      console.log(dataTransaksi);
 
       _this.setState({
-        dataTransaksi: dataTransaksi
+        dataTransaksi: newDataTransaksi
       });
     };
 
@@ -16783,41 +16696,15 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             });
           }
         } else if (dataTransaksi.jenis_transaksi == "Transfer") {
-          if (dataTransaksi.jenis_pembayaran == "Tabungan") {
-            if (dataRekening.saldo == 0 || dataRekening.saldo - dataTransaksi.nominal < 0) {
-              _this.setState({
-                status: "failed",
-                message: "Saldo Anda Tidak Mencukupi"
-              }, function () {
-                _this.getRekening();
+          if (dataRekening.saldo == 0 || dataRekening.saldo - dataTransaksi.nominal < 0) {
+            _this.setState({
+              status: "failed",
+              message: "Saldo Anda Tidak Mencukupi"
+            }, function () {
+              _this.getRekening();
 
-                _this.getHistory();
-              });
-            } else {
-              axios.post("http://".concat(window.location.host, "/api/transaksi"), dataTransaksi).then(function (response) {
-                _this.setState({
-                  dataTransaksi: {
-                    nm_nasabah: "",
-                    id_transaksi: "",
-                    waktu: "",
-                    nominal: "",
-                    jenis_transaksi: "",
-                    no_rekening: "",
-                    kirim_tabungan: "",
-                    jenis_pembayaran: "",
-                    keterangan: "",
-                    status: "",
-                    pin: ""
-                  },
-                  status: response.data.status,
-                  message: response.data.message
-                }, function () {
-                  _this.getRekening();
-
-                  _this.getHistory();
-                });
-              });
-            }
+              _this.getHistory();
+            });
           } else {
             axios.post("http://".concat(window.location.host, "/api/transaksi"), dataTransaksi).then(function (response) {
               _this.setState({
@@ -16891,17 +16778,23 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       className: "status",
       text: "Status",
       cell: function cell(record, index) {
-        if (record.status == "menunggu konfirmasi") {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-            className: "badge badge-warning p-2",
-            children: "Menunggu Konfirmasi"
-          });
-        } else {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-            className: "badge badge-success p-2",
-            children: "Berhasil"
-          });
-        }
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+          className: "badge badge-success p-2",
+          children: "Berhasil"
+        });
+      }
+    }, {
+      key: "aksi",
+      className: "aksi",
+      text: "Aksi",
+      cell: function cell(record, index) {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("a", {
+          href: 'http://' + window.location.host + '/api/cetak-struk-transaksi/' + record.transaksi_id,
+          className: "btn btn-primary",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
+            icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faPrint
+          }), " Print"]
+        });
       }
     }];
     _this.config = {
@@ -16934,6 +16827,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         status: "",
         pin: ""
       },
+      saldoTransfer: "",
       status: "",
       message: ""
     };
@@ -16944,6 +16838,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       this.getRekening();
+      this.getSaldoTransfer();
       this.getHistory();
     }
   }, {
@@ -16990,13 +16885,25 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       }
     }
   }, {
-    key: "getHistory",
-    value: function getHistory() {
+    key: "getSaldoTransfer",
+    value: function getSaldoTransfer() {
       var _this3 = this;
 
       var params = this.props.match.params;
-      axios.get("http://".concat(window.location.host, "/api/where-history-transaksi/").concat(params.no_rekening)).then(function (response) {
+      axios.get("http://".concat(window.location.host, "/api/saldo-transfer/").concat(params.no_rekening)).then(function (response) {
         _this3.setState({
+          saldoTransfer: response.data.data.saldo_transfer
+        });
+      });
+    }
+  }, {
+    key: "getHistory",
+    value: function getHistory() {
+      var _this4 = this;
+
+      var params = this.props.match.params;
+      axios.get("http://".concat(window.location.host, "/api/where-history-transaksi/").concat(params.no_rekening)).then(function (response) {
+        _this4.setState({
           history: response.data.data ? response.data.data : []
         });
       });
@@ -17004,14 +16911,15 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var _this$state2 = this.state,
           dataRekening = _this$state2.dataRekening,
           history = _this$state2.history,
           dataTransaksi = _this$state2.dataTransaksi,
           status = _this$state2.status,
-          message = _this$state2.message;
+          message = _this$state2.message,
+          saldoTransfer = _this$state2.saldoTransfer;
       var params = this.props.match.params;
       var sendMessage = "";
 
@@ -17040,7 +16948,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
           "data-target": "#modalTransaksi",
           "data-toggle": "modal",
           onClick: function onClick() {
-            _this4.detailRekening(params.no_rekening);
+            _this5.detailRekening(params.no_rekening);
           },
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
             icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faMoneyBill
@@ -17089,6 +16997,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
             className: "form-control bg-dark text-white",
             name: "pin",
+            type: "password",
             maxLength: "6",
             value: dataTransaksi.pin,
             onChange: this.onChangeTransaksiHandler
@@ -17096,6 +17005,41 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         });
       } else {
         pin = "";
+      }
+
+      var tujuanTransfer = "";
+
+      if (dataTransaksi.jenis_pembayaran == "Pembayaran") {
+        tujuanTransfer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          className: "form-group",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+            htmlFor: "kirim_tabungan",
+            children: "Transfer No Rekening"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+            type: "number",
+            name: "kirim_tabungan",
+            placeholder: "e.g 9875432123456",
+            className: "form-control bg-dark text-white",
+            value: "20210325722833418",
+            onChange: this.onChangeTransaksiHandler,
+            readOnly: true
+          })]
+        });
+      } else {
+        tujuanTransfer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          className: "form-group",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+            htmlFor: "kirim_tabungan",
+            children: "Transfer No Rekening"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+            type: "number",
+            name: "kirim_tabungan",
+            placeholder: "e.g 9875432123456",
+            className: "form-control bg-dark text-white",
+            value: dataRekening.kirim_tabungan,
+            onChange: this.onChangeTransaksiHandler
+          })]
+        });
       }
 
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
@@ -17144,7 +17088,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
                     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faMoneyBill
                   })
-                }), 'Rp.' + dataRekening.saldo]
+                }), 'Rp.' + parseInt(dataRekening.saldo + saldoTransfer)]
               })
             })]
           })]
@@ -17200,19 +17144,35 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   readOnly: true
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                className: "form-group",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
-                  htmlFor: "kirim_tabungan",
-                  children: "Transfer Ke"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
-                  type: "number",
-                  name: "kirim_tabungan",
-                  placeholder: "e.g 9875432123456",
-                  className: "form-control bg-dark text-white",
-                  value: dataRekening.kirim_tabungan,
-                  onChange: this.onChangeTransaksiHandler
+                className: "form-group d-flex",
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                  className: "form-check mr-3",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                    type: "radio",
+                    name: "jenis_pembayaran",
+                    className: "form-check-input",
+                    value: "Non Pembayaran",
+                    onChange: this.onChangeTransaksiHandler,
+                    checked: dataTransaksi.jenis_pembayaran == "Non Pembayaran" ? "checked" : ""
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                    className: "form-check-label",
+                    children: "Non Pembayaran"
+                  })]
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                  className: "form-check",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                    type: "radio",
+                    name: "jenis_pembayaran",
+                    className: "form-check-input",
+                    value: "Pembayaran",
+                    checked: dataTransaksi.jenis_pembayaran == "Pembayaran" ? "checked" : "",
+                    onChange: this.onChangeTransaksiHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                    className: "form-check-label",
+                    children: "Pembayaran"
+                  })]
                 })]
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              }), tujuanTransfer, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
                 className: "form-group",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
                   htmlFor: "nominal",
@@ -17224,33 +17184,6 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   className: "form-control bg-dark text-white",
                   value: dataTransaksi.nominal,
                   onChange: this.onChangeTransaksiHandler
-                })]
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                className: "form-group d-flex",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                  className: "form-check mr-3",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
-                    type: "radio",
-                    name: "jenis_pembayaran",
-                    className: "form-check-input",
-                    value: "Cash",
-                    onChange: this.onChangeTransaksiHandler
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
-                    className: "form-check-label",
-                    children: "Cash"
-                  })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-                  className: "form-check",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
-                    type: "radio",
-                    name: "jenis_pembayaran",
-                    className: "form-check-input",
-                    value: "Tabungan",
-                    onChange: this.onChangeTransaksiHandler
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
-                    className: "form-check-label",
-                    children: "Tabungan"
-                  })]
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
                 className: "form-group",
@@ -17271,7 +17204,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                 children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
                   className: "btn btn-primary",
                   onClick: function onClick() {
-                    _this4.handleTransaksi();
+                    _this5.handleTransaksi();
                   },
                   children: "Transfer"
                 })
@@ -17410,12 +17343,12 @@ var EditRekening = /*#__PURE__*/function (_Component) {
                 className: "modal-footer",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
                   type: "button",
-                  className: "btn btn-secondary",
+                  className: "btn btn-danger",
                   "data-dismiss": "modal",
-                  children: "Close"
+                  children: "Tidak"
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
                   type: "button",
-                  className: "btn btn-primary",
+                  className: "btn btn-success",
                   onClick: function onClick() {
                     return _this.props.updateRekening();
                   },
@@ -17663,15 +17596,7 @@ var Rekening = /*#__PURE__*/function (_Component) {
       }
 
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-          className: "card bg-dark mb-2",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-            className: "card-header",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h3", {
-              children: "Rekening Page"
-            })
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_EditRekening__WEBPACK_IMPORTED_MODULE_4__.default, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_EditRekening__WEBPACK_IMPORTED_MODULE_4__.default, {
           updateRekening: this.updateRekening,
           onChangeEditHandler: this.onChangeEditHandler,
           editRekening: editRekening
@@ -18194,12 +18119,12 @@ var EditUsers = /*#__PURE__*/function (_Component) {
                 className: "modal-footer",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
                   type: "button",
-                  className: "btn btn-secondary",
+                  className: "btn btn-danger",
                   "data-dismiss": "modal",
-                  children: "Close"
+                  children: "Tidak"
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
                   type: "button",
-                  className: "btn btn-primary",
+                  className: "btn btn-success",
                   onClick: function onClick() {
                     return _this.props.updateUsers();
                   },
@@ -18714,8 +18639,6 @@ var User = /*#__PURE__*/function (_Component) {
       var _this2 = this;
 
       axios.get("http://".concat(window.location.host, "/api/users")).then(function (response) {
-        console.log(response);
-
         _this2.setState({
           users: response.data.data ? response.data.data : []
         });
@@ -18766,25 +18689,22 @@ var User = /*#__PURE__*/function (_Component) {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
           className: "card bg-dark mb-2",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-            className: "card-body",
+            className: "card-header",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h3", {
-              children: "User Page"
+              children: "Data User"
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_EditUsers__WEBPACK_IMPORTED_MODULE_4__.default, {
             editUsers: dataUsers,
             onChangeEditHandler: this.onChangeEditHandler,
             updateUsers: this.updateUsers
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-            className: "card bg-dark",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-              className: "card-body",
-              children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_1__.default, {
-                className: "table table-dark table-bordered",
-                columns: this.columns,
-                config: this.config,
-                records: users
-              })]
-            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            className: "card-body",
+            children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_1__.default, {
+              className: "table table-dark table-bordered",
+              columns: this.columns,
+              config: this.config,
+              records: users
+            })]
           })]
         })
       });
@@ -23304,7 +23224,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "body {\n\toverflow: hidden;\n}\n\n/*Navbar*/\n.navbar {\n\tz-index: 1;\n\tbox-shadow: 5px 5px 5px rgba(0,0,0,0.5);\n}\n\n.navbar .navbar-brand {\n\tcolor: #018786;\n\tfont-size: 28px;\n\tfont-weight: 800;\n\tfont-family: 'Gergogia';\n\tfont-style: italic;\n\tletter-spacing: 2px;\n}\n\n.navbar-brand .logo-image {\n\theight: 7vh;\n}\n\n.navbar-brand:hover {\n\tcolor: #018778 !important;\n}\n\t\n.nav-item {\n\tfont-size: 20px;\n\twidth: 50px;\n\theight: 50px;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tbackground: #121212;\n\tborder-radius: 50%;\n\tpadding: 5px;\n\tmargin: 0 5px; \n}\n\n/*End Navbar*/\n\n/*Sidebar*/\n.sidebar {\n\tposition: fixed;\n\tleft: 0;\n\twidth: 20%;\n\theight: 100vh;\n\tbackground: #343a40;\n\toverflow-y: auto; \n\tborder-right: 3px solid #212121;\n}\n\n.sidebar-title {\n\tmargin-left: 10px;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.sidebar-menu {\n\twidth: 100%;\n\tlist-style: none;\n\tmargin: 20px 0;\n}\n\n.sidebar-item {\n\tpadding: 10px;\n\t/*border-right: 3px solid #018786;*/\n\tfont-size: 18px;\n}\n\n.sidebar-item:hover{\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\n.sidebar-item.active {\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\na.sidebar-link svg{\n\tcolor: rgba(255,255,255,.5);\n}\n\na.sidebar-link {\n\tcolor: #fff;\n\ttext-decoration: none;\n}\n\n.icon {\n\tdisplay: flex;\n\talign-items: center;\n\tpadding-right: 5px;\n}\n\n.icon .sidebar-icon-box {\n\twidth: 20px;\n\tmargin-right: 8px;\t\n\tfont-size: 20px;\n}\n\n.sidebar .footer {\n\tposition: fixed;\n\tbottom: 0;\n\tfont-size: 18px;\n\tcolor: white;\n\tmargin: 20px;\n}\n/*End Sidebar*/\n\n.wrapper {\n\tmargin-left: auto; \n\twidth: 80%;\n\tpadding: 20px 50px 50px 50px;\n\theight: 100vh;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tbackground: #212121;\n\tcolor: white;\n}\n\n.asrt-page-length .input-group-addon {\n    background: #343a40 !important;\n}\n\n.asrt-page-length .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n\tborder-radius: 5px !important;\n}\n\n.asrt-page-length .input-group-addon .input-group-text {\n\tcolor:white;\n}\n\n.table_filter .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n\n.table_filter .form-control::-moz-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control:-ms-input-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control::placeholder {\n\tcolor: white;\n}\n\n.asrt-pagination .disabled.page-item .page-link{\n\tbackground: #343a40;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.asrt-pagination .page-item .page-link{\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.asrt-pagination .page-item .page-link input {\n\tbackground: #343a40;\n\tcolor: white;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "body {\n\toverflow: hidden;\n}\n\n/*Navbar*/\n.navbar {\n\tz-index: 1;\n\tbox-shadow: 3px 3px 3px rgba(0,0,0,0.2);\n}\n\n.navbar .navbar-brand {\n\tcolor: #018786;\n\tfont-size: 28px;\n\tfont-weight: 800;\n\tfont-family: 'Gergogia';\n\tfont-style: italic;\n\tletter-spacing: 2px;\n}\n\n.navbar-brand .logo-image {\n\theight: 7vh;\n}\n\n.navbar-brand:hover {\n\tcolor: #018778 !important;\n}\n\t\n.nav-item {\n\tfont-size: 20px;\n\twidth: 50px;\n\theight: 50px;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tbackground: #121212;\n\tborder-radius: 50%;\n\tpadding: 5px;\n\tmargin: 0 5px; \n}\n\n/*End Navbar*/\n\n/*Sidebar*/\n.sidebar {\n\tposition: fixed;\n\tleft: 0;\n\twidth: 20%;\n\theight: 100vh;\n\tbackground: #343a40;\n\toverflow-y: auto; \n\tborder-right: 3px solid #212121;\n}\n\n.sidebar-title {\n\tmargin-left: 10px;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.sidebar-menu {\n\twidth: 100%;\n\tlist-style: none;\n\tmargin: 20px 0;\n}\n\n.sidebar-item {\n\tpadding: 10px;\n\t/*border-right: 3px solid #018786;*/\n\tfont-size: 18px;\n}\n\n.sidebar-item:hover{\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\n.sidebar-item.active {\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\na.sidebar-link svg{\n\tcolor: rgba(255,255,255,.5);\n}\n\na.sidebar-link {\n\tcolor: #fff;\n\ttext-decoration: none;\n}\n\n.icon {\n\tdisplay: flex;\n\talign-items: center;\n\tpadding-right: 5px;\n}\n\n.icon .sidebar-icon-box {\n\twidth: 20px;\n\tmargin-right: 8px;\t\n\tfont-size: 20px;\n}\n\n.sidebar .footer {\n\tposition: fixed;\n\ttransform: translateX(15%);\n\tbottom: 0;\n\tfont-size: 16px;\n\tcolor: white;\n}\n/*End Sidebar*/\n\n.wrapper {\n\tmargin-left: auto; \n\twidth: 80%;\n\tpadding: 20px 50px 50px 50px;\n\theight: 100vh;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tbackground: #212121;\n\tcolor: white;\n}\n\n.asrt-page-length .input-group-addon {\n    background: #343a40 !important;\n}\n\n.asrt-page-length .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n\tborder-radius: 5px !important;\n}\n\n.asrt-page-length .input-group-addon .input-group-text {\n\tcolor:white;\n}\n\n.table_filter .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n\n.table_filter .form-control::-moz-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control:-ms-input-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control::placeholder {\n\tcolor: white;\n}\n\n.asrt-pagination .disabled.page-item .page-link{\n\tbackground: #343a40;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.asrt-pagination .page-item .page-link{\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.asrt-pagination .page-item .page-link input {\n\tbackground: #343a40;\n\tcolor: white;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -47,55 +47,22 @@ class Nasabah extends React.Component{
 				className:"action",
 				text: "Action",
 				cell: (record, index) => {
+					let kd_nasabah = record.kd_nasabah
 					return(
 						<div className="d-flex">
 							<button
 								className="btn btn-success btn-sm"
 								data-target="#modalEdit" data-toggle="modal"
-								onClick={() => {this.editNasabah(record.kd_nasabah)}}
+								onClick={() => {this.editNasabah(kd_nasabah)}}
 							>
 								<FontAwesomeIcon icon={faEdit} /> Edit
 							</button>
-							<div>
-								<button
-									className="btn btn-danger btn-sm ml-2"
-									data-target="#modalHapus"
-									data-toggle="modal"
-								>
-									<FontAwesomeIcon icon={faTrash} /> Hapus
-								</button>
-
-
-								<div className="modal fade" id="modalHapus" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-								  	<div className="modal-dialog">
-								    	<div className="modal-content bg-dark">
-								      		<div className="modal-header">
-								        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">Hapus Data Nasabah</h5>
-								      		</div>
-								      		<div className="modal-body">
-								      			<h5>Yakin Data Akan Dihapus?</h5>
-								      		</div>
-								      		<div className="modal-footer">
-								        		<button 
-								        			type="button" 
-								        			className="btn btn-danger" 
-								        			data-dismiss="modal"
-								        		>
-								        			Close
-								        		</button>
-								        		<button 
-								        			type="button" 
-								        			className="btn btn-success" 
-								        			onClick={()=>this.hapusNasabah(record.kd_nasabah)}
-								        			data-dismiss="modal"
-								        		>
-								        			Hapus
-								        		</button>
-								      		</div>
-								    	</div>
-								  	</div>
-								</div>
-							</div>
+							<button
+								className="btn btn-danger btn-sm ml-2"
+								onClick={() => {this.hapusNasabah(kd_nasabah)}}
+							>
+								<FontAwesomeIcon icon={faTrash} /> Hapus
+							</button>
 						</div>
 					)
 				}
@@ -178,9 +145,9 @@ class Nasabah extends React.Component{
 		this.setState({dataNasabahBaru, dataUsersBaru});
 	}
 
-	tambahNasabah = () => {
+	tambahNasabah = (e) => {
 		let {dataNasabahBaru, dataUsersBaru} = this.state;
-
+		
 		axios.post(`http://${window.location.host}/api/tambah-nasabah`, dataNasabahBaru, dataUsersBaru)
 		.then((response) => {
 			this.setState({
@@ -241,6 +208,7 @@ class Nasabah extends React.Component{
 	}
 
 	hapusNasabah = (kd_nasabah) => {
+		console.log(kd_nasabah);
 		axios.delete(`http://${window.location.host}/api/delete-nasabah/${kd_nasabah}`)
 		.then((response) => {
 			this.setState({
@@ -269,11 +237,6 @@ class Nasabah extends React.Component{
 		return(
 			<div>
 				<div className="container mb-5">
-					<div className="card bg-dark">
-						<div className="card-header">
-							<h2>Nasabah Page</h2>	
-						</div>
-					</div>
 
 					<div className="card bg-dark mt-2">
 						<div className="card-header d-flex justify-content-between align-items-center">

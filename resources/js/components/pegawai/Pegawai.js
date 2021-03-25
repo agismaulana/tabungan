@@ -62,41 +62,10 @@ class Pegawai extends Component {
 							<div>
 								<button
 									className="btn btn-danger btn-sm ml-2"
-									data-target="#modalHapus"
-									data-toggle="modal"
+									onClick={() => {this.hapusPegawai(record.kd_pegawai)}}
 								>
 									<FontAwesomeIcon icon={faTrash} /> Hapus
 								</button>
-
-								<div className="modal fade" id="modalHapus" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-								  	<div className="modal-dialog">
-								    	<div className="modal-content bg-dark">
-								      		<div className="modal-header">
-								        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">Hapus Data Nasabah</h5>
-								      		</div>
-								      		<div className="modal-body">
-								      			<h5>Yakin Data Akan Dihapus?</h5>
-								      		</div>
-								      		<div className="modal-footer">
-								        		<button 
-								        			type="button" 
-								        			className="btn btn-danger" 
-								        			data-dismiss="modal"
-								        		>
-								        			Close
-								        		</button>
-								        		<button 
-								        			type="button" 
-								        			className="btn btn-success" 
-								        			onClick={()=>this.hapusPegawai(record.kd_pegawai)}
-								        			data-dismiss="modal"
-								        		>
-								        			Hapus
-								        		</button>
-								      		</div>
-								    	</div>
-								  	</div>
-								</div>
 							</div>
 						</div>
 					)
@@ -278,12 +247,6 @@ class Pegawai extends Component {
 
 		return(
 			<div>
-				<div className="card bg-dark mb-2">
-					<div className="card-header">
-						<h2>Pegawai Page</h2>
-					</div>
-				</div>
-
 				<div className="card bg-dark">
 					<div className="card-header d-flex justify-content-between align-items-center">
 						<h4>Data Operator</h4>

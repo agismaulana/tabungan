@@ -62,7 +62,8 @@ Route::get('/exportExcelTransaksi/{no_rekening}', 'App\Http\Controllers\Rekening
 Route::get('/buka-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@getDataRekening');
 Route::get('/transaksi', 'App\Http\Controllers\TransaksiController@index');
 Route::get('/where-history-transaksi/{no_rekening}', 'App\Http\Controllers\TransaksiController@getWhereTransaksi');
-
+Route::get('/saldo-transfer/{no_rekening}', 'App\Http\Controllers\RekeningController@getSaldoTransfer');
+Route::get('/cetak-struk-transaksi/{id_transaksi}', 'App\Http\Controllers\RekeningController@cetakStruk');
 // History
 Route::post('/change-status/{id_transfer}', 'App\Http\Controllers\TransaksiController@changeStatus');
 Route::get('/exportExcelHistory', 'App\Http\Controllers\TransaksiController@exportExcel');

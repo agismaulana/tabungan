@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
-import {faUser, faAddressCard, faMoneyBill, faFilePdf, faFileExcel} from '@fortawesome/free-solid-svg-icons';
+import {faUser, faAddressCard, faMoneyBill, faFilePdf, faFileExcel, faPrint} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import ReactDatatable from '@ashvin27/react-datatable';
 import './Rekening.css';
@@ -35,11 +35,20 @@ class BukaRekening extends Component {
 				className: "status",
 				text: "Status",
 				cell: (record, index) => {
-					if(record.status == "menunggu konfirmasi") {
-						return(<div className="badge badge-warning p-2">Menunggu Konfirmasi</div>)
-					} else {
-						return(<div className="badge badge-success p-2">Berhasil</div>)
-					}
+					return(<div className="badge badge-success p-2">Berhasil</div>)
+				}
+			}, 
+			{
+				key: "aksi",
+				className: "aksi",
+				text: "Aksi",
+				cell: (record, index) => {
+					return(
+							<a href={'http://'+window.location.host+'/api/cetak-struk-transaksi/'+record.transaksi_id} 
+								className="btn btn-primary">
+								<FontAwesomeIcon icon={faPrint}/> Print
+							</a>
+						)
 				}
 			}
 		];
@@ -75,6 +84,7 @@ class BukaRekening extends Component {
 				status: "",
 				pin: "",
 			},
+			saldoTransfer: "",
 			status: "",
 			message: "",
 		}
@@ -82,6 +92,7 @@ class BukaRekening extends Component {
 
 	componentDidMount() {
 		this.getRekening();
+		this.getSaldoTransfer();
 		this.getHistory();
 	}
 
@@ -113,7 +124,7 @@ class BukaRekening extends Component {
 					keterangan: "",
 					status: "",
 					pin: "", 
-				}
+				},
 			})
 		})
 
@@ -125,6 +136,16 @@ class BukaRekening extends Component {
 				})
 			}, 1500)
 		}
+	}
+
+	getSaldoTransfer() {
+		const {params} = this.props.match;
+		axios.get(`http://${window.location.host}/api/saldo-transfer/${params.no_rekening}`)
+		.then((response) => {
+			this.setState({
+				saldoTransfer: response.data.data.saldo_transfer,
+			})
+		})
 	}
 
 	getHistory() {
@@ -151,9 +172,11 @@ class BukaRekening extends Component {
 	}
 
 	onChangeTransaksiHandler = (e) => {
+		let newDataTransaksi = {...this.state.dataTransaksi}
 		let {dataTransaksi} = this.state;
-		dataTransaksi[e.target.name] = e.target.value;
-		this.setState({dataTransaksi});
+		newDataTransaksi[e.target.name] = e.target.value;
+		console.log(dataTransaksi)
+		this.setState({dataTransaksi: newDataTransaksi});
 	}
 
 	handleTransaksi = () => {
@@ -194,55 +217,32 @@ class BukaRekening extends Component {
 					});
 				}
 			} else if(dataTransaksi.jenis_transaksi == "Transfer") {
-				if(dataTransaksi.jenis_pembayaran == "Tabungan") {
-					if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
-						this.setState({
-							status: "failed",
-							message: "Saldo Anda Tidak Mencukupi",
-						}, () => {this.getRekening();this.getHistory()})
-					} else {
-						axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
-						.then((response) => {
-							this.setState({
-								dataTransaksi: {
-									nm_nasabah: "",
-									id_transaksi: "",
-									waktu: "",
-									nominal: "",
-									jenis_transaksi: "",
-									no_rekening: "",
-									kirim_tabungan: "",
-									jenis_pembayaran: "",
-									keterangan: "",
-									status: "",
-									pin: "",
-								},
-								status: response.data.status,
-								message: response.data.message,
-							}, () => {this.getRekening();this.getHistory()});
-						});
-					}
+				if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
+					this.setState({
+						status: "failed",
+						message: "Saldo Anda Tidak Mencukupi",
+					}, () => {this.getRekening();this.getHistory()})
 				} else {
 					axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
-						.then((response) => {
-							this.setState({
-								dataTransaksi: {
-									nm_nasabah: "",
-									id_transaksi: "",
-									waktu: "",
-									nominal: "",
-									jenis_transaksi: "",
-									no_rekening: "",
-									kirim_tabungan: "",
-									jenis_pembayaran: "",
-									keterangan: "",
-									status: "",
-									pin: "",
-								},
-								status: response.data.status,
-								message: response.data.message,
-							}, () => {this.getRekening();this.getHistory()});
-						});
+					.then((response) => {
+						this.setState({
+							dataTransaksi: {
+								nm_nasabah: "",
+								id_transaksi: "",
+								waktu: "",
+								nominal: "",
+								jenis_transaksi: "",
+								no_rekening: "",
+								kirim_tabungan: "",
+								jenis_pembayaran: "",
+								keterangan: "",
+								status: "",
+								pin: "",
+							},
+							status: response.data.status,
+							message: response.data.message,
+						}, () => {this.getRekening();this.getHistory()});
+					});
 				}
 			} else  {
 				axios.post(`http://${window.location.host}/api/transaksi`, dataTransaksi)
@@ -271,7 +271,7 @@ class BukaRekening extends Component {
 
 	render() {
 
-		const {dataRekening, history, dataTransaksi, status, message} = this.state;
+		const {dataRekening, history, dataTransaksi, status, message, saldoTransfer} = this.state;
 		const {params} = this.props.match;
 
 		let sendMessage = "";
@@ -331,6 +331,7 @@ class BukaRekening extends Component {
 					<input 
 						className="form-control bg-dark text-white" 
 						name="pin"
+						type="password"
 						maxLength="6"
 						value={dataTransaksi.pin}
 						onChange={this.onChangeTransaksiHandler}
@@ -338,6 +339,34 @@ class BukaRekening extends Component {
 				  </div>;
 		} else {
 			pin = "";
+		}
+
+		let tujuanTransfer = "";
+		if(dataTransaksi.jenis_pembayaran == "Pembayaran") {
+			tujuanTransfer = <div className="form-group">
+								<label htmlFor="kirim_tabungan">Transfer No Rekening</label>
+								<input 
+									type="number"
+									name="kirim_tabungan"
+									placeholder="e.g 9875432123456"
+									className="form-control bg-dark text-white"
+									value="20210325722833418"
+									onChange={this.onChangeTransaksiHandler}
+									readOnly
+								/>
+							</div>
+		} else {
+			tujuanTransfer = <div className="form-group">
+								<label htmlFor="kirim_tabungan">Transfer No Rekening</label>
+								<input 
+									type="number"
+									name="kirim_tabungan"
+									placeholder="e.g 9875432123456"
+									className="form-control bg-dark text-white"
+									value={dataRekening.kirim_tabungan}
+									onChange={this.onChangeTransaksiHandler}
+								/>
+							</div>
 		}
 
 		return(
@@ -375,7 +404,7 @@ class BukaRekening extends Component {
 								<div className="box-icon mr-2">
 									<FontAwesomeIcon icon={faMoneyBill} />
 								</div> 
-								{'Rp.' + dataRekening.saldo}
+								{'Rp.' + parseInt(dataRekening.saldo + saldoTransfer)}
 							</h3>
 						</div>
 					</div>
@@ -426,18 +455,32 @@ class BukaRekening extends Component {
 								/>
 							</div>
 
-							<div className="form-group">
-								<label htmlFor="kirim_tabungan">Transfer Ke</label>
-								<input 
-									type="number"
-									name="kirim_tabungan"
-									placeholder="e.g 9875432123456"
-									className="form-control bg-dark text-white"
-									value={dataRekening.kirim_tabungan}
-									onChange={this.onChangeTransaksiHandler}
-								/>
+							<div className="form-group d-flex">
+								<div className="form-check mr-3">
+					    			<input
+					    				type="radio"
+					    				name="jenis_pembayaran"
+					    				className="form-check-input"
+					    				value="Non Pembayaran"
+					    				onChange={this.onChangeTransaksiHandler}
+					    				checked={dataTransaksi.jenis_pembayaran == "Non Pembayaran" ? "checked" : ""}
+					    			/>
+					    			<label className="form-check-label">Non Pembayaran</label>
+								</div>
+			        			<div className="form-check">
+				        			<input
+				        				type="radio"
+				        				name="jenis_pembayaran"
+				        				className="form-check-input"
+				        				value="Pembayaran"
+				        				checked={dataTransaksi.jenis_pembayaran == "Pembayaran" ? "checked" : ""}
+				        				onChange={this.onChangeTransaksiHandler}
+				        			/>
+				        			<label className="form-check-label">Pembayaran</label>
+			        			</div>
 							</div>
 
+							{tujuanTransfer}
 							<div className="form-group">
 								<label htmlFor="nominal">Nominal</label>
 								<input 
@@ -450,29 +493,6 @@ class BukaRekening extends Component {
 								/>
 							</div>
 							
-			        		<div className="form-group d-flex">
-								<div className="form-check mr-3">
-				        			<input
-				        				type="radio"
-				        				name="jenis_pembayaran"
-				        				className="form-check-input"
-				        				value="Cash"
-				        				onChange={this.onChangeTransaksiHandler}
-				        			/>
-				        			<label className="form-check-label">Cash</label>
-			        			</div>
-			        			<div className="form-check">
-				        			<input
-				        				type="radio"
-				        				name="jenis_pembayaran"
-				        				className="form-check-input"
-				        				value="Tabungan"
-				        				onChange={this.onChangeTransaksiHandler}
-				        			/>
-				        			<label className="form-check-label">Tabungan</label>
-			        			</div>
-							</div>
-
 							<div className="form-group">
 								<label htmlFor="keterangan">Keterangan</label>
 								<textarea

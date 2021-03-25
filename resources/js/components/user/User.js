@@ -72,7 +72,6 @@ class User extends Component {
 	getUsers() {
 		axios.get(`http://${window.location.host}/api/users`)
 		.then((response) => {
-			console.log(response)
 			this.setState({
 				users: response.data.data ? response.data.data : [], 
 			})
@@ -138,24 +137,22 @@ class User extends Component {
 		return(
 			<div>
 				<div className="card bg-dark mb-2">
-					<div className="card-body">
-						<h3>User Page</h3>
+					<div className="card-header">
+						<h3>Data User</h3>
 					</div>
 					<EditUsers
 						editUsers={dataUsers}
 						onChangeEditHandler={this.onChangeEditHandler}
 						updateUsers={this.updateUsers}
 					/>
-					<div className="card bg-dark">
-						<div className="card-body">
-							{sendMessage}
-							<ReactDatatable 
-								className = "table table-dark table-bordered"
-								columns = {this.columns}
-								config = {this.config}
-								records = {users}
-							/>
-						</div>
+					<div className="card-body">
+						{sendMessage}
+						<ReactDatatable 
+							className = "table table-dark table-bordered"
+							columns = {this.columns}
+							config = {this.config}
+							records = {users}
+						/>
 					</div>
 				</div>
 			</div>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+require_once base_path('vendor/autoload.php');
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -34,14 +36,13 @@ class RekeningController extends Controller
     public function getDataRekening($no_rekening) {
         $rekening = Rekening::select(
                         DB::raw('*,
-                                 ((saldo_setor + saldo_transfer_tabungan) - (saldo_tarik + saldo_transfer)) as saldo'))
+                                 ((saldo_setor) - (saldo_tarik + saldo_transfer)) as saldo'))
                     ->where('rekening.no_rekening', $no_rekening)
                     ->leftJoin(
                         DB::raw("(select 
                                   sum(if(jenis_transaksi='setor', nominal, 0)) as saldo_setor, 
                                   sum(if(jenis_transaksi='tarik', nominal, 0)) as saldo_tarik, 
-                                  sum(if(jenis_transaksi='transfer' && jenis_pembayaran='tabungan' && status='berhasil', nominal, 0)) as saldo_transfer,
-                                  sum(if(transfer.no_rekening = ".$no_rekening." && transfer.status = 'berhasil', nominal, 0)) as saldo_transfer_tabungan, 
+                                  sum(if(jenis_transaksi='transfer', nominal, 0)) as saldo_transfer, 
                                   transaksi.no_rekening as transaksi_rekening 
                                   from transaksi 
                                   left join transfer on transfer.id_transaksi = transaksi.id_transaksi 
@@ -50,6 +51,22 @@ class RekeningController extends Controller
                     ->leftJoin("nasabah", "nasabah.kd_nasabah", "=", "rekening.kd_nasabah")
                     ->first();
         return response()->json(['status'=>200, 'success'=>true, 'data' => $rekening]);
+    }
+
+    public function getSaldoTransfer($no_rekening) {
+        $saldoTransfer = Rekening::select(DB::raw('saldo_transfer'))
+                         ->where('rekening.no_rekening', $no_rekening)
+                         ->leftJoin(
+                            DB::raw("(select transfer.no_rekening,
+                                        sum(if(transfer.no_rekening = ".$no_rekening.", nominal, 0)) as saldo_transfer 
+                                      from transfer 
+                                      left join transaksi 
+                                      on transaksi.id_transaksi = transfer.id_transaksi
+                                      where transfer.no_rekening = ".$no_rekening.")
+                                    b")
+                            ,'b.no_rekening', '=', 'rekening.no_rekening')
+                         ->first();
+        return response()->json(['status' => 200, 'success' => true, 'data' => $saldoTransfer]);
     }
 
     public function transaksi(Request $request) {
@@ -62,8 +79,13 @@ class RekeningController extends Controller
     		// data Rekening
     		$noRekening 	= $request->no_rekening;
     		// data Transfer
-    		$kirimTabungan	= $request->kirim_tabungan;
     		$jenisPembayaran= $request->jenis_pembayaran;
+    		if($jenisPembayaran == "Non Pembayaran") {
+                $kirimTabungan = $request->kirim_tabungan;
+            } else {
+                $kirimTabungan = "20210325722833418";
+            }
+
     		$keterangan		= $request->keterangan;
             $level          = $request->level;
             $pin            = $request->pin;
@@ -87,7 +109,7 @@ class RekeningController extends Controller
                             'keterangan'        => $keterangan,
                             'id_transaksi'      => $idTransaksi,
                             'no_rekening'       => $kirimTabungan,
-                            'status'            => 'menunggu konfirmasi',
+                            'status'            => 'berhasil',
                         ];
 
                         $createTransfer = Transfer::create($dataTransfer);
@@ -186,7 +208,6 @@ class RekeningController extends Controller
     }
 
     public function exportPdf($no_rekening) {
-        require_once base_path('vendor/autoload.php');
 
         $mpdf = new \Mpdf\Mpdf();
 
@@ -256,7 +277,62 @@ class RekeningController extends Controller
                 </div>";
 
         $mpdf->writeHTML($html);
-        $mpdf->output();
+        $mpdf->output("transaksi-laporan.pdf", "D");
+    }
 
+    public function cetakStruk($id_transaksi) {
+        $transaksi = Transaksi::select(DB::raw('*, transaksi.no_rekening as transaksi_rekening, transaksi.id_transaksi as transaksi_id, transfer.no_rekening as transfer_rekening'))
+                     ->where('transaksi.id_transaksi', $id_transaksi)
+                     ->leftJoin('transfer', 'transaksi.id_transaksi', '=', 'transfer.id_transaksi')
+                     ->leftJoin('rekening', 'transaksi.no_rekening', '=', 'rekening.no_rekening')
+                     ->leftJoin('nasabah', 'nasabah.kd_nasabah', '=', 'rekening.kd_nasabah')
+                     ->first();
+
+        $mpdf = new \Mpdf\Mpdf();
+
+        $titleJenis = "";
+        $jenisPembayaran = "";
+        if($transaksi->jenis_transaksi == "transfer") {
+            $titleJenis      = "<td>Jenis Pembayaran</td>
+                                 <td>Transfer No Rekening</td>";
+            $jenisPembayaran = "<td>".$transaksi->jenis_pembayaran."</td>
+                                 <td>".$transaksi->transfer_rekening."</td>";
+            $total = "<td colspan='4'>Total Transaksi</td>
+                      <td>".$transaksi->nominal."</td>";
+        } else {
+            $total = "<td colspan='2'>Total Transaksi</td>
+                      <td>".$transaksi->nominal."</td>";
+        }
+
+        $html = "<div>
+                    <center>
+                        <p align='center'>My Deposits</p>
+                        <h1 align='center'>Struk Transaksi</h1>
+                    </center>
+                    <pre>
+                    <h3>Id Transaksi : ".$transaksi->transaksi_id."</h3>
+                    <h3>Nama Nasabah : ".$transaksi->nm_nasabah."</h3>
+                    <h3>Tanggal      : ".date('d-m-Y')."</h3>
+                    </pre>
+                    <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
+                        <tr>
+                            <td>Waktu Transaksi</td>
+                            <td>Jenis Transaksi</td>
+                            ".$titleJenis."
+                            <td>Nominal</td>
+                        </tr>
+                        <tr>
+                            <td>".$transaksi->waktu."</td>
+                            <td>".$transaksi->jenis_transaksi."</td>
+                            ".$jenisPembayaran."
+                            <td>".$transaksi->nominal."</td>
+                        </tr>
+                        <tr>
+                            ".$total."
+                        </tr>
+                    </table>
+                </div>";
+        $mpdf->writeHTML($html);
+        $mpdf->output();
     }
 }
