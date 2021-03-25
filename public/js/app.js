@@ -16758,6 +16758,46 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       }
     };
 
+    _this.onhandleDateGenerate = function (e) {
+      var _e$target = e.target,
+          name = _e$target.name,
+          value = _e$target.value;
+      var dateGenerate = _this.state.dateGenerate;
+      dateGenerate[name] = value;
+
+      _this.setState({
+        dateGenerate: dateGenerate
+      });
+    };
+
+    _this.handlePdf = function () {
+      var dateGenerate = _this.state.dateGenerate;
+      var params = _this.props.match.params;
+
+      if (dateGenerate.sampai_tanggal != "" && dateGenerate.mulai_tanggal != "") {
+        axios({
+          url: "http://".concat(window.location.host, "/api/exportPdfTransaksi/").concat(params.no_rekening),
+          method: "POST",
+          data: dateGenerate,
+          responseType: 'blob'
+        }).then(function (response) {
+          var url = window.URL.createObjectURL(new Blob([response.data]));
+          var link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'transaksi-laporan-' + params.no_rekening + '.pdf');
+          document.body.appendChild(link);
+          link.click();
+        });
+      } else {
+        _this.setState({
+          status: "failed",
+          message: "Pilih Tanggal Terlebih Dahulu"
+        }, function () {
+          _this.getRekening();
+        });
+      }
+    };
+
     _this.columns = [{
       key: "waktu",
       className: "waktu",
@@ -16828,6 +16868,10 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         pin: ""
       },
       saldoTransfer: "",
+      dateGenerate: {
+        mulai_tanggal: "",
+        sampai_tanggal: ""
+      },
       status: "",
       message: ""
     };
@@ -16915,11 +16959,12 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
 
       var _this$state2 = this.state,
           dataRekening = _this$state2.dataRekening,
-          history = _this$state2.history,
           dataTransaksi = _this$state2.dataTransaksi,
+          dateGenerate = _this$state2.dateGenerate,
+          saldoTransfer = _this$state2.saldoTransfer,
+          history = _this$state2.history,
           status = _this$state2.status,
-          message = _this$state2.message,
-          saldoTransfer = _this$state2.saldoTransfer;
+          message = _this$state2.message;
       var params = this.props.match.params;
       var sendMessage = "";
 
@@ -16974,12 +17019,75 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faFileExcel
             }), " Export Excel"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("a", {
-            className: "btn btn-danger btn-md",
-            href: 'http://' + window.location.host + '/api/exportPdfTransaksi/' + params.no_rekening,
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faFilePdf
-            }), " Export PDF"]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+              className: "btn btn-danger btn-md mr-2",
+              "data-target": "#modalPdf",
+              "data-toggle": "modal",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
+                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faFilePdf
+              }), " Export PDF"]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+              className: "modal fade",
+              id: "modalPdf",
+              tabIndex: "-1",
+              "aria-labelledby": "exampleModalLabel",
+              "aria-hidden": "true",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                className: "modal-dialog col-md-12",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                  className: "modal-content bg-dark",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                    className: "modal-header",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
+                      className: "modal-title font-weigth-bold",
+                      id: "exampleModalLabel",
+                      children: "Transaksi"
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                    className: "modal-body",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                      className: "form-group",
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                        htmlFor: "mulai_tanggal",
+                        children: "Mulai Tanggal"
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                        type: "date",
+                        className: "form-control bg-dark text-white",
+                        name: "mulai_tanggal",
+                        value: dateGenerate.mulai_tanggal,
+                        onChange: this.onhandleDateGenerate
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                        htmlFor: "mulai_tanggal",
+                        children: "Sampai Tanggal"
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                        type: "date",
+                        className: "form-control bg-dark text-white",
+                        name: "sampai_tanggal",
+                        value: dateGenerate.sampai_tanggal,
+                        onChange: this.onhandleDateGenerate
+                      })]
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                    className: "modal-footer",
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-danger",
+                      "data-dismiss": "modal",
+                      children: "Tidak"
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-success",
+                      onClick: function onClick() {
+                        return _this5.handlePdf();
+                      },
+                      "data-dismiss": "modal",
+                      children: "Generate"
+                    })]
+                  })]
+                })
+              })
+            })]
           })]
         });
       } else {
@@ -17196,7 +17304,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   value: dataTransaksi.keterangan,
                   onChange: this.onChangeTransaksiHandler
                 })]
-              }), pin]
+              }), ";", pin]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
               className: "card-footer",
               children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {

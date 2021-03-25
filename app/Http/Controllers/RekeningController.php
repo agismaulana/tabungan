@@ -207,11 +207,15 @@ class RekeningController extends Controller
         }
     }
 
-    public function exportPdf($no_rekening) {
+    public function exportPdf($no_rekening, Request $request) {
 
         $mpdf = new \Mpdf\Mpdf();
 
+        $mulai_tanggal = $request->mulai_tanggal;
+        $sampai_tanggal = $request->sampai_tanggal;
+
         $transaksi = Transaksi::where('transaksi.no_rekening', $no_rekening)
+                     ->whereBetween('transaksi.waktu', [$mulai_tanggal, $sampai_tanggal])
                      ->orderby('waktu', 'DESC')
                      ->get();
         $saldoTambah = Transaksi::select(
@@ -223,12 +227,13 @@ class RekeningController extends Controller
                                     '=', 
                                     'transaksi.id_transaksi')
                             ->where('transaksi.no_rekening', $no_rekening)
+                            ->whereBetween('transaksi.waktu', [$mulai_tanggal, $sampai_tanggal])
                             ->first();
 
         $saldoKurang = Transaksi::select(
                             DB::raw("
                                         (sum(if(jenis_transaksi = 'Tarik', nominal, 0)) + 
-                                         sum(if(jenis_transaksi = 'Transfer' && jenis_pembayaran = 'Tabungan' && status = 'Berhasil', nominal, 0))
+                                         sum(if(jenis_transaksi = 'Transfer' && status = 'berhasil', nominal, 0))
                                         ) as saldo_kurang
                                    ")
                             )
@@ -237,6 +242,7 @@ class RekeningController extends Controller
                                     '=', 
                                     'transaksi.id_transaksi')
                             ->where('transaksi.no_rekening', $no_rekening)
+                            ->whereBetween('transaksi.waktu', [$mulai_tanggal, $sampai_tanggal])
                             ->first();
     
         $recordtransaksi = "";
@@ -260,7 +266,7 @@ class RekeningController extends Controller
                     </center>
                     <h4>No Rekening : ".$no_rekening."</h4>
                     <h4>Nama Nasabah : ".$nasabah->nm_nasabah."</h4>
-                    <h4>Tanggal : ".date('d-m-Y')."</h4>
+                    <h4>Tanggal : ".$mulai_tanggal." - ".$sampai_tanggal."</h4>
                     <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
                         <tr>
                             <td>Id Transaksi</td>
@@ -277,7 +283,9 @@ class RekeningController extends Controller
                 </div>";
 
         $mpdf->writeHTML($html);
-        $mpdf->output("transaksi-laporan.pdf", "D");
+        $file = $mpdf->output();
+        return response()
+               ->download($file);
     }
 
     public function cetakStruk($id_transaksi) {

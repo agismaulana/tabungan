@@ -85,6 +85,10 @@ class BukaRekening extends Component {
 				pin: "",
 			},
 			saldoTransfer: "",
+			dateGenerate: {
+				mulai_tanggal: "",
+				sampai_tanggal: "",
+			},
 			status: "",
 			message: "",
 		}
@@ -269,9 +273,48 @@ class BukaRekening extends Component {
 		}
 	}
 
+	onhandleDateGenerate = (e) => {
+		let {name, value} = e.target;
+		let {dateGenerate} = this.state;
+		dateGenerate[name] = value;
+		this.setState({dateGenerate});
+	}
+
+	handlePdf = () => {
+		let {dateGenerate} = this.state;
+		let {params}	   = this.props.match;
+		if(dateGenerate.sampai_tanggal != "" && dateGenerate.mulai_tanggal != "") {
+			axios({
+				url:`http://${window.location.host}/api/exportPdfTransaksi/${params.no_rekening}`,
+				method: "POST",
+				data: dateGenerate,
+				responseType: 'blob',
+			}).then((response) => {
+				const url = window.URL.createObjectURL(new Blob([response.data]))
+				const link = document.createElement('a');
+				link.href = url;
+				link.setAttribute('download', 'transaksi-laporan-'+params.no_rekening+'.pdf');
+				document.body.appendChild(link);
+				link.click();
+			})
+		} else {
+			this.setState({
+				status: "failed",
+				message: "Pilih Tanggal Terlebih Dahulu",
+			}, () => {this.getRekening()})
+		}
+	}
+
 	render() {
 
-		const {dataRekening, history, dataTransaksi, status, message, saldoTransfer} = this.state;
+		const { dataRekening, 
+				dataTransaksi, 
+				dateGenerate,
+				saldoTransfer,
+				history, 
+				status, 
+				message, 
+			} = this.state;
 		const {params} = this.props.match;
 
 		let sendMessage = "";
@@ -313,13 +356,69 @@ class BukaRekening extends Component {
 									<FontAwesomeIcon icon={faFileExcel}/> Export Excel
 								</a>
 
-								<a
-									className="btn btn-danger btn-md"
-									href={'http://' + window.location.host + '/api/exportPdfTransaksi/' + params.no_rekening}
-								>
-									<FontAwesomeIcon icon={faFilePdf}/> Export PDF
-								</a>
+
+								<div>								
+									<button 
+										className="btn btn-danger btn-md mr-2" 
+										data-target="#modalPdf"
+										data-toggle="modal">
+											<FontAwesomeIcon icon={faFilePdf}/> Export PDF
+									</button>
+
+									<div className="modal fade" id="modalPdf" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  	<div className="modal-dialog col-md-12">
+									    	<div className="modal-content bg-dark">
+									      		<div className="modal-header">
+									        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">Transaksi</h5>
+									      		</div>
+									      		<div className="modal-body">
+							        				<div className="form-group">
+							        					<label htmlFor="mulai_tanggal">
+							        						Mulai Tanggal
+							        					</label>
+							        					<input 
+							        						type="date"
+							        						className="form-control bg-dark text-white"
+							        						name="mulai_tanggal"
+							        						value={dateGenerate.mulai_tanggal}
+							        						onChange={this.onhandleDateGenerate}
+							        					/>
+
+							        					<label htmlFor="mulai_tanggal">
+							        						Sampai Tanggal
+							        					</label>
+							        					<input 
+							        						type="date"
+							        						className="form-control bg-dark text-white"
+							        						name="sampai_tanggal"
+							        						value={dateGenerate.sampai_tanggal}
+							        						onChange={this.onhandleDateGenerate}
+							        					/>
+							        				</div>
+									      		</div>
+									      		<div className="modal-footer">
+									        		<button 
+									        			type="button" 
+									        			className="btn btn-danger" 
+									        			data-dismiss="modal"
+									        		>
+									        			Tidak
+									        		</button>
+									        		<button 
+									        			type="button" 
+									        			className="btn btn-success" 
+									        			onClick={()=>this.handlePdf()}
+									        			data-dismiss="modal"
+									        		>
+									        			Generate
+									        		</button>
+									      		</div>
+									    	</div>
+									  	</div>
+									</div>
+								</div>
 							</div>
+							;
 		} else {
 			buttonLaporan = "";
 		}
@@ -501,7 +600,7 @@ class BukaRekening extends Component {
 									value={dataTransaksi.keterangan}
 									onChange={this.onChangeTransaksiHandler}
 								></textarea>
-							</div>
+							</div>;
 
 							{pin}
 						</div>

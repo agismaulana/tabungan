@@ -55,7 +55,7 @@ Route::get('/rekening', 'App\Http\Controllers\RekeningController@index');
 Route::get('/where-rekening/{no_rekening}', 'App\Http\Controllers\RekeningController@show');
 Route::post('/edit-rekening', 'App\Http\Controllers\RekeningController@update');
 Route::post('/transaksi', 'App\Http\Controllers\RekeningController@transaksi');
-Route::get('/exportPdfTransaksi/{no_rekening}', 'App\Http\Controllers\RekeningController@exportPdf');
+Route::post('/exportPdfTransaksi/{no_rekening}', 'App\Http\Controllers\RekeningController@exportPdf');
 Route::get('/exportExcelTransaksi/{no_rekening}', 'App\Http\Controllers\RekeningController@exportExcel');
 
 // Buka Rekening
