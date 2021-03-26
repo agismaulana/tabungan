@@ -93,6 +93,10 @@ class History extends Component {
 
 		this.state = {
 			transaksi: [],
+			dateGenerate: {
+				mulai_tanggal: "",
+				sampai_tanggal: "",
+			},
 			status: "",
 			message: "",
 		}
@@ -130,10 +134,47 @@ class History extends Component {
 		})
 	}
 
-	render() {
-		const {transaksi, status, message} = this.state;
+	onhandleDateGenerate = (e) => {
+		let {name, value} = e.target;
+		let {dateGenerate} = this.state;
+		dateGenerate[name] = value;
+		this.setState({dateGenerate});
+	}
 
-		if(localStorage.level == "Nasabah") {
+	handlePdf = () => {
+		let {dateGenerate} = this.state;
+		if(dateGenerate.sampai_tanggal != "" && dateGenerate.mulai_tanggal != "") {
+			axios({
+				url:`http://${window.location.host}/api/exportPdfHistory`,
+				method: "POST",
+				data: dateGenerate,
+				responseType: 'blob',
+			}).then((response) => {
+				this.setState({
+					dateGenerate: {
+						mulai_tanggal: "",
+						sampai_tanggal: "",
+					}
+				}, () => {this.getTransaksi()})
+				const url = window.URL.createObjectURL(new Blob([response.data]))
+				const link = document.createElement('a');
+				link.href = url;
+				link.setAttribute('download', 'laporan-history.pdf');
+				document.body.appendChild(link);
+				link.click();
+			})
+		} else {
+			this.setState({
+				status: "failed",
+				message: "Pilih Tanggal Terlebih Dahulu",
+			}, () => {this.getTransaksi()})
+		}
+	}
+
+	render() {
+		const {transaksi, status, message, dateGenerate} = this.state;
+
+		if(localStorage.level != "Administrator") {
 			return <Redirect to="/home" />
 		}
 
@@ -150,14 +191,73 @@ class History extends Component {
 		if(localStorage.level == "Administrator") {
 			buttonLaporan = <div className="d-flex">
 								<a 
-									href={"http://"+window.location.host+"/api/ExportExcelHistory"}
+									href={"http://"+window.location.host+"/api/exportExcelHistory"}
 									className="btn btn-success btn-md mr-2"
 								> 
 									<FontAwesomeIcon icon={faFileExcel}/> Export Excel
 								</a>
-								<a href={"http://"+window.location.host+"/api/exportPdfHistory"} className="btn btn-danger btn-md">
-									<FontAwesomeIcon icon={faFilePdf}/> Export Pdf
-								</a>
+
+								<div>
+									<button 
+										className="btn btn-danger"
+										data-target="#modalPdf"
+										data-toggle="modal"
+									>
+										<FontAwesomeIcon icon={faFilePdf}/> Export Pdf
+									</button>
+
+									<div className="modal fade" id="modalPdf" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  	<div className="modal-dialog col-md-12">
+									    	<div className="modal-content bg-dark">
+									      		<div className="modal-header">
+									        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">Transaksi</h5>
+									      		</div>
+									      		<div className="modal-body">
+							        				<div className="form-group">
+							        					<label htmlFor="mulai_tanggal">
+							        						Mulai Tanggal
+							        					</label>
+							        					<input 
+							        						type="date"
+							        						className="form-control bg-dark text-white"
+							        						name="mulai_tanggal"
+							        						value={dateGenerate.mulai_tanggal}
+							        						onChange={this.onhandleDateGenerate}
+							        					/>
+
+							        					<label htmlFor="mulai_tanggal">
+							        						Sampai Tanggal
+							        					</label>
+							        					<input 
+							        						type="date"
+							        						className="form-control bg-dark text-white"
+							        						name="sampai_tanggal"
+							        						value={dateGenerate.sampai_tanggal}
+							        						onChange={this.onhandleDateGenerate}
+							        					/>
+							        				</div>
+									      		</div>
+									      		<div className="modal-footer">
+									        		<button 
+									        			type="button" 
+									        			className="btn btn-danger" 
+									        			data-dismiss="modal"
+									        		>
+									        			Tidak
+									        		</button>
+									        		<button 
+									        			type="button" 
+									        			className="btn btn-success" 
+									        			onClick={()=>this.handlePdf()}
+									        			data-dismiss="modal"
+									        		>
+									        			Generate
+									        		</button>
+									      		</div>
+									    	</div>
+									  	</div>
+									</div>
+								</div>
 							</div>;
 		} else {
 			buttonLaporan = "";

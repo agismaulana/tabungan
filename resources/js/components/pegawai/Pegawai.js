@@ -46,6 +46,24 @@ class Pegawai extends Component {
 				sortable: true,
 			},
 			{
+				key:"status",
+				className:"status",
+				text:"Status",
+				cell:(record, index) => {
+					return(
+						<div>
+							<label className="switch">
+							  <input 
+							  	type="checkbox"
+							  	onChange={() => {this.changeStatus(record.kd_pegawai)}}
+							  	checked={record.status == "Aktif" ? "checked" : ""}/>
+							  <span className="slider round"></span>
+							</label>
+						</div>
+					)
+				}
+			},
+			{
 				key: "action",
 				className:"action",
 				text: "Action",
@@ -59,14 +77,6 @@ class Pegawai extends Component {
 							>
 								<FontAwesomeIcon icon={faEdit} /> Edit
 							</button>
-							<div>
-								<button
-									className="btn btn-danger btn-sm ml-2"
-									onClick={() => {this.hapusPegawai(record.kd_pegawai)}}
-								>
-									<FontAwesomeIcon icon={faTrash} /> Hapus
-								</button>
-							</div>
 						</div>
 					)
 				}
@@ -109,6 +119,17 @@ class Pegawai extends Component {
 			status: "",
 			message: "",
 		}
+	}
+
+	changeStatus = (kd_pegawai) => {
+		console.log(kd_pegawai)
+		axios.get(`http://${window.location.host}/api/change-status-pegawai/${kd_pegawai}`)
+		.then((response)=>{
+			this.setState({
+				status: response.data.status,
+				message: response.data.message,
+			}, () => {this.getPegawai()})
+		})
 	}
 
 	componentDidMount() {

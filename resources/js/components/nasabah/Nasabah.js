@@ -43,6 +43,24 @@ class Nasabah extends React.Component{
 				sortable: true,
 			},
 			{
+				key:"status",
+				className:"status",
+				text:"Status",
+				cell:(record, index) => {
+					return(
+						<div>
+							<label className="switch">
+							  <input 
+							  	type="checkbox"
+							  	onChange={() => {this.changeStatus(record.kd_nasabah)}}
+							  	checked={record.status == "Aktif" ? "checked" : ""}/>
+							  <span className="slider round"></span>
+							</label>
+						</div>
+					)
+				}
+			},
+			{
 				key: "action",
 				className:"action",
 				text: "Action",
@@ -56,12 +74,6 @@ class Nasabah extends React.Component{
 								onClick={() => {this.editNasabah(kd_nasabah)}}
 							>
 								<FontAwesomeIcon icon={faEdit} /> Edit
-							</button>
-							<button
-								className="btn btn-danger btn-sm ml-2"
-								onClick={() => {this.hapusNasabah(kd_nasabah)}}
-							>
-								<FontAwesomeIcon icon={faTrash} /> Hapus
 							</button>
 						</div>
 					)
@@ -106,6 +118,16 @@ class Nasabah extends React.Component{
 			status : "",
 			message : "",
 		}
+	}
+
+	changeStatus = (kd_nasabah) => {
+		axios.get(`http://${window.location.host}/api/change-status-nasabah/${kd_nasabah}`)
+		.then((response)=>{
+			this.setState({
+				status: response.data.status,
+				message: response.data.message,
+			}, () => {this.getNasabah()})
+		})
 	}
 
 	componentDidMount() {
@@ -207,16 +229,7 @@ class Nasabah extends React.Component{
 		})	
 	}
 
-	hapusNasabah = (kd_nasabah) => {
-		console.log(kd_nasabah);
-		axios.delete(`http://${window.location.host}/api/delete-nasabah/${kd_nasabah}`)
-		.then((response) => {
-			this.setState({
-				status: response.status,
-				message: response.data.message
-			}, () => this.getNasabah())
-		})
-	}
+
 
 	render() {
 		const {dataNasabahBaru, dataUsersBaru, status, message} = this.state;

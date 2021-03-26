@@ -2,9 +2,9 @@
 
 namespace App\Exports;
 
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use App\Models\Transaksi;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\DB;
 
 class HistoryExport implements FromCollection
 {

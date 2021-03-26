@@ -10,7 +10,7 @@ class Nasabah extends Model
     use HasFactory;
     protected $table = 'nasabah';
     public $timestamps = false;
-    protected $fillable = ["kd_nasabah", "nm_nasabah", "jk", "no_hp", "email", "alamat", "id_users"];
+    protected $fillable = ["kd_nasabah", "nm_nasabah", "jk", "no_hp", "email", "alamat", "id_users", "status"];
 
     public function Users() {
     	return $this->hasMany(Users::class, 'id_users');

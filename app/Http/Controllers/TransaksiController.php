@@ -56,18 +56,23 @@ class TransaksiController extends Controller
         }
     }
 
-    public function exportPdf() {
+    public function exportPdf(Request $request) {
         require_once base_path('vendor/autoload.php');
 
         $mpdf = new \Mpdf\Mpdf();
 
+        $mulai_tanggal = $request->mulai_tanggal;
+        $sampai_tanggal = $request->sampai_tanggal;
+
         $transaksi = Transaksi::select(DB::raw('transaksi.*, transaksi.id_transaksi as transaksi_id, transaksi.no_rekening as transaksi_rekening, transfer.*'))
                      ->leftJoin('transfer', 'transaksi.id_transaksi', '=', 'transfer.id_transaksi')
-                     ->get();;
+                     ->whereBetWeen('transaksi.waktu', [$mulai_tanggal, $sampai_tanggal])
+                     ->get();
         
         $saldo = Transaksi::select(DB::raw("sum(nominal) as total"))
                  ->leftJoin('transfer', 'transaksi.id_transaksi', '=', 'transfer.id_transaksi')
-                 ->first();;
+                 ->whereBetWeen('transaksi.waktu', [$mulai_tanggal, $sampai_tanggal])
+                 ->first();
 
         $recordtransaksi = "";
         foreach($transaksi as $trans) {
@@ -115,6 +120,12 @@ class TransaksiController extends Controller
                 </div>";
 
         $mpdf->writeHTML($html);
-        $mpdf->output("history-transaksi.pdf", "D");
+        if($transaksi != null) {
+            $file = $mpdf->output();
+            return response()->download($file);
+        } else {
+            return response()->json(['status'=>'failed', 'success'=>false,'message'=>'Tidak Ada Ditemukan']);
+        }
+
     }
 }

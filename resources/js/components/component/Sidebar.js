@@ -159,17 +159,6 @@ class Sidebar extends Component {
 									</div>
 								</Link>
 							</li>
-
-							<li className={window.location.pathname == "/history" ? 'sidebar-item active' : 'sidebar-item'}>
-								<Link to="/history" className="sidebar-link">
-									<div className="icon"> 
-										<div className="sidebar-icon-box">
-											<FontAwesomeIcon icon={faHistory}/> 
-										</div>
-										<span>History</span>
-									</div>
-								</Link>
-							</li>
 						</ul>
 
 						<p className="footer">

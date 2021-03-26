@@ -53,6 +53,7 @@ class NasabahController extends Controller
 	    		'email'		 => $email,
 	    		'alamat'	 => $alamat,
 	    		'id_users'	 => $id_users,
+                'status'     => 'Aktif',
 	    	];
 
             $dataUsers = [
@@ -119,5 +120,23 @@ class NasabahController extends Controller
     	} else {
     		return response()->json(["status" => "failed", "success" => false, "message" => "Data Tidak Ditemukan"]);
     	}
+    }
+
+    public function changeStatus($kd_nasabah) {
+        $nasabah = Nasabah::where("kd_nasabah", $kd_nasabah)->first();
+        if(!is_null($nasabah)) {
+            if($nasabah->status == "Aktif") {
+                $change = Nasabah::where("kd_nasabah", $kd_nasabah)->update(['status'=>'Tidak Aktif']);
+            } else {
+                $change = Nasabah::where("kd_nasabah", $kd_nasabah)->update(['status'=>'Aktif']);
+            }
+            if($change == 1) {
+                return response()->json(["status"=>200, "success" => true, "message" => "Status Berhasil Diubah"]);
+            } else {
+                return response()->json(["status" => "failed", "success" => false, "message" => "Status Gagal Diubah"]);
+            }
+        } else {
+            return response()->json(["status" => "failed", "success" => false, "message" => "Data Tidak Ditemukan"]);
+        }
     }
 }

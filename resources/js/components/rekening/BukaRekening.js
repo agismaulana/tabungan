@@ -179,7 +179,6 @@ class BukaRekening extends Component {
 		let newDataTransaksi = {...this.state.dataTransaksi}
 		let {dataTransaksi} = this.state;
 		newDataTransaksi[e.target.name] = e.target.value;
-		console.log(dataTransaksi)
 		this.setState({dataTransaksi: newDataTransaksi});
 	}
 
@@ -188,6 +187,19 @@ class BukaRekening extends Component {
 
 		if(dataTransaksi.nominal == "") {
 			this.setState({
+				dataTransaksi: {
+					nm_nasabah: "",
+					id_transaksi: "",
+					waktu: "",
+					nominal: "",
+					jenis_transaksi: "",
+					no_rekening: "",
+					kirim_tabungan: "",
+					jenis_pembayaran: "",
+					keterangan: "",
+					status: "",
+					pin: "",
+				},
 				status: "failed",
 				message: "Transaksi Gagal",
 			}, () => {this.getRekening();this.getHistory()})
@@ -290,6 +302,12 @@ class BukaRekening extends Component {
 				data: dateGenerate,
 				responseType: 'blob',
 			}).then((response) => {
+				this.setState({
+					dateGenerate: {
+						mulai_tanggal: "",
+						sampai_tanggal: "",
+					}
+				}, () => {this.getRekening()})
 				const url = window.URL.createObjectURL(new Blob([response.data]))
 				const link = document.createElement('a');
 				link.href = url;
@@ -441,20 +459,7 @@ class BukaRekening extends Component {
 		}
 
 		let tujuanTransfer = "";
-		if(dataTransaksi.jenis_pembayaran == "Pembayaran") {
-			tujuanTransfer = <div className="form-group">
-								<label htmlFor="kirim_tabungan">Transfer No Rekening</label>
-								<input 
-									type="number"
-									name="kirim_tabungan"
-									placeholder="e.g 9875432123456"
-									className="form-control bg-dark text-white"
-									value="20210325722833418"
-									onChange={this.onChangeTransaksiHandler}
-									readOnly
-								/>
-							</div>
-		} else {
+		if(dataTransaksi.jenis_pembayaran == "Non Pembayaran") {
 			tujuanTransfer = <div className="form-group">
 								<label htmlFor="kirim_tabungan">Transfer No Rekening</label>
 								<input 
@@ -466,6 +471,8 @@ class BukaRekening extends Component {
 									onChange={this.onChangeTransaksiHandler}
 								/>
 							</div>
+		} else {
+			tujuanTransfer = "";
 		}
 
 		return(
@@ -600,7 +607,7 @@ class BukaRekening extends Component {
 									value={dataTransaksi.keterangan}
 									onChange={this.onChangeTransaksiHandler}
 								></textarea>
-							</div>;
+							</div>
 
 							{pin}
 						</div>

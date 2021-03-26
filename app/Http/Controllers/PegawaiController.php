@@ -47,6 +47,7 @@ class PegawaiController extends Controller
 				'email'		 => $email,
 				'alamat'	 => $alamat,
 				'id_users'	 => $id_users,
+				'status'     => 'Aktif',
 			];
 
 			$dataUsers = [
@@ -98,6 +99,24 @@ class PegawaiController extends Controller
 			return response()->json(["status" => "failed", "success" => false, "message" => "Data Gagal Diupdate"]);
 		}
 	}
+
+	public function changeStatus($kd_pegawai) {
+        $pegawai = Pegawai::where("kd_pegawai", $kd_pegawai)->first();
+        if(!is_null($pegawai)) {
+            if($pegawai->status == "Aktif") {
+                $change = Pegawai::where("kd_pegawai", $kd_pegawai)->update(['status'=>'Tidak Aktif']);
+            } else {
+                $change = Pegawai::where("kd_pegawai", $kd_pegawai)->update(['status'=>'Aktif']);
+            }
+            if($change == 1) {
+                return response()->json(["status"=>200, "success" => true, "message" => "Status Berhasil Diubah"]);
+            } else {
+                return response()->json(["status" => "failed", "success" => false, "message" => "Status Gagal Diubah"]);
+            }
+        } else {
+            return response()->json(["status" => "failed", "success" => false, "message" => "Data Tidak Ditemukan"]);
+        }
+    }
 
 	public function hapus($kd_pegawai) {
 		$pegawai = Pegawai::where("kd_pegawai", $kd_pegawai)->first();

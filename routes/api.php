@@ -30,6 +30,7 @@ Route::get('/where-nasabah/{kd_nasabah}', 'App\Http\Controllers\NasabahControlle
 Route::post('/tambah-nasabah', 'App\Http\Controllers\NasabahController@tambah');
 Route::post('/update-nasabah', 'App\Http\Controllers\NasabahController@update');
 Route::delete('/delete-nasabah/{kd_nasabah}', 'App\Http\Controllers\NasabahController@hapus');
+Route::get('/change-status-nasabah/{kd_nasabah}', 'App\Http\Controllers\NasabahController@changeStatus');
 
 // Pegawai
 Route::get('/pegawai', 'App\Http\Controllers\PegawaiController@index');
@@ -37,6 +38,7 @@ Route::get('/where-pegawai/{kd_pegawai}', 'App\Http\Controllers\PegawaiControlle
 Route::post('/tambah-pegawai', 'App\Http\Controllers\PegawaiController@tambah');
 Route::post('/update-pegawai', 'App\Http\Controllers\PegawaiController@update');
 Route::delete('/delete-pegawai/{kd_pegawai}', 'App\Http\Controllers\PegawaiController@hapus');
+Route::get('/change-status-pegawai/{kd_nasabah}', 'App\Http\Controllers\PegawaiController@changeStatus');
 
 // Users
 Route::get('/users', 'App\Http\Controllers\UsersController@index');
@@ -67,4 +69,4 @@ Route::get('/cetak-struk-transaksi/{id_transaksi}', 'App\Http\Controllers\Rekeni
 // History
 Route::post('/change-status/{id_transfer}', 'App\Http\Controllers\TransaksiController@changeStatus');
 Route::get('/exportExcelHistory', 'App\Http\Controllers\TransaksiController@exportExcel');
-Route::get('/exportPdfHistory', 'App\Http\Controllers\TransaksiController@exportPdf');
+Route::post('/exportPdfHistory', 'App\Http\Controllers\TransaksiController@exportPdf');

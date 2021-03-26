@@ -14324,23 +14324,6 @@ var Sidebar = /*#__PURE__*/function (_Component) {
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
-                className: window.location.pathname == "/history" ? 'sidebar-item active' : 'sidebar-item',
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
-                  to: "/history",
-                  className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-                    className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
-                      className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faHistory
-                      })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
-                      children: "History"
-                    })]
-                  })
-                })
               })]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
               className: "footer",
@@ -14484,6 +14467,54 @@ var History = /*#__PURE__*/function (_Component) {
       });
     };
 
+    _this.onhandleDateGenerate = function (e) {
+      var _e$target = e.target,
+          name = _e$target.name,
+          value = _e$target.value;
+      var dateGenerate = _this.state.dateGenerate;
+      dateGenerate[name] = value;
+
+      _this.setState({
+        dateGenerate: dateGenerate
+      });
+    };
+
+    _this.handlePdf = function () {
+      var dateGenerate = _this.state.dateGenerate;
+
+      if (dateGenerate.sampai_tanggal != "" && dateGenerate.mulai_tanggal != "") {
+        axios({
+          url: "http://".concat(window.location.host, "/api/exportPdfHistory"),
+          method: "POST",
+          data: dateGenerate,
+          responseType: 'blob'
+        }).then(function (response) {
+          _this.setState({
+            dateGenerate: {
+              mulai_tanggal: "",
+              sampai_tanggal: ""
+            }
+          }, function () {
+            _this.getTransaksi();
+          });
+
+          var url = window.URL.createObjectURL(new Blob([response.data]));
+          var link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'laporan-history.pdf');
+          document.body.appendChild(link);
+          link.click();
+        });
+      } else {
+        _this.setState({
+          status: "failed",
+          message: "Pilih Tanggal Terlebih Dahulu"
+        }, function () {
+          _this.getTransaksi();
+        });
+      }
+    };
+
     _this.columns = [{
       key: "transaksi_id",
       className: "transaksi_id",
@@ -14570,6 +14601,10 @@ var History = /*#__PURE__*/function (_Component) {
     };
     _this.state = {
       transaksi: [],
+      dateGenerate: {
+        mulai_tanggal: "",
+        sampai_tanggal: ""
+      },
       status: "",
       message: ""
     };
@@ -14604,12 +14639,15 @@ var History = /*#__PURE__*/function (_Component) {
   }, {
     key: "render",
     value: function render() {
+      var _this3 = this;
+
       var _this$state = this.state,
           transaksi = _this$state.transaksi,
           status = _this$state.status,
-          message = _this$state.message;
+          message = _this$state.message,
+          dateGenerate = _this$state.dateGenerate;
 
-      if (localStorage.level == "Nasabah") {
+      if (localStorage.level != "Administrator") {
         return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
           to: "/home"
         });
@@ -14639,17 +14677,80 @@ var History = /*#__PURE__*/function (_Component) {
         buttonLaporan = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
           className: "d-flex",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("a", {
-            href: "http://" + window.location.host + "/api/ExportExcelHistory",
+            href: "http://" + window.location.host + "/api/exportExcelHistory",
             className: "btn btn-success btn-md mr-2",
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__.faFileExcel
             }), " Export Excel"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("a", {
-            href: "http://" + window.location.host + "/api/exportPdfHistory",
-            className: "btn btn-danger btn-md",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__.faFilePdf
-            }), " Export Pdf"]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("button", {
+              className: "btn btn-danger",
+              "data-target": "#modalPdf",
+              "data-toggle": "modal",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__.faFilePdf
+              }), " Export Pdf"]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+              className: "modal fade",
+              id: "modalPdf",
+              tabIndex: "-1",
+              "aria-labelledby": "exampleModalLabel",
+              "aria-hidden": "true",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                className: "modal-dialog col-md-12",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                  className: "modal-content bg-dark",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                    className: "modal-header",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h5", {
+                      className: "modal-title font-weigth-bold",
+                      id: "exampleModalLabel",
+                      children: "Transaksi"
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                    className: "modal-body",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                      className: "form-group",
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("label", {
+                        htmlFor: "mulai_tanggal",
+                        children: "Mulai Tanggal"
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                        type: "date",
+                        className: "form-control bg-dark text-white",
+                        name: "mulai_tanggal",
+                        value: dateGenerate.mulai_tanggal,
+                        onChange: this.onhandleDateGenerate
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("label", {
+                        htmlFor: "mulai_tanggal",
+                        children: "Sampai Tanggal"
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                        type: "date",
+                        className: "form-control bg-dark text-white",
+                        name: "sampai_tanggal",
+                        value: dateGenerate.sampai_tanggal,
+                        onChange: this.onhandleDateGenerate
+                      })]
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                    className: "modal-footer",
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-danger",
+                      "data-dismiss": "modal",
+                      children: "Tidak"
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+                      type: "button",
+                      className: "btn btn-success",
+                      onClick: function onClick() {
+                        return _this3.handlePdf();
+                      },
+                      "data-dismiss": "modal",
+                      children: "Generate"
+                    })]
+                  })]
+                })
+              })
+            })]
           })]
         });
       } else {
@@ -15241,6 +15342,17 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
 
     _this = _super.call(this, props);
 
+    _this.changeStatus = function (kd_nasabah) {
+      axios.get("http://".concat(window.location.host, "/api/change-status-nasabah/").concat(kd_nasabah)).then(function (response) {
+        _this.setState({
+          status: response.data.status,
+          message: response.data.message
+        }, function () {
+          _this.getNasabah();
+        });
+      });
+    };
+
     _this.onChangeHandler = function (e) {
       var _this$state = _this.state,
           dataNasabahBaru = _this$state.dataNasabahBaru,
@@ -15321,18 +15433,6 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       });
     };
 
-    _this.hapusNasabah = function (kd_nasabah) {
-      console.log(kd_nasabah);
-      axios["delete"]("http://".concat(window.location.host, "/api/delete-nasabah/").concat(kd_nasabah)).then(function (response) {
-        _this.setState({
-          status: response.status,
-          message: response.data.message
-        }, function () {
-          return _this.getNasabah();
-        });
-      });
-    };
-
     _this.columns = [{
       key: "nm_nasabah",
       className: "nm_nasabah",
@@ -15359,14 +15459,34 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       text: "Alamat",
       sortable: true
     }, {
+      key: "status",
+      className: "status",
+      text: "Status",
+      cell: function cell(record, index) {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("label", {
+            className: "switch",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+              type: "checkbox",
+              onChange: function onChange() {
+                _this.changeStatus(record.kd_nasabah);
+              },
+              checked: record.status == "Aktif" ? "checked" : ""
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+              className: "slider round"
+            })]
+          })
+        });
+      }
+    }, {
       key: "action",
       className: "action",
       text: "Action",
       cell: function cell(record, index) {
         var kd_nasabah = record.kd_nasabah;
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "d-flex",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
             className: "btn btn-success btn-sm",
             "data-target": "#modalEdit",
             "data-toggle": "modal",
@@ -15376,15 +15496,7 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faEdit
             }), " Edit"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
-            className: "btn btn-danger btn-sm ml-2",
-            onClick: function onClick() {
-              _this.hapusNasabah(kd_nasabah);
-            },
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faTrash
-            }), " Hapus"]
-          })]
+          })
         });
       }
     }];
@@ -16027,6 +16139,18 @@ var Pegawai = /*#__PURE__*/function (_Component) {
     _this = _super.call(this, props);
     _this._isMounted = false;
 
+    _this.changeStatus = function (kd_pegawai) {
+      console.log(kd_pegawai);
+      axios.get("http://".concat(window.location.host, "/api/change-status-pegawai/").concat(kd_pegawai)).then(function (response) {
+        _this.setState({
+          status: response.data.status,
+          message: response.data.message
+        }, function () {
+          _this.getPegawai();
+        });
+      });
+    };
+
     _this.onChangeHandler = function (e) {
       var _this$state = _this.state,
           dataPegawaiBaru = _this$state.dataPegawaiBaru,
@@ -16143,13 +16267,33 @@ var Pegawai = /*#__PURE__*/function (_Component) {
       text: "Alamat",
       sortable: true
     }, {
+      key: "status",
+      className: "status",
+      text: "Status",
+      cell: function cell(record, index) {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("label", {
+            className: "switch",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+              type: "checkbox",
+              onChange: function onChange() {
+                _this.changeStatus(record.kd_pegawai);
+              },
+              checked: record.status == "Aktif" ? "checked" : ""
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+              className: "slider round"
+            })]
+          })
+        });
+      }
+    }, {
       key: "action",
       className: "action",
       text: "Action",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "d-flex",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
             className: "btn btn-success btn-sm",
             "data-target": "#modalEdit",
             "data-toggle": "modal",
@@ -16159,17 +16303,7 @@ var Pegawai = /*#__PURE__*/function (_Component) {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
               icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faEdit
             }), " Edit"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
-              className: "btn btn-danger btn-sm ml-2",
-              onClick: function onClick() {
-                _this.hapusPegawai(record.kd_pegawai);
-              },
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faTrash
-              }), " Hapus"]
-            })
-          })]
+          })
         });
       }
     }];
@@ -16638,7 +16772,6 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
 
       var dataTransaksi = _this.state.dataTransaksi;
       newDataTransaksi[e.target.name] = e.target.value;
-      console.log(dataTransaksi);
 
       _this.setState({
         dataTransaksi: newDataTransaksi
@@ -16652,6 +16785,19 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
 
       if (dataTransaksi.nominal == "") {
         _this.setState({
+          dataTransaksi: {
+            nm_nasabah: "",
+            id_transaksi: "",
+            waktu: "",
+            nominal: "",
+            jenis_transaksi: "",
+            no_rekening: "",
+            kirim_tabungan: "",
+            jenis_pembayaran: "",
+            keterangan: "",
+            status: "",
+            pin: ""
+          },
           status: "failed",
           message: "Transaksi Gagal"
         }, function () {
@@ -16781,6 +16927,15 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
           data: dateGenerate,
           responseType: 'blob'
         }).then(function (response) {
+          _this.setState({
+            dateGenerate: {
+              mulai_tanggal: "",
+              sampai_tanggal: ""
+            }
+          }, function () {
+            _this.getRekening();
+          });
+
           var url = window.URL.createObjectURL(new Blob([response.data]));
           var link = document.createElement('a');
           link.href = url;
@@ -17117,23 +17272,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
 
       var tujuanTransfer = "";
 
-      if (dataTransaksi.jenis_pembayaran == "Pembayaran") {
-        tujuanTransfer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-          className: "form-group",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
-            htmlFor: "kirim_tabungan",
-            children: "Transfer No Rekening"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
-            type: "number",
-            name: "kirim_tabungan",
-            placeholder: "e.g 9875432123456",
-            className: "form-control bg-dark text-white",
-            value: "20210325722833418",
-            onChange: this.onChangeTransaksiHandler,
-            readOnly: true
-          })]
-        });
-      } else {
+      if (dataTransaksi.jenis_pembayaran == "Non Pembayaran") {
         tujuanTransfer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
           className: "form-group",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
@@ -17148,6 +17287,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             onChange: this.onChangeTransaksiHandler
           })]
         });
+      } else {
+        tujuanTransfer = "";
       }
 
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
@@ -17304,7 +17445,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   value: dataTransaksi.keterangan,
                   onChange: this.onChangeTransaksiHandler
                 })]
-              }), ";", pin]
+              }), pin]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
               className: "card-footer",
               children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
@@ -23332,7 +23473,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "body {\n\toverflow: hidden;\n}\n\n/*Navbar*/\n.navbar {\n\tz-index: 1;\n\tbox-shadow: 3px 3px 3px rgba(0,0,0,0.2);\n}\n\n.navbar .navbar-brand {\n\tcolor: #018786;\n\tfont-size: 28px;\n\tfont-weight: 800;\n\tfont-family: 'Gergogia';\n\tfont-style: italic;\n\tletter-spacing: 2px;\n}\n\n.navbar-brand .logo-image {\n\theight: 7vh;\n}\n\n.navbar-brand:hover {\n\tcolor: #018778 !important;\n}\n\t\n.nav-item {\n\tfont-size: 20px;\n\twidth: 50px;\n\theight: 50px;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tbackground: #121212;\n\tborder-radius: 50%;\n\tpadding: 5px;\n\tmargin: 0 5px; \n}\n\n/*End Navbar*/\n\n/*Sidebar*/\n.sidebar {\n\tposition: fixed;\n\tleft: 0;\n\twidth: 20%;\n\theight: 100vh;\n\tbackground: #343a40;\n\toverflow-y: auto; \n\tborder-right: 3px solid #212121;\n}\n\n.sidebar-title {\n\tmargin-left: 10px;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.sidebar-menu {\n\twidth: 100%;\n\tlist-style: none;\n\tmargin: 20px 0;\n}\n\n.sidebar-item {\n\tpadding: 10px;\n\t/*border-right: 3px solid #018786;*/\n\tfont-size: 18px;\n}\n\n.sidebar-item:hover{\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\n.sidebar-item.active {\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\na.sidebar-link svg{\n\tcolor: rgba(255,255,255,.5);\n}\n\na.sidebar-link {\n\tcolor: #fff;\n\ttext-decoration: none;\n}\n\n.icon {\n\tdisplay: flex;\n\talign-items: center;\n\tpadding-right: 5px;\n}\n\n.icon .sidebar-icon-box {\n\twidth: 20px;\n\tmargin-right: 8px;\t\n\tfont-size: 20px;\n}\n\n.sidebar .footer {\n\tposition: fixed;\n\ttransform: translateX(15%);\n\tbottom: 0;\n\tfont-size: 16px;\n\tcolor: white;\n}\n/*End Sidebar*/\n\n.wrapper {\n\tmargin-left: auto; \n\twidth: 80%;\n\tpadding: 20px 50px 50px 50px;\n\theight: 100vh;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tbackground: #212121;\n\tcolor: white;\n}\n\n.asrt-page-length .input-group-addon {\n    background: #343a40 !important;\n}\n\n.asrt-page-length .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n\tborder-radius: 5px !important;\n}\n\n.asrt-page-length .input-group-addon .input-group-text {\n\tcolor:white;\n}\n\n.table_filter .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n\n.table_filter .form-control::-moz-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control:-ms-input-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control::placeholder {\n\tcolor: white;\n}\n\n.asrt-pagination .disabled.page-item .page-link{\n\tbackground: #343a40;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.asrt-pagination .page-item .page-link{\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.asrt-pagination .page-item .page-link input {\n\tbackground: #343a40;\n\tcolor: white;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "body {\n\toverflow: hidden;\n}\n\n/*Navbar*/\n.navbar {\n\tz-index: 1;\n\tbox-shadow: 3px 3px 3px rgba(0,0,0,0.2);\n}\n\n.navbar .navbar-brand {\n\tcolor: #018786;\n\tfont-size: 28px;\n\tfont-weight: 800;\n\tfont-family: 'Gergogia';\n\tfont-style: italic;\n\tletter-spacing: 2px;\n}\n\n.navbar-brand .logo-image {\n\theight: 7vh;\n}\n\n.navbar-brand:hover {\n\tcolor: #018778 !important;\n}\n\t\n.nav-item {\n\tfont-size: 20px;\n\twidth: 50px;\n\theight: 50px;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tbackground: #121212;\n\tborder-radius: 50%;\n\tpadding: 5px;\n\tmargin: 0 5px; \n}\n\n/*End Navbar*/\n\n/*Sidebar*/\n.sidebar {\n\tposition: fixed;\n\tleft: 0;\n\twidth: 20%;\n\theight: 100vh;\n\tbackground: #343a40;\n\toverflow-y: auto; \n\tborder-right: 3px solid #212121;\n}\n\n.sidebar-title {\n\tmargin-left: 10px;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.sidebar-menu {\n\twidth: 100%;\n\tlist-style: none;\n\tmargin: 20px 0;\n}\n\n.sidebar-item {\n\tpadding: 10px;\n\t/*border-right: 3px solid #018786;*/\n\tfont-size: 18px;\n}\n\n.sidebar-item:hover{\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\n.sidebar-item.active {\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\na.sidebar-link svg{\n\tcolor: rgba(255,255,255,.5);\n}\n\na.sidebar-link {\n\tcolor: #fff;\n\ttext-decoration: none;\n}\n\n.icon {\n\tdisplay: flex;\n\talign-items: center;\n\tpadding-right: 5px;\n}\n\n.icon .sidebar-icon-box {\n\twidth: 20px;\n\tmargin-right: 8px;\t\n\tfont-size: 20px;\n}\n\n.sidebar .footer {\n\tposition: fixed;\n\ttransform: translateX(15%);\n\tbottom: 0;\n\tfont-size: 16px;\n\tcolor: white;\n}\n/*End Sidebar*/\n\n.wrapper {\n\tmargin-left: auto; \n\twidth: 80%;\n\tpadding: 20px 50px 50px 50px;\n\theight: 100vh;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tbackground: #212121;\n\tcolor: white;\n}\n\n.asrt-page-length .input-group-addon {\n    background: #343a40 !important;\n}\n\n.asrt-page-length .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n\tborder-radius: 5px !important;\n}\n\n.asrt-page-length .input-group-addon .input-group-text {\n\tcolor:white;\n}\n\n.table_filter .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n\n.table_filter .form-control::-moz-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control:-ms-input-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control::placeholder {\n\tcolor: white;\n}\n\n.asrt-pagination .disabled.page-item .page-link{\n\tbackground: #343a40;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.asrt-pagination .page-item .page-link{\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.asrt-pagination .page-item .page-link input {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.switch {\n  position: relative;\n  display: inline-block;\n  width: 40px;\n  height: 16px;\n}\n\n.switch input {\n  opacity: 0;\n  width: 0;\n  height: 0;\n}\n\n/* The slider */\n.slider {\n  position: absolute;\n  cursor: pointer;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: red;\n  transition: .4s;\n}\n\n.slider:before {\n  position: absolute;\n  content: \"\";\n  height: 16px;\n  width: 16px;\n  background-color: white;\n  border: 1px solid #ccc;\n  transition: .4s;\n}\n\ninput:checked + .slider {\n  background-color: lime;\n}\n\ninput:focus + .slider {\n  box-shadow: 0 0 1px #2196F3;\n}\n\ninput:checked + .slider:before {\n  transform: translateX(26px);\n}\n\n/* Rounded sliders */\n.slider.round {\n  border-radius: 34px;\n}\n\n.slider.round:before {\n  border-radius: 50%;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
