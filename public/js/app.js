@@ -16781,7 +16781,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
     _this.handleTransaksi = function () {
       var _this$state = _this.state,
           dataTransaksi = _this$state.dataTransaksi,
-          dataRekening = _this$state.dataRekening;
+          dataRekening = _this$state.dataRekening,
+          saldoTransfer = _this$state.saldoTransfer;
 
       if (dataTransaksi.nominal == "") {
         _this.setState({
@@ -16799,7 +16800,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             pin: ""
           },
           status: "failed",
-          message: "Transaksi Gagal"
+          message: "Masukkan Nominal Terlebih Dahulu"
         }, function () {
           _this.getRekening();
 
@@ -16807,7 +16808,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         });
       } else {
         if (dataTransaksi.jenis_transaksi == "Tarik") {
-          if (dataRekening.saldo == 0 || dataRekening.saldo - dataTransaksi.nominal < 0) {
+          if (parseInt(dataRekening.saldo + saldoTransfer) == 0 || parseInt(dataRekening.saldo + saldoTransfer) - dataTransaksi.nominal < 0) {
             _this.setState({
               status: "failed",
               message: "Saldo Anda Tidak Mencukupi"
@@ -16842,7 +16843,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             });
           }
         } else if (dataTransaksi.jenis_transaksi == "Transfer") {
-          if (dataRekening.saldo == 0 || dataRekening.saldo - dataTransaksi.nominal < 0) {
+          if (parseInt(dataRekening.saldo + saldoTransfer) == 0 || parseInt(dataRekening.saldo + saldoTransfer) - dataTransaksi.nominal < 0) {
             _this.setState({
               status: "failed",
               message: "Saldo Anda Tidak Mencukupi"

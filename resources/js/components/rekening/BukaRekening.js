@@ -183,7 +183,7 @@ class BukaRekening extends Component {
 	}
 
 	handleTransaksi = () => {
-		let {dataTransaksi, dataRekening} = this.state;
+		let {dataTransaksi, dataRekening, saldoTransfer} = this.state;
 
 		if(dataTransaksi.nominal == "") {
 			this.setState({
@@ -201,11 +201,11 @@ class BukaRekening extends Component {
 					pin: "",
 				},
 				status: "failed",
-				message: "Transaksi Gagal",
+				message: "Masukkan Nominal Terlebih Dahulu",
 			}, () => {this.getRekening();this.getHistory()})
 		} else {
 			if(dataTransaksi.jenis_transaksi == "Tarik") {
-				if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
+				if(parseInt(dataRekening.saldo + saldoTransfer) == 0 || (parseInt(dataRekening.saldo + saldoTransfer) - dataTransaksi.nominal) < 0) {
 					this.setState({
 						status: "failed",
 						message: "Saldo Anda Tidak Mencukupi",
@@ -233,7 +233,7 @@ class BukaRekening extends Component {
 					});
 				}
 			} else if(dataTransaksi.jenis_transaksi == "Transfer") {
-				if(dataRekening.saldo == 0 || (dataRekening.saldo - dataTransaksi.nominal) < 0) {
+				if(parseInt(dataRekening.saldo + saldoTransfer) == 0 || (parseInt(dataRekening.saldo + saldoTransfer) - dataTransaksi.nominal) < 0) {
 					this.setState({
 						status: "failed",
 						message: "Saldo Anda Tidak Mencukupi",

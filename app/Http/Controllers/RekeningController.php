@@ -76,30 +76,45 @@ class RekeningController extends Controller
     		$waktu			= now();
     		$nominal		= $request->nominal;
     		$jenisTransaksi = $request->jenis_transaksi;
+
     		// data Rekening
     		$noRekening 	= $request->no_rekening;
+
     		// data Transfer
     		$jenisPembayaran= $request->jenis_pembayaran;
     		if($jenisPembayaran == "Non Pembayaran") {
                 $kirimTabungan = $request->kirim_tabungan;
-            } else {
+            } else if($jenisPembayaran == "Pembayaran") {
                 $lembaga = Rekening::join('nasabah', 
                                           'nasabah.kd_nasabah', '=', 'rekening.kd_nasabah')
                            ->join('users', 'users.id_users', '=', 'nasabah.id_users')
-                           ->where('users.username', 'smkypc')
+                           ->where('users.username', 'lembaga')
                            ->first();
 
                 $kirimTabungan = $lembaga->no_rekening;
+            } else {
+                $kirimTabungan = "";
             }
 
+            // keterangan
     		$keterangan		= $request->keterangan;
             $level          = $request->level;
             $pin            = $request->pin;
 
+            // data rekening yang melakukan transaksi
             $rekeningSaya = Rekening::join('nasabah', 
                                            'nasabah.kd_nasabah', '=', 'rekening.kd_nasabah')
+                            ->where('rekening.no_rekening', $noRekening)
                             ->first();
+
+            // kondisi ketika status nasabah aktif
             if($rekeningSaya->status == "Aktif") {
+                
+                $tabunganLain = Rekening::join('nasabah', 
+                                           'nasabah.kd_nasabah', '=', 'rekening.kd_nasabah')
+                            ->where('rekening.no_rekening', $kirimTabungan)
+                            ->first();
+
                 if($level == "Nasabah") {
                     $rekening = Rekening::where('no_rekening', $noRekening)->first();
                 
@@ -122,12 +137,16 @@ class RekeningController extends Controller
                                 'status'            => 'berhasil',
                             ];
 
-                            $createTransfer = Transfer::create($dataTransfer);
-                            if(!is_null($createTransfer)) {
-                                $create = Transaksi::create($dataTransaksi);
-                                return response()->json(['status' => 200, 'success' => true, 'message' => "Transfer Berhasil"]);
+                            if($tabunganLain->status == "Aktif" || $tabunganLain != null) {
+                                $createTransfer = Transfer::create($dataTransfer);
+                                if(!is_null($createTransfer)) {
+                                    $create = Transaksi::create($dataTransaksi);
+                                    return response()->json(['status' => 200, 'success' => true, 'message' => "Transfer Berhasil"]);
+                                } else {
+                                    return response()->json(['status' => "failed", 'success' => false, 'message' => "Transfer Gagal"]);
+                                }
                             } else {
-                                return response()->json(['status' => "failed", 'success' => false, 'message' => "Transfer Gagal"]);
+                                return response()->json(['status' => "failed", 'success' => false, 'message' => "Tabungan Sudah Tidak Aktif Atau Rekening Tidak Ditemukan"]);
                             }
                         } else {
                             $create = Transaksi::create($dataTransaksi);
@@ -159,12 +178,16 @@ class RekeningController extends Controller
                             'status'            => 'berhasil',
                         ];
 
-                        $createTransfer = Transfer::create($dataTransfer);
-                        if(!is_null($createTransfer)) {
-                            $create = Transaksi::create($dataTransaksi);
-                            return response()->json(['status' => 200, 'success' => true, 'message' => "Transfer Berhasil"]);
+                        if($tabunganLain->status == "Aktif" && $tabunganLain != null) {
+                            $createTransfer = Transfer::create($dataTransfer);
+                            if(!is_null($createTransfer)) {
+                                $create = Transaksi::create($dataTransaksi);
+                                return response()->json(['status' => 200, 'success' => true, 'message' => "Transfer Berhasil"]);
+                            } else {
+                                return response()->json(['status' => "failed", 'success' => false, 'message' => "Transfer Gagal"]);
+                            }
                         } else {
-                            return response()->json(['status' => "failed", 'success' => false, 'message' => "Transfer Gagal"]);
+                            return response()->json(['status' => "failed", 'success' => false, 'message' => "Tabungan Sudah Tidak Aktif Atau Rekening Tidak Ditemukan"]);
                         }
                     } else {
                         $create = Transaksi::create($dataTransaksi);
@@ -231,7 +254,7 @@ class RekeningController extends Controller
                      ->whereBetween('transaksi.waktu', [$mulai_tanggal, $sampai_tanggal])
                      ->orderby('waktu', 'DESC')
                      ->get();
-                     
+
         $saldoTambah = Transaksi::select(
                              DB::raw("(sum(if(jenis_transaksi = 'Setor', nominal, 0)) 
                                       + sum(if(transfer.no_rekening = ".$no_rekening." && status = 'berhasil', nominal, 0))) as saldo_tambah")
