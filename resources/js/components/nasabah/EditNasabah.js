@@ -19,6 +19,9 @@ class EditNasabah extends Component {
 				        				name="nm_nasabah"
 				        				value={this.props.editNasabah.nm_nasabah}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">
+				        				{this.props.errorsEdit.nm_nasabah}
+				        			</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">E-mail</label>
@@ -28,6 +31,9 @@ class EditNasabah extends Component {
 				        				name="email"
 				        				value={this.props.editNasabah.email}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">
+				        				{this.props.errorsEdit.email}
+				        			</span>
 				        		</div>
 			        			<div className="form-group">
 				        			<label htmlFor="no_hp">No Handphone/Telephone</label>
@@ -38,6 +44,9 @@ class EditNasabah extends Component {
 				        				maxLength="12"
 				        				value={this.props.editNasabah.no_hp}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">
+				        				{this.props.errorsEdit.no_hp}
+				        			</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<div className="d-flex">
@@ -63,6 +72,9 @@ class EditNasabah extends Component {
 						        			<label className="form-check-label">Perempuan</label>
 					        			</div>
 				        			</div>
+				        			<span className="text-danger">
+				        				{this.props.errorsEdit.jk}
+				        			</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">Alamat</label>
@@ -87,7 +99,13 @@ class EditNasabah extends Component {
 				        			type="button" 
 				        			className="btn btn-success" 
 				        			onClick={()=>this.props.updateNasabah()}
-				        			data-dismiss="modal"
+				        			data-dismiss= {
+				        				this.props.editNasabah.nm_nasabah != ""
+				        				&& this.props.editNasabah.email != ""
+				        				&& this.props.editNasabah.no_hp != ""
+				        				&& this.props.editNasabah.jk != ""
+				        				? 'modal' : ''
+				        			}
 				        		>
 				        			Simpan
 				        		</button>

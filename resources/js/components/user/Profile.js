@@ -33,6 +33,16 @@ class Profile extends Component {
 				no_hp: "",
 				level: "",
 			},
+			errorsUbah: {
+				password_lama: "",
+				password_baru: "",
+			},
+			errorsEdit: {
+				nm_users: "",
+				email: "",
+				jk: "",
+				no_hp: "",
+			},
 			status: "",
 			message: "",
 		}
@@ -58,6 +68,8 @@ class Profile extends Component {
 						alamat: response.data.data.alamat,
 						no_hp: response.data.data.no_hp,
 						level: response.data.data.level,
+						password_lama: "",
+						password_baru: "",
 					}
 				});	
 			});
@@ -75,6 +87,8 @@ class Profile extends Component {
 						alamat: response.data.data.alamat,
 						no_hp: response.data.data.no_hp,
 						level: response.data.data.level,
+						password_lama: "",
+						password_baru: "",
 					}
 				})	
 			})
@@ -86,53 +100,92 @@ class Profile extends Component {
 					status: "",
 					message: "",
 				})
-			}, 1500)
+			}, 3000)
 		}
 	}
 
 
 	// Ubah Password
 	onChangeUbahPassword = (e) => {
-		let {dataUsers} = this.state;
+		let {dataUsers, errorsUbah} = this.state;
+		errorsUbah[e.target.name] = "";
 		dataUsers[e.target.name] = e.target.value;
-		this.setState({dataUsers});
+		this.setState({dataUsers, errorsUbah});
 	}
 
 	ubahPassword = () => {
-		let {dataUsers} = this.state
-		axios.post(`http://${window.location.host}/api/ubah-password`, dataUsers)
-		.then((response)=>{
-			this.setState({
-				dataUsers: {
-					password_lama: "",
-					password_baru: "",
-				},
-				status: response.data.status,
-				message: response.data.message
-			}, () => this.getProfile());
-		})
+
+		let {dataUsers, errorsUbah} = this.state
+
+		if(dataUsers.password_lama == "") {
+			errorsUbah.password_lama = "Password harus Diisi"
+		}
+
+		if(dataUsers.password_baru == "") {
+			errorsUbah.password_baru = "Password harus Diisi"
+		}
+
+		if(errorsUbah.password_lama || errorsUbah.password_baru) {
+			this.setState({errorsUbah})
+		} else {
+			axios.post(`http://${window.location.host}/api/ubah-password`, dataUsers)
+			.then((response)=>{
+				this.setState({
+					dataUsers: {
+						password_lama: "",
+						password_baru: "",
+					},
+					status: response.data.status,
+					message: response.data.message
+				}, () => this.getProfile());
+			})
+		}
 	}
 
 	// Edit Profile
 	onChangeEditHandler = (e) => {
-		let {dataUsers} = this.state;
+		let {dataUsers, errorsEdit} = this.state;
+		errorsEdit[e.target.name] = "";
 		dataUsers[e.target.name] = e.target.value;
 		this.setState({dataUsers})
 	}
 
 	updateProfile = () => {
-		let {dataUsers} = this.state;
-		axios.post(`http://${window.location.host}/api/update-profile`, dataUsers)
-		.then((response)=>{
-			this.setState({
-				status: response.data.status,
-				message: response.data.message,
-			}, () => this.getProfile())
-		})
+		let {dataUsers, errorsEdit} = this.state;
+
+		if(dataUsers.nm_users == "") {
+			errorsEdit.nm_users = "Nama Harus Diisi"
+		}
+
+		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+		if(dataUsers.email == "" || reg.test(dataUsers.email) === false) {
+			errorsEdit.email = "Email Tidak Valid"
+		}
+
+		if(dataUsers.jk == "") {
+			errorsEdit.jk = "Jenis Kelamin Harus Dipilih"
+		}
+
+		if(dataUsers.no_hp == "") {
+			errorsEdit.no_hp = "No Handphone Harus Diisi"
+		}
+
+		if(errorsEdit.nm_users || errorsEdit.email || errorsEdit.jk || errorsEdit.no_hp) {
+			this.setState({errorsEdit});
+		} else {
+			axios.post(`http://${window.location.host}/api/update-profile`, dataUsers)
+			.then((response)=>{
+				this.setState({
+					status: response.data.status,
+					message: response.data.message,
+				}, () => this.getProfile())
+			})
+		}
 	}
 
 	render() {
-		const {dataUsers, status, message} = this.state;
+		const {dataUsers, status, message, errorsUbah, errorsEdit} = this.state;
 
 		let gender = "";
 		if(dataUsers.jk == 'Laki-Laki') {
@@ -202,6 +255,7 @@ class Profile extends Component {
 										onChange={this.onChangeUbahPassword}
 										className="form-control bg-dark text-white"
 									/>
+									<span className="text-danger">{errorsUbah.password_lama}</span>
 								</div>
 								<div className="form-group">
 									<label>Password Baru</label>
@@ -212,6 +266,7 @@ class Profile extends Component {
 										onChange={this.onChangeUbahPassword}
 										className="form-control bg-dark text-white"
 									/>
+									<span className="text-danger">{errorsUbah.password_baru}</span>
 								</div>
 								<div className="d-flex">
 									<button
@@ -225,6 +280,7 @@ class Profile extends Component {
 										dataUsers={dataUsers}
 										editProfile={this.editProfile}
 										onChangeEditHandler={this.onChangeEditHandler}
+										errorsEdit={errorsEdit}
 									/>
 								</div>
 

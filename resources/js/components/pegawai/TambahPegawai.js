@@ -30,6 +30,7 @@ class TambahPegawai extends Component {
 			        						value={this.props.dataUsersBaru.username}
 			        						onChange={this.props.onChangeHandler}
 			        					/>
+			        					<span className="text-danger">{this.props.errors.username}</span>
 			        				</div>
 			        				<div className="form-group">
 			        					<label htmlFor="password">Password</label>
@@ -41,6 +42,7 @@ class TambahPegawai extends Component {
 			        						value={this.props.dataUsersBaru.password}
 			        						onChange={this.props.onChangeHandler}
 			        					/>
+			        					<span className="text-danger">{this.props.errors.password}</span>
 			        				</div>
 			        			</div>
 			        			<div className="form-group">
@@ -52,6 +54,7 @@ class TambahPegawai extends Component {
 				        				value={this.props.dataPegawaiBaru.nm_pegawai}
 				        				onChange={this.props.onChangeHandler}
 				        			/>
+				        			<span className="text-danger">{this.props.errors.nm_pegawai}</span>
 				        		</div>
 			        			<div className="form-group">
 				        			<label htmlFor="no_hp">E-mail</label>
@@ -61,6 +64,7 @@ class TambahPegawai extends Component {
 				        				name="email"
 				        				value={this.props.dataPegawaiBaru.email}
 				        				onChange={this.props.onChangeHandler}/>
+				        			<span className="text-danger">{this.props.errors.email}</span>
 				        		</div>
 			        			<div className="form-group">
 				        			<label htmlFor="no_hp">No Handphone/Telephone</label>
@@ -71,6 +75,7 @@ class TambahPegawai extends Component {
 				        				maxLength="12"
 				        				value={this.props.dataPegawaiBaru.no_hp}
 				        				onChange={this.props.onChangeHandler}/>
+				        			<span className="text-danger">{this.props.errors.no_hp}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<div className="d-flex">
@@ -97,6 +102,7 @@ class TambahPegawai extends Component {
 						        			<label className="form-check-label">Perempuan</label>
 					        			</div>
 				        			</div>
+				        			<span className="text-danger">{this.props.errors.jk}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">Alamat</label>
@@ -121,7 +127,15 @@ class TambahPegawai extends Component {
 				        			type="button" 
 				        			className="btn btn-success" 
 				        			onClick={()=>this.props.tambahPegawai()}
-				        			data-dismiss="modal"
+				        			data-dismiss = {
+				        				this.props.dataUsersBaru.username != ""
+				        				&& this.props.dataUsersBaru.password != ""
+				        				&& this.props.dataPegawaiBaru.nm_pegawai != ""
+				        				&& this.props.dataPegawaiBaru.email != ""
+				        				&& this.props.dataPegawaiBaru.jk != ""
+				        				&&  this.props.dataPegawaiBaru.no_hp != ""
+				        				? "modal" : ""
+				        			}
 				        		>
 				        			Simpan
 				        		</button>

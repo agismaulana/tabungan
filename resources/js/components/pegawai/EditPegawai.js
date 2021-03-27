@@ -20,6 +20,7 @@ class EditPegawai extends Component {
 				        				value={this.props.editPegawai.nm_pegawai}
 				        				onChange={this.props.onChangeEditHandler}
 				        			/>
+				        			<span className="text-danger">{this.props.errorsEdit.nm_pegawai}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">E-mail</label>
@@ -29,6 +30,7 @@ class EditPegawai extends Component {
 				        				name="email"
 				        				value={this.props.editPegawai.email}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">{this.props.errorsEdit.email}</span>
 				        		</div>
 			        			<div className="form-group">
 				        			<label htmlFor="no_hp">No Handphone/Telephone</label>
@@ -39,6 +41,7 @@ class EditPegawai extends Component {
 				        				maxLength="12"
 				        				value={this.props.editPegawai.no_hp}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">{this.props.errorsEdit.no_hp}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<div className="d-flex">
@@ -65,6 +68,7 @@ class EditPegawai extends Component {
 						        			<label className="form-check-label">Perempuan</label>
 					        			</div>
 				        			</div>
+				        			<span className="text-danger">{this.props.errorsEdit.jk}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">Alamat</label>
@@ -89,7 +93,13 @@ class EditPegawai extends Component {
 				        			type="button" 
 				        			className="btn btn-success" 
 				        			onClick={()=>this.props.updatePegawai()}
-				        			data-dismiss="modal"
+				        			data-dismiss={
+				        				this.props.editPegawai.nm_pegawai != ""
+				        				&& this.props.editPegawai.email != ""
+				        				&& this.props.editPegawai.no_hp != ""
+				        				&& this.props.editPegawai.jk != ""
+				        				? "modal" : ""
+				        			}
 				        		>
 				        			Simpan
 				        		</button>

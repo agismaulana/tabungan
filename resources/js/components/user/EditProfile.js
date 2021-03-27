@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 
-
 import {
 	faUserEdit,
 } from '@fortawesome/free-solid-svg-icons';
@@ -29,6 +28,7 @@ class EditProfile extends Component {
 				        				name="nm_users"
 				        				value={this.props.dataUsers.nm_users}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">{this.props.errorsEdit.nm_users}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">E-mail</label>
@@ -38,6 +38,7 @@ class EditProfile extends Component {
 				        				name="email"
 				        				value={this.props.dataUsers.email}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">{this.props.errorsEdit.email}</span>
 				        		</div>
 			        			<div className="form-group">
 				        			<label htmlFor="no_hp">No Handphone/Telephone</label>
@@ -48,6 +49,7 @@ class EditProfile extends Component {
 				        				maxLength="12"
 				        				value={this.props.dataUsers.no_hp}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">{this.props.errorsEdit.no_hp}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<div className="d-flex">
@@ -73,6 +75,7 @@ class EditProfile extends Component {
 						        			<label className="form-check-label">Perempuan</label>
 					        			</div>
 				        			</div>
+				        			<span className="text-danger">{this.props.errorsEdit.jk}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">Alamat</label>
@@ -97,7 +100,13 @@ class EditProfile extends Component {
 				        			type="button" 
 				        			className="btn btn-success" 
 				        			onClick={()=>this.props.updateProfile()}
-				        			data-dismiss="modal"
+				        			data-dismiss={
+				        				this.props.dataUsers.nm_users != ""
+				        				&& this.props.dataUsers.email != ""
+				        				&& this.props.dataUsers.no_hp != ""
+				        				&& this.props.dataUsers.jk != ""
+				        				? "modal" : ""
+				        			}
 				        		>
 				        			Simpan
 				        		</button>

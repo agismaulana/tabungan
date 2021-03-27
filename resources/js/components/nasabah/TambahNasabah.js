@@ -28,6 +28,7 @@ class TambahNasabah extends React.Component {
 					        				value={this.props.dataUsersBaru.username}
 					        				onChange={this.props.onChangeHandler}
 					        			/>	
+					        			<span className="text-danger">{this.props.errors.username}</span>
 				      				</div>
 				      				<div className="form-group">
 				      					<label htmlFor="password">Password</label>
@@ -39,6 +40,7 @@ class TambahNasabah extends React.Component {
 					        				value={this.props.dataUsersBaru.password}
 					        				onChange={this.props.onChangeHandler}
 					        			/>	
+				        				<span className="text-danger">{this.props.errors.password}</span>
 				      				</div>
 				      			</div>
 				        		<div className="form-group">
@@ -50,6 +52,7 @@ class TambahNasabah extends React.Component {
 				        				value={this.props.dataNasabahBaru.nm_nasabah}
 				        				onChange={this.props.onChangeHandler}
 				        			/>
+				        			<span className="text-danger">{this.props.errors.nm_nasabah}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">E-mail</label>
@@ -59,6 +62,7 @@ class TambahNasabah extends React.Component {
 				        				name="email"
 				        				value={this.props.dataNasabahBaru.email}
 				        				onChange={this.props.onChangeHandler}/>
+				        			<span className="text-danger">{this.props.errors.email}</span>
 				        		</div>
 			        			<div className="form-group">
 				        			<label htmlFor="no_hp">No Handphone/Telephone</label>
@@ -69,6 +73,7 @@ class TambahNasabah extends React.Component {
 				        				maxLength="12"
 				        				value={this.props.dataNasabahBaru.no_hp}
 				        				onChange={this.props.onChangeHandler}/>
+				        			<span className="text-danger">{this.props.errors.no_hp}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<div className="d-flex">
@@ -95,6 +100,7 @@ class TambahNasabah extends React.Component {
 						        			<label className="form-check-label">Perempuan</label>
 					        			</div>
 				        			</div>
+				        			<span className="text-danger">{this.props.errors.jk}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="no_hp">Alamat</label>
@@ -105,6 +111,7 @@ class TambahNasabah extends React.Component {
 				        				value={this.props.dataNasabahBaru.alamat}
 				        				onChange={this.props.onChangeHandler}>
 				        			</textarea>
+				        			<span className="text-danger">{this.props.errors.alamat}</span>
 				        		</div>
 				        		<div className="form-group">
 				        			<label htmlFor="pin">Pin Rekening</label>
@@ -116,6 +123,7 @@ class TambahNasabah extends React.Component {
 				        				maxLength="6"
 				        				value={this.props.dataUsersBaru.pin}
 				        				onChange={this.props.onChangeHandler}/>
+				        			<span className="text-danger">{this.props.errors.pin}</span>
 				        		</div>
 				      		</div>
 				      		<div className="modal-footer">
@@ -130,7 +138,16 @@ class TambahNasabah extends React.Component {
 				        			type="button" 
 				        			className="btn btn-success" 
 				        			onClick={()=>this.props.tambahNasabah()}
-				        			data-dismiss="modal"
+				        			data-dismiss={
+				        				this.props.dataUsersBaru.username != ""
+				        				&& this.props.dataUsersBaru.password != ""
+				        				&& this.props.dataUsersBaru.pin != ""
+				        				&& this.props.dataNasabahBaru.nm_nasabah != ""
+				        				&& this.props.dataNasabahBaru.email != ""
+				        				&& this.props.dataNasabahBaru.no_hp != ""
+				        				&& this.props.dataNasabahBaru.jk != ""
+				        				? 'modal' : ''
+				        			}
 				        		>
 				        			Simpan
 				        		</button>

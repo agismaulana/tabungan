@@ -10,7 +10,7 @@ class PegawaiController extends Controller
 {
     
 	public function index() {
-		$pegawai = Pegawai::all();
+		$pegawai = Pegawai::where('nm_pegawai', '!=', 'Admin')->get();
 
 		if(count($pegawai) > 0) {
 			return response()->json(["status" => 200, "success" => true, "data" => $pegawai]);
@@ -57,12 +57,19 @@ class PegawaiController extends Controller
 				'level'		=> $level,
 			];
 
-			$tambahPegawai  = Pegawai::create($dataPegawai);
-			$tambahUsers	= Users::create($dataUsers);
-			if(!is_null($tambahPegawai) && !is_null($tambahUsers)) {
-				return response()->json(["status" => 200, "success" => true, "message" => "Data Berhasil Ditambahkan"]);
+			$users = Users::where('username', $username)->first();
+
+			if(is_null($users)) {
+
+				$tambahPegawai  = Pegawai::create($dataPegawai);
+				$tambahUsers	= Users::create($dataUsers);
+				if(!is_null($tambahPegawai) && !is_null($tambahUsers)) {
+					return response()->json(["status" => 200, "success" => true, "message" => "Data Berhasil Ditambahkan"]);
+				} else {
+					return response()->json(["status"=>"failed", "success" => false, "message" => "Data Gagal Ditambahkan"]);
+				}
 			} else {
-				return response()->json(["status"=>"failed", "success" => false, "message" => "Data Gagal Ditambahkan"]);
+				return response()->json(["status"=>"failed", "success" => false, "message" => "Username Sudah Dipakai"]);
 			}
 		} else {
 			return response()->json(["status" => "failed", "success" => false, "message" => "Data Input Tidak Boleh Kosong"]);

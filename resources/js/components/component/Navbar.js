@@ -33,11 +33,8 @@ class Navbar extends Component {
 				<div className="modal fade" id="modalLogout" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				  	<div className="modal-dialog">
 				    	<div className="modal-content bg-dark">
-				      		<div className="modal-header">
-				        		<h5 className="modal-title font-weigth-bold text-white" id="exampleModalLabel">Modal Log Out</h5>
-				      		</div>
 				      		<div className="modal-body">
-				      			<h4 className="text-white">Apakah Anda Yakin Log Out!!!!</h4>
+				      			<h4 className="text-white">Anda Yakin Ingin Log Out?</h4>
 				      		</div>
 				      		<div className="modal-footer">
 				        		<button 
@@ -45,7 +42,7 @@ class Navbar extends Component {
 				        			className="btn btn-danger" 
 				        			data-dismiss="modal"
 				        		>
-				        			Close
+				        			Tidak
 				        		</button>
 				        		<a 
 				        			href="/logout"

@@ -28,7 +28,7 @@ class NasabahController extends Controller
 
     public function tambah(Request $request) {
 
-    	if($request->all() != null) {
+    	if($request->all() != null || $request->all() != "") {
 	    	// data users
             $id_users = date('Ymd').random_int(0, 100);
             $username = $request->username;
@@ -44,6 +44,8 @@ class NasabahController extends Controller
 
             // data Rekening 
             $pin = $request->pin;
+
+            $users = Users::where('username', $username)->first();
 
 	    	$dataNasabah = [
 	    		'kd_nasabah' => $kd_nasabah,
@@ -69,16 +71,20 @@ class NasabahController extends Controller
                 'kd_nasabah'  => $kd_nasabah,
             ];
 
-	    	$tambahNasabah  = Nasabah::create($dataNasabah);
-            $tambahUsers    = Users::create($dataUsers);
-	    	if(!is_null($tambahNasabah) && !is_null($tambahUsers)) {
-                $tambahRekening = Rekening::create($dataRekening);
-                if(!is_null($tambahRekening)){
-    		    	return response()->json(["status"=>200, "success" => true, "message"=>"Data Berhasil Ditambahkan"]);
+	    	if(is_null($users)) {
+                $tambahNasabah  = Nasabah::create($dataNasabah);
+                $tambahUsers    = Users::create($dataUsers);
+                if(!is_null($tambahNasabah) && !is_null($tambahUsers)) {
+                    $tambahRekening = Rekening::create($dataRekening);
+                    if(!is_null($tambahRekening)){
+                        return response()->json(["status"=>200, "success" => true, "message"=>"Data Berhasil Ditambahkan"]);
+                    }
+                } else {
+                    return response()->json(["status"=>"failed", "success" => false,"message"=>"Data Gagal Ditambahkan"]);
                 }
-	    	} else {
-	    		return response()->json(["status"=>"failed", "success" => false,"message"=>"Data Gagal Ditambahkan"]);
-	    	}
+            } else {
+                return response()->json(["status"=>"failed", "success" => false,"message"=>"Username Sudah Dipakai"]);       
+            }
     	} else {
     		return response()->json(["status"=>"failed", "success"=>false,"message"=>"Data Tidak Boleh Ada Yang Kosong"]);
     	}

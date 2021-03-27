@@ -15,6 +15,10 @@ class Login extends Component {
                 username: "",
                 password: "",
             },
+            errors: {
+                usernameErrors: "",
+                passwordErrors: "",
+            },
             redirect: false,
             status: "",
             message: "",
@@ -42,6 +46,10 @@ class Login extends Component {
             dataLogin: {
                 username: e.target.value,
                 password: this.state.dataLogin.password,
+            },
+            errors: {
+                usernameErrors: "",
+                passwordErrors: this.state.errors.passwordErrors,
             }
         });
     }
@@ -51,6 +59,10 @@ class Login extends Component {
             dataLogin: {
                 username: this.state.dataLogin.username,
                 password: e.target.value,
+            }, 
+            errors: {
+                usernameErrors: this.state.errors.usernameErrors,
+                passwordErrors: "",
             }
         })
     }
@@ -68,48 +80,63 @@ class Login extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
+        
+        const {dataLogin, errors} = this.state;
+
         const login = {
-            username: this.state.dataLogin.username,
-            password: this.state.dataLogin.password,
+            username: dataLogin.username,
+            password: dataLogin.password,
         }
 
-        axios.post(`http://${window.location.host}/api/send-login`, 
-                    login)
-        .then((response) => {
-            let {login} = this.state;
+        if(dataLogin.username == "") {
+            errors.usernameErrors = "Username Harus Diisi";
+        }
 
-            const userBaru = [...login];
-            this.setState({
-                dataLogin: {
-                    username: "",
-                    password: "",
-                },
-            })
+        if(dataLogin.password == "") {
+            errors.passwordErrors = "Password Harus Diisi";
+        }
 
-            if(response.data.status == 200) {
-                localStorage.setItem('id_users', response.data.user.id_users);
-                localStorage.setItem('nama', response.data.user.username);
-                localStorage.setItem('level', response.data.user.level);
-                if(localStorage.length > 0) {
-                    this.setState({
-                        redirect: true,
-                    })
-                }
-            } else {
+        if(errors.UsernameErrors || errors.passwordErrors) { 
+            this.setState({errors})
+        } else {   
+            axios.post(`http://${window.location.host}/api/send-login`, 
+                        login)
+            .then((response) => {
+                let {login} = this.state;
+
+                const userBaru = [...login];
                 this.setState({
                     dataLogin: {
                         username: "",
                         password: "",
                     },
-                    status: response.data.status,
-                    message: response.data.message,
-                }, () => this.timeStatus())
-            }
-        });
+                })
+
+                if(response.data.status == 200) {
+                    localStorage.setItem('id_users', response.data.user.id_users);
+                    localStorage.setItem('nama', response.data.user.username);
+                    localStorage.setItem('level', response.data.user.level);
+                    if(localStorage.length > 0) {
+                        this.setState({
+                            redirect: true,
+                        })
+                    }
+                } else {
+                    this.setState({
+                        dataLogin: {
+                            username: "",
+                            password: "",
+                        },
+                        status: response.data.status,
+                        message: response.data.message,
+                    }, () => this.timeStatus())
+                }
+            });
+        }
     }
 
     render() {
-        const {dataLogin, status, message} = this.state;
+        const {dataLogin, status, message, errors} = this.state;
 
         if(localStorage.length > 0) {
             if(this.state.redirect) {
@@ -145,6 +172,7 @@ class Login extends Component {
                                             value={dataLogin.username}
                                             onChange={this.handleChangeUsername}
                                         />
+                                        <span className="text-danger">{errors.usernameErrors}</span>
                                     </div>
                                     <div className="form-group">
                                         <input 
@@ -153,6 +181,7 @@ class Login extends Component {
                                             placeholder="Password" 
                                             value={dataLogin.password}
                                             onChange={this.handleChangePassword} />
+                                        <span className="text-danger">{errors.passwordErrors}</span>
                                     </div>
 
                                     <button type="submit" className="btn btn-primary btn-block mb-3">Login</button>

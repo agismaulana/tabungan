@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
-import {faUser, faAddressCard, faMoneyBill, faFilePdf, faFileExcel, faPrint} from '@fortawesome/free-solid-svg-icons';
+import {faUser, faMoneyCheck, faMoneyBill, faFilePdf, faFileExcel, faPrint} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import ReactDatatable from '@ashvin27/react-datatable';
 import './Rekening.css';
@@ -12,6 +12,12 @@ class BukaRekening extends Component {
 	constructor(props) {
 		super(props);
 		this.columns = [
+			{
+				key: "transaksi_id",
+				className: "transaksi_id",
+				text: "Id Transaksi",
+				sortable: true,
+			},
 			{
 				key: "waktu",
 				className: "waktu",
@@ -44,10 +50,11 @@ class BukaRekening extends Component {
 				text: "Aksi",
 				cell: (record, index) => {
 					return(
-							<a href={'http://'+window.location.host+'/api/cetak-struk-transaksi/'+record.transaksi_id} 
-								className="btn btn-primary">
+							<button 
+								onClick={() => {this.handleCetak(record.transaksi_id)}}
+								className="btn btn-primary btn-md">
 								<FontAwesomeIcon icon={faPrint}/> Print
-							</a>
+							</button>
 						)
 				}
 			}
@@ -138,7 +145,7 @@ class BukaRekening extends Component {
 					status: "",
 					message: "",
 				})
-			}, 1500)
+			}, 3000)
 		}
 	}
 
@@ -302,18 +309,25 @@ class BukaRekening extends Component {
 				data: dateGenerate,
 				responseType: 'blob',
 			}).then((response) => {
-				this.setState({
-					dateGenerate: {
-						mulai_tanggal: "",
-						sampai_tanggal: "",
-					}
-				}, () => {this.getRekening()})
-				const url = window.URL.createObjectURL(new Blob([response.data]))
-				const link = document.createElement('a');
-				link.href = url;
-				link.setAttribute('download', 'transaksi-laporan-'+params.no_rekening+'.pdf');
-				document.body.appendChild(link);
-				link.click();
+				if(response.data.status != "failed") {
+					this.setState({
+						dateGenerate: {
+							mulai_tanggal: "",
+							sampai_tanggal: "",
+						}
+					}, () => {this.getRekening()})
+					const url = window.URL.createObjectURL(new Blob([response.data]))
+					const link = document.createElement('a');
+					link.href = url;
+					link.setAttribute('download', 'transaksi-laporan-'+params.no_rekening+'.pdf');
+					document.body.appendChild(link);
+					link.click();
+				} else {
+					this.setState({
+						status: response.data.status,
+						message: response.data.message
+					}, () => {this.getRekening()})
+				}
 			})
 		} else {
 			this.setState({
@@ -321,6 +335,21 @@ class BukaRekening extends Component {
 				message: "Pilih Tanggal Terlebih Dahulu",
 			}, () => {this.getRekening()})
 		}
+	}
+
+	handleCetak = (id_transaksi) => {
+		axios({
+			url:`http://${window.location.host}/api/cetak-struk-transaksi/${id_transaksi}`,
+			method: "GET",
+			responseType: 'blob',
+		}).then((response) => {
+			const url = window.URL.createObjectURL(new Blob([response.data]))
+			const link = document.createElement('a');
+			link.href = url;
+			link.setAttribute('download', 'cetak-struk-'+id_transaksi+'.pdf');
+			document.body.appendChild(link);
+			link.click();
+		})
 	}
 
 	render() {
@@ -487,7 +516,7 @@ class BukaRekening extends Component {
 						<div className="card-body">
 							<h3 className="d-flex align-items-center">
 								<div className="box-icon mr-2">
-									<FontAwesomeIcon icon={faAddressCard} />
+									<FontAwesomeIcon icon={faMoneyCheck} />
 								</div> 
 								{dataRekening.no_rekening}
 							</h3>
@@ -530,18 +559,20 @@ class BukaRekening extends Component {
 						<div className="card-body">
 							{sendMessage}
 							{transaksi}
-							<ReactDatatable 
-								className="table table-dark table-bordered"
-								columns={this.columns}
-								records={history}
-								config={this.config}
-							/>
+							<div>
+								<ReactDatatable 
+									className="table table-dark table-bordered table-responsive"
+									columns={this.columns}
+									records={history}
+									config={this.config}
+								/>
+							</div>
 						</div>
 					</div>
 
 					<div className="card bg-dark col-md-4 ml-1 mt-2 mb-5">
 						<div className="card-header">
-							<h4>Transfer Rekening Lain</h4>
+							<h4>Transfer</h4>
 						</div>
 						<div className="card-body">
 							<input 
@@ -613,7 +644,12 @@ class BukaRekening extends Component {
 						</div>
 						<div className="card-footer">
 							<div className="ml-auto">
-								<button className="btn btn-primary" onClick={() => {this.handleTransaksi()}}>Transfer</button>
+								<button 
+									className="btn btn-primary" 
+									onClick={() => {this.handleTransaksi()}}
+								>
+									<FontAwesomeIcon icon={faMoneyBill}/> Transfer
+								</button>
 							</div>
 						</div>
 					</div>

@@ -27,6 +27,12 @@ class User extends Component {
 				sortable: true,
 			},
 			{
+				key: "level",
+				className: "level",
+				text: "Level",
+				sortable: true,
+			},
+			{
 				key: "action",
 				className: "action",
 				text: "Action",
@@ -60,6 +66,10 @@ class User extends Component {
 				username:"",
 				password:"",
 			},
+			errorsEdit: {
+				username: "",
+				password: "",
+			},
 			status: "",
 			message: "",
 		}
@@ -83,7 +93,7 @@ class User extends Component {
 					status: "",
 					message: "",
 				})
-			}, 1500)
+			}, 3000)
 		}
 	}
 
@@ -95,31 +105,49 @@ class User extends Component {
 					id_users: response.data.data.id_users,
 					username: response.data.data.username,
 					password: "",
+				}, errorsEdit: {
+					username: "",
+					password: "",
 				}
 			})
 		})
 	}
 
 	onChangeEditHandler = (e) => {
-		let {dataUsers} = this.state;
+		let {dataUsers, errorsEdit} = this.state;
+		errorsEdit[e.target.name] = "";
 		dataUsers[e.target.name] = e.target.value;
 		this.setState({dataUsers});
 	}
 
 	updateUsers = () => {
-		let {dataUsers} = this.state;
-		axios.post(`http://${window.location.host}/api/update-users`, dataUsers)
-		.then((response)=>{
-			this.setState({
-				status: response.data.status,
-				message: response.data.message,
-			}, () => this.getUsers())
-		})
+
+		let {dataUsers, errorsEdit} = this.state;
+
+		if(dataUsers.username == "") {
+			errorsEdit.username = "Username Harus Diisi";
+		}
+
+		if(dataUsers.password == "") {
+			errorsEdit.password = "Password Harus Diisi"
+		}
+
+		if(errorsEdit.username || errorsEdit.password) {
+			this.setState({errorsEdit})
+		} else {
+			axios.post(`http://${window.location.host}/api/update-users`, dataUsers)
+			.then((response)=>{
+				this.setState({
+					status: response.data.status,
+					message: response.data.message,
+				}, () => this.getUsers())
+			})
+		}
 	}
 
 	render() {
 
-		const {users, dataUsers, status, message} = this.state;
+		const {users, dataUsers, status, message, errorsEdit} = this.state;
 
 		let sendMessage = "";
 		if(status == 200) {
@@ -144,6 +172,7 @@ class User extends Component {
 						editUsers={dataUsers}
 						onChangeEditHandler={this.onChangeEditHandler}
 						updateUsers={this.updateUsers}
+						errorsEdit={errorsEdit}
 					/>
 					<div className="card-body">
 						{sendMessage}

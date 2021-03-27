@@ -29,6 +29,7 @@ class EditRekening extends Component {
 		        						type="password"
 		        						className="form-control bg-dark text-white"
 		        						placeholder="*******"
+		        						maxLength="6"
 		        						name="pin_lama"
 		        						value={this.props.editRekening.pin_lama}
 		        						onChange={this.props.onChangeEditHandler}
@@ -40,6 +41,7 @@ class EditRekening extends Component {
 		        						type="password"
 		        						className="form-control bg-dark text-white"
 		        						placeholder="*******"
+		        						maxLength="6"
 		        						name="pin_baru"
 		        						value={this.props.editRekening.pin_baru}
 		        						onChange={this.props.onChangeEditHandler}

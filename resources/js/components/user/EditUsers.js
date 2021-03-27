@@ -19,6 +19,7 @@ class EditUsers extends Component {
 				        				name="username"
 				        				value={this.props.editUsers.username}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">{this.props.errorsEdit.username}</span>
 				        		</div>
 			        			<div className="form-group">
 				        			<label htmlFor="no_hp">Password</label>
@@ -29,6 +30,7 @@ class EditUsers extends Component {
 				        				name="password"
 				        				value={this.props.editUsers.password}
 				        				onChange={this.props.onChangeEditHandler}/>
+				        			<span className="text-danger">{this.props.errorsEdit.password}</span>
 				        		</div>
 				      		</div>
 				      		<div className="modal-footer">
@@ -43,7 +45,11 @@ class EditUsers extends Component {
 				        			type="button" 
 				        			className="btn btn-success" 
 				        			onClick={()=>this.props.updateUsers()}
-				        			data-dismiss="modal"
+				        			data-dismiss={
+				        				this.props.editUsers.username != "" 
+				        				&& this.props.editUsers.password != "" 
+				        				? 'modal' : ''
+				        			}
 				        		>
 				        			Simpan
 				        		</button>

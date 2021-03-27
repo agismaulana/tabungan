@@ -99,12 +99,29 @@ class Nasabah extends React.Component{
 				alamat: "",
 				id_users: "",
 			},
+			errors: {
+				nm_nasabah: "",
+				jk: "",
+				no_hp: "",
+				email: "",
+				alamat: "",
+				username: "",
+				password: "",
+				pin: "",
+			},
 			dataUsersBaru: {
 				id_users: "",
 				username: "",
 				password: "",
 				level: "",
 				pin: "",
+			},
+			errorsEdit: {
+				nm_nasabah: "",
+				jk: "",
+				no_hp: "",
+				email: "",
+				alamat: "",
 			},
 			editNasabah : {
 				kd_nasabah: "",
@@ -156,47 +173,83 @@ class Nasabah extends React.Component{
 					status: "",
 					message: "",
 				})
-			}, 1500)
+			}, 3000)
 		}
 	}
 
 	onChangeHandler = (e) => {
-		let {dataNasabahBaru, dataUsersBaru} = this.state;
+		let {dataNasabahBaru, dataUsersBaru, errors} = this.state;
+		errors[e.target.name] = "";
 		dataNasabahBaru[e.target.name] 	= e.target.value;
 		dataUsersBaru[e.target.name]	= e.target.value;
-		this.setState({dataNasabahBaru, dataUsersBaru});
+		this.setState({dataNasabahBaru, dataUsersBaru, errors});
 	}
 
-	tambahNasabah = (e) => {
-		let {dataNasabahBaru, dataUsersBaru} = this.state;
-		
-		axios.post(`http://${window.location.host}/api/tambah-nasabah`, dataNasabahBaru, dataUsersBaru)
-		.then((response) => {
-			this.setState({
-				dataNasabahBaru: {
-					kd_nasabah: "",
-					nm_nasabah: "",
-					jk: "",
-					no_hp: "",
-					email: "",
-					alamat: "",
-					id_users: "",
-				},
-				dataUsersBaru: {
-					id_users: "",
-					username: "",
-					password: "",
-					level: "",
-					pin: "",
-				},
-				status: response.status,
-				message: response.data.message
-			}, () => this.getNasabah())
-		},);
+	tambahNasabah = () => {
+
+		let {dataNasabahBaru, dataUsersBaru, errors} = this.state;
+		if(dataNasabahBaru.nm_nasabah == "") {
+			errors.nm_nasabah = "Nama Harus Diisi";
+		}
+
+		if(dataNasabahBaru.jk == "") {
+			errors.jk = "Jenis Kelamin Harus Dipilih";	
+		}
+
+		if(dataNasabahBaru.no_hp == "") {
+			errors.no_hp = "No Handphone Harus Diisi";
+		}
+
+		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+		if(dataNasabahBaru.email == "" || reg.test(dataNasabahBaru.email) === false) {
+			errors.email = "Email Tidak Valid";
+		}
+
+		if(dataUsersBaru.username == "") {
+			errors.username = "Username Harus Diisi";
+		}
+
+		if(dataUsersBaru.password == "") {
+			errors.password = "Password Harus Diisi";
+		}
+
+		if(dataUsersBaru.pin == "") {
+			errors.pin = "Pin Harus Diisi";
+		}
+
+		if(errors.nm_nasabah || errors.jk || errors.no_hp || errors.email || errors.username || errors.password || errors.pin) {
+			this.setState({errors});
+		} else {
+			axios.post(`http://${window.location.host}/api/tambah-nasabah`, dataNasabahBaru, dataUsersBaru)
+			.then((response) => {
+				this.setState({
+					dataNasabahBaru: {
+						kd_nasabah: "",
+						nm_nasabah: "",
+						jk: "",
+						no_hp: "",
+						email: "",
+						alamat: "",
+						id_users: "",
+					},
+					dataUsersBaru: {
+						id_users: "",
+						username: "",
+						password: "",
+						level: "",
+						pin: "",
+					},
+					status: response.data.status,
+					message: response.data.message
+				}, () => this.getNasabah())
+			});
+		}
 	}
 
 	onChangeEditHandler = (e) => {
-		let {editNasabah} = this.state;
+		let {editNasabah, errorsEdit} = this.state;
+		errorsEdit[e.target.name] = "";
 		editNasabah[e.target.name] = e.target.value;
 		this.setState({editNasabah})
 	}
@@ -213,26 +266,56 @@ class Nasabah extends React.Component{
 					email: response.data.data.email,
 					alamat: response.data.data.alamat,
 					id_users: response.data.data.id_users,
-				}
+				},
+				errorsEdit: {
+					nm_nasabah: "",
+					jk: "",
+					no_hp: "",
+					email: "",
+					alamat: "",
+				},
 			});
 		})
 	} 
 
 	updateNasabah = () => {
-		let {editNasabah} = this.state;
-		axios.post(`http://${window.location.host}/api/update-nasabah`, editNasabah)
-		.then((response) => {
-			this.setState({
-				status:response.status,
-				message:response.data.message,
-			}, ()=>this.getNasabah())
-		})	
+		let {editNasabah, errorsEdit} = this.state;
+
+		if(editNasabah.nm_nasabah == "") {
+			errorsEdit.nm_nasabah = "Nama Harus Diisi";
+		}
+
+		if(editNasabah.jk == "") {
+			errorsEdit.jk = "Jenis Kelamin Harus Dipilih";	
+		}
+
+		if(editNasabah.no_hp == "") {
+			errorsEdit.no_hp = "No Handphone Harus Diisi";
+		}
+
+		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+		if(editNasabah.email == "" || reg.test(editNasabah.email) === false) {
+			errorsEdit.email = "Email Tidak Valid";
+		}
+
+		if(errorsEdit.nm_nasabah || errorsEdit.jk || errorsEdit.no_hp || errorsEdit.email) {
+			this.setState({errorsEdit});
+		} else {
+			axios.post(`http://${window.location.host}/api/update-nasabah`, editNasabah)
+			.then((response) => {
+				this.setState({
+					status:response.data.status,
+					message:response.data.message,
+				}, ()=>this.getNasabah())
+			})
+		}	
 	}
 
 
 
 	render() {
-		const {dataNasabahBaru, dataUsersBaru, status, message} = this.state;
+		const {dataNasabahBaru, dataUsersBaru, status, message, errors, errorsEdit} = this.state;
 
 		let sendMessage = "";
 		if(status == 200) {
@@ -259,6 +342,7 @@ class Nasabah extends React.Component{
 								onChangeHandler={this.onChangeHandler}
 								dataNasabahBaru={dataNasabahBaru}
 								dataUsersBaru={dataUsersBaru}
+								errors={errors}
 							/>
 
 						</div>
@@ -266,15 +350,18 @@ class Nasabah extends React.Component{
 							editNasabah={this.state.editNasabah}
 							onChangeEditHandler={this.onChangeEditHandler}
 							updateNasabah={this.updateNasabah}
+							errorsEdit={errorsEdit}
 						/>
 						<div className="card-body">
 							{sendMessage}
-							<ReactDatatable
-								className="table table-dark table-bordered"
-								config={this.config}
-								columns={this.columns}
-								records={this.state.nasabah}
-							/>
+							<div>
+								<ReactDatatable
+									className="table table-dark table-bordered table-responsive"
+									config={this.config}
+									columns={this.columns}
+									records={this.state.nasabah}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>

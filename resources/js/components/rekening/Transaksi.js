@@ -61,7 +61,7 @@ class Transaksi extends Component {
 						        				onChange={this.props.onChangeTransaksiHandler}
 						        				checked={this.props.dataTransaksi.jenis_transaksi == "Setor" ? 'checked' : ''}
 						        			/>
-						        			<label className="form-check-label">Setor</label>
+						        			<label className="form-check-label">Setor Tunai</label>
 					        			</div>
 					        			<div className="form-check mr-3">
 						        			<input
@@ -72,7 +72,7 @@ class Transaksi extends Component {
 						        				onChange={this.props.onChangeTransaksiHandler}
 						        				checked={this.props.dataTransaksi.jenis_transaksi == "Tarik" ? 'checked' : ''}
 						        			/>
-						        			<label className="form-check-label">Tarik</label>
+						        			<label className="form-check-label">Tarik Tunai</label>
 					        			</div>
 				        			</div>
 				        		</div>

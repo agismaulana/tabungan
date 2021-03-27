@@ -246,7 +246,6 @@ class RekeningController extends Controller
     public function exportPdf($no_rekening, Request $request) {
 
         $mpdf = new \Mpdf\Mpdf();
-
         $mulai_tanggal = $request->mulai_tanggal;
         $sampai_tanggal = $request->sampai_tanggal;
 
@@ -256,9 +255,7 @@ class RekeningController extends Controller
                      ->get();
 
         $saldoTambah = Transaksi::select(
-                             DB::raw("(sum(if(jenis_transaksi = 'Setor', nominal, 0)) 
-                                      + sum(if(transfer.no_rekening = ".$no_rekening." && status = 'berhasil', nominal, 0))) as saldo_tambah")
-                            )
+                            DB::raw("sum(if(jenis_transaksi = 'Setor', nominal, 0)) as saldo_tambah"))
                             ->leftJoin('transfer', 
                                     'transfer.id_transaksi', 
                                     '=', 
@@ -266,6 +263,11 @@ class RekeningController extends Controller
                             ->where('transaksi.no_rekening', $no_rekening)
                             ->whereBetween('transaksi.waktu', [$mulai_tanggal, $sampai_tanggal])
                             ->first();
+
+        $saldoTransfer = Transfer::select(DB::raw("sum(if(transfer.no_rekening = ".$no_rekening.", nominal, 0)) as saldo_transfer"))
+                            ->where('transfer.no_rekening',$no_rekening)
+                            ->leftJoin('transaksi', 'transaksi.id_transaksi', '=', 'transfer.id_transaksi')
+                            ->first(); 
 
         $saldoKurang = Transaksi::select(
                             DB::raw("
@@ -297,6 +299,10 @@ class RekeningController extends Controller
                    ->join('nasabah', 'nasabah.kd_nasabah', '=', 'rekening.kd_nasabah')
                    ->first();
 
+        $saldoSetor = $saldoTambah->saldo_tambah != 0 ? $saldoTambah->saldo_tambah : 0;
+        $saldoPenarikan = $saldoKurang->saldo_kurang != 0 ? $saldoKurang->saldo_kurang : 0;
+        $transferSaldo = $saldoTransfer->saldo_transfer != 0 ? $saldoTransfer->saldo_transfer : 0;
+
         $html = "<div>
                     <center>
                         <p align='center'>My Deposits</p>
@@ -314,16 +320,27 @@ class RekeningController extends Controller
                         </tr>
                         ".$recordtransaksi."
                         <tr>
+                            <td colspan='3'>Saldo Setor</td>
+                            <td>Rp.".$saldoSetor."</td>
+                        </tr>
+                        <tr>
+                            <td colspan='3'>Saldo Transfer Dari Rekening Lain</td>
+                            <td>Rp.".$transferSaldo."</td>
+                        </tr>
+                        <tr>
+                            <td colspan='3'>Saldo Penarikan Dan Transfer</td>
+                            <td>Rp.".$saldoPenarikan."</td>
+                        </tr>
+                        <tr>
                             <td colspan='3'>Saldo Tabungan</td>
-                            <td>Rp.".$saldoTambah->saldo_tambah - $saldoKurang->saldo_kurang."</td>
+                            <td>Rp.".$saldoSetor + $transferSaldo - $saldoPenarikan."</td>
                         </tr>
                     </table>
                 </div>";
 
         $mpdf->writeHTML($html);
         $file = $mpdf->output();
-        return response()
-               ->download($file);
+        return response()->download($file);
     }
 
     public function cetakStruk($id_transaksi) {
@@ -344,10 +361,10 @@ class RekeningController extends Controller
             $jenisPembayaran = "<td>".$transaksi->jenis_pembayaran."</td>
                                  <td>".$transaksi->transfer_rekening."</td>";
             $total = "<td colspan='4'>Total Transaksi</td>
-                      <td>".$transaksi->nominal."</td>";
+                      <td>Rp.".$transaksi->nominal."</td>";
         } else {
             $total = "<td colspan='2'>Total Transaksi</td>
-                      <td>".$transaksi->nominal."</td>";
+                      <td>Rp.".$transaksi->nominal."</td>";
         }
 
         $html = "<div>
@@ -371,7 +388,7 @@ class RekeningController extends Controller
                             <td>".$transaksi->waktu."</td>
                             <td>".$transaksi->jenis_transaksi."</td>
                             ".$jenisPembayaran."
-                            <td>".$transaksi->nominal."</td>
+                            <td>Rp.".$transaksi->nominal."</td>
                         </tr>
                         <tr>
                             ".$total."
@@ -379,6 +396,7 @@ class RekeningController extends Controller
                     </table>
                 </div>";
         $mpdf->writeHTML($html);
-        $mpdf->output();
+        $file = $mpdf->output();
+        return response()->download($file);
     }
 }

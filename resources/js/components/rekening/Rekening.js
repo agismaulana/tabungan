@@ -105,7 +105,7 @@ class Rekening extends Component {
 							status: "",
 							message: "",
 						})
-					}, 2000)
+					}, 3000)
 				}
 			})
 		}
@@ -136,6 +136,11 @@ class Rekening extends Component {
 		axios.post(`http://${window.location.host}/api/edit-rekening`, editRekening)
 		.then((response) => {
 			this.setState({
+				editRekening: {
+					no_rekening: "",
+					pin_lama: "",
+					pin_baru: "",
+				},
 				status: response.data.status,
 				message: response.data.message,
 			}, () => this.getRekening());
@@ -154,7 +159,7 @@ class Rekening extends Component {
 			sendMessage = "";
 		}
 
-		if(localStorage.level == "nasabah") {
+		if(localStorage.level == "Nasabah") {
 			return <Redirect to="/home" />
 		}
 

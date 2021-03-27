@@ -101,6 +101,15 @@ class Pegawai extends Component {
 				alamat: "",
 				id_users: "",
 			},
+			errors: {
+				nm_pegawai: "",
+				jk: "",
+				no_hp: "",
+				email: "",
+				alamat: "",
+				username: "",
+				password: "",
+			},
 			dataUsersBaru: {
 				id_users: "",
 				username: "",
@@ -115,6 +124,13 @@ class Pegawai extends Component {
 				email: "",
 				alamat: "",
 				id_users: "",	
+			},
+			errorsEdit: {
+				nm_pegawai: "",
+				jk: "",
+				no_hp: "",
+				email: "",
+				alamat: "",
 			},
 			status: "",
 			message: "",
@@ -165,42 +181,77 @@ class Pegawai extends Component {
 					status: "",
 					message: "",
 				})
-			}, 1500)
+			}, 3000)
 		}
 	}
 
 	onChangeHandler = (e) => {
-		let {dataPegawaiBaru, dataUsersBaru} = this.state;
+		let {dataPegawaiBaru, dataUsersBaru, errors} = this.state;
+		errors[e.target.name] = "";
 		dataPegawaiBaru[e.target.name] = e.target.value;
 		dataUsersBaru[e.target.name] = e.target.value;
 		this.setState({dataPegawaiBaru, dataUsersBaru});
 	} 
 
 	tambahPegawai = (e) => {
-		let {dataPegawaiBaru, dataUsersBaru} = this.state;
+		let {dataPegawaiBaru, dataUsersBaru, errors} = this.state;
 
-		axios.post(`http://${window.location.host}/api/tambah-pegawai`, dataPegawaiBaru, dataUsersBaru)
-		.then((response) => {
-			this.setState({
-				dataPegawaiBaru: {
-					kd_pegawai: "",
-					nm_pegawai: "",
-					jk: "",
-					no_hp: "",
-					email: "",
-					alamat: "",
-					id_users: "",
-				},
-				dataUsersBaru: {
-					id_users: "",
-					username: "",
-					password: "",
-					level: "",
-				},
-				status: response.status,
-				message: response.data.message,
-			}, () => this.getPegawai());
-		})
+		if(dataPegawaiBaru.nm_pegawai == "") {
+			errors.nm_pegawai = "Nama Harus Diisi";
+		}
+
+		if(dataPegawaiBaru.jk == "") {
+			errors.jk = "Jenis Kelamin Harus Dipilih";	
+		}
+
+		if(dataPegawaiBaru.no_hp == "") {
+			errors.no_hp = "No Handphone Harus Diisi";
+		}
+
+		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+		if(dataPegawaiBaru.email == "" || reg.test(dataPegawaiBaru.email) === false) {
+			errors.email = "Email Tidak Valid";
+		}
+
+		if(dataUsersBaru.username == "") {
+			errors.username = "Username Harus Diisi";
+		}
+
+		if(dataUsersBaru.password == "") {
+			errors.password = "Password Harus Diisi";
+		}
+
+		if(dataUsersBaru.pin == "") {
+			errors.pin = "Pin Harus Diisi";
+		}
+
+		if(errors.nm_pegawai || errors.jk || errors.no_hp || errors.email || errors.username || errors.password || errors.pin) {
+			this.setState({errors});
+		} else {
+			axios.post(`http://${window.location.host}/api/tambah-pegawai`, dataPegawaiBaru, dataUsersBaru)
+			.then((response) => {
+				this.setState({
+					dataPegawaiBaru: {
+						kd_pegawai: "",
+						nm_pegawai: "",
+						jk: "",
+						no_hp: "",
+						email: "",
+						alamat: "",
+						id_users: "",
+					},
+					dataUsersBaru: {
+						id_users: "",
+						username: "",
+						password: "",
+						level: "",
+					},
+					status: response.data.status,
+					message: response.data.message,
+				}, () => this.getPegawai());
+			})
+		}
 	}
 
 	editPegawai = (kd_pegawai) => {
@@ -215,26 +266,55 @@ class Pegawai extends Component {
 					email: response.data.data.email,
 					alamat: response.data.data.alamat,
 					id_users: response.data.data.id_users,
-				}
+				}, errorsEdit: {
+					nm_pegawai: "",
+					jk: "",
+					no_hp: "",
+					email: "",
+					alamat: "",
+				},
 			})
 		})
 	}
 
 	onChangeEditHandler = (e) => {
-		let {editPegawai} = this.state;
+		let {editPegawai, errorsEdit} = this.state;
+		errorsEdit[e.target.name] = "";
 		editPegawai[e.target.name] = e.target.value;
 		this.setState({editPegawai});
 	}
 
 	updatePegawai = () => {
-		let {editPegawai} = this.state;
-		axios.post(`http://${window.location.host}/api/update-pegawai`, editPegawai)
-		.then((response) => {
-			this.setState({
-				status: response.status,
-				message: response.data.message,
-			}, () => this.getPegawai());
-		})
+		let {editPegawai, errorsEdit} = this.state;
+		if(editPegawai.nm_pegawai == "") {
+			errorsEdit.nm_pegawai = "Nama Harus Diisi";
+		}
+
+		if(editPegawai.jk == "") {
+			errorsEdit.jk = "Jenis Kelamin Harus Dipilih";	
+		}
+
+		if(editPegawai.no_hp == "") {
+			errorsEdit.no_hp = "No Handphone Harus Diisi";
+		}
+
+		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+		if(editPegawai.email == "" || reg.test(editPegawai.email) === false) {
+			errorsEdit.email = "Email Tidak Valid";
+		}
+
+		if(errorsEdit.nm_pegawai || errorsEdit.jk || errorsEdit.no_hp || errorsEdit.email) {
+			this.setState({errorsEdit});
+		} else {
+			axios.post(`http://${window.location.host}/api/update-pegawai`, editPegawai)
+			.then((response) => {
+				this.setState({
+					status: response.data.status,
+					message: response.data.message,
+				}, () => this.getPegawai());
+			})
+		}
 	}
 
 
@@ -251,7 +331,7 @@ class Pegawai extends Component {
 
 	render() {
 
-		const {dataPegawaiBaru, dataUsersBaru, status, message} = this.state;
+		const {dataPegawaiBaru, dataUsersBaru, status, message, errors, errorsEdit} = this.state;
 
 		let sendMessage = "";
 		if(status == 200) {
@@ -276,6 +356,7 @@ class Pegawai extends Component {
 							dataPegawaiBaru={dataPegawaiBaru}
 							dataUsersBaru={dataUsersBaru}
 							onChangeHandler={this.onChangeHandler}
+							errors={errors}
 						/>
 					</div>
 
@@ -283,6 +364,7 @@ class Pegawai extends Component {
 						editPegawai={this.state.editPegawai}
 						onChangeEditHandler={this.onChangeEditHandler}
 						updatePegawai={this.updatePegawai}
+						errorsEdit={errorsEdit}
 					/>
 
 					<div className="card-body">

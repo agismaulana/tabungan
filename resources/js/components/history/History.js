@@ -120,7 +120,7 @@ class History extends Component {
 					status: "",
 					message: "",
 				})
-			}, 1500)
+			}, 3000)
 		}
 	}
 

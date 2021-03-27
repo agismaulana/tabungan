@@ -13510,6 +13510,10 @@ var Login = /*#__PURE__*/function (_Component) {
         username: "",
         password: ""
       },
+      errors: {
+        usernameErrors: "",
+        passwordErrors: ""
+      },
       redirect: false,
       status: "",
       message: ""
@@ -13540,6 +13544,10 @@ var Login = /*#__PURE__*/function (_Component) {
         dataLogin: {
           username: e.target.value,
           password: this.state.dataLogin.password
+        },
+        errors: {
+          usernameErrors: "",
+          passwordErrors: this.state.errors.passwordErrors
         }
       });
     }
@@ -13550,6 +13558,10 @@ var Login = /*#__PURE__*/function (_Component) {
         dataLogin: {
           username: this.state.dataLogin.username,
           password: e.target.value
+        },
+        errors: {
+          usernameErrors: this.state.errors.usernameErrors,
+          passwordErrors: ""
         }
       });
     }
@@ -13573,53 +13585,72 @@ var Login = /*#__PURE__*/function (_Component) {
       var _this3 = this;
 
       e.preventDefault();
+      var _this$state = this.state,
+          dataLogin = _this$state.dataLogin,
+          errors = _this$state.errors;
       var login = {
-        username: this.state.dataLogin.username,
-        password: this.state.dataLogin.password
+        username: dataLogin.username,
+        password: dataLogin.password
       };
-      axios.post("http://".concat(window.location.host, "/api/send-login"), login).then(function (response) {
-        var login = _this3.state.login;
 
-        var userBaru = _toConsumableArray(login);
+      if (dataLogin.username == "") {
+        errors.usernameErrors = "Username Harus Diisi";
+      }
 
-        _this3.setState({
-          dataLogin: {
-            username: "",
-            password: ""
-          }
+      if (dataLogin.password == "") {
+        errors.passwordErrors = "Password Harus Diisi";
+      }
+
+      if (errors.UsernameErrors || errors.passwordErrors) {
+        this.setState({
+          errors: errors
         });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/send-login"), login).then(function (response) {
+          var login = _this3.state.login;
 
-        if (response.data.status == 200) {
-          localStorage.setItem('id_users', response.data.user.id_users);
-          localStorage.setItem('nama', response.data.user.username);
-          localStorage.setItem('level', response.data.user.level);
+          var userBaru = _toConsumableArray(login);
 
-          if (localStorage.length > 0) {
-            _this3.setState({
-              redirect: true
-            });
-          }
-        } else {
           _this3.setState({
             dataLogin: {
               username: "",
               password: ""
-            },
-            status: response.data.status,
-            message: response.data.message
-          }, function () {
-            return _this3.timeStatus();
+            }
           });
-        }
-      });
+
+          if (response.data.status == 200) {
+            localStorage.setItem('id_users', response.data.user.id_users);
+            localStorage.setItem('nama', response.data.user.username);
+            localStorage.setItem('level', response.data.user.level);
+
+            if (localStorage.length > 0) {
+              _this3.setState({
+                redirect: true
+              });
+            }
+          } else {
+            _this3.setState({
+              dataLogin: {
+                username: "",
+                password: ""
+              },
+              status: response.data.status,
+              message: response.data.message
+            }, function () {
+              return _this3.timeStatus();
+            });
+          }
+        });
+      }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this$state = this.state,
-          dataLogin = _this$state.dataLogin,
-          status = _this$state.status,
-          message = _this$state.message;
+      var _this$state2 = this.state,
+          dataLogin = _this$state2.dataLogin,
+          status = _this$state2.status,
+          message = _this$state2.message,
+          errors = _this$state2.errors;
 
       if (localStorage.length > 0) {
         if (this.state.redirect) {
@@ -13670,23 +13701,29 @@ var Login = /*#__PURE__*/function (_Component) {
                     }), " MyDeposits"]
                   }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("form", {
                     onSubmit: this.handleSubmit,
-                    children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                    children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                       className: "form-group",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
                         className: "form-control bg-dark text-white",
                         placeholder: "Username",
                         value: dataLogin.username,
                         onChange: this.handleChangeUsername
-                      })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
+                        className: "text-danger",
+                        children: errors.usernameErrors
+                      })]
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                       className: "form-group",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
                         type: "password",
                         className: "form-control bg-dark text-white",
                         placeholder: "Password",
                         value: dataLogin.password,
                         onChange: this.handleChangePassword
-                      })
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
+                        className: "text-danger",
+                        children: errors.passwordErrors
+                      })]
                     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
                       type: "submit",
                       className: "btn btn-primary btn-block mb-3",
@@ -14009,17 +14046,10 @@ var Navbar = /*#__PURE__*/function (_Component) {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
               className: "modal-content bg-dark",
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
-                className: "modal-header",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h5", {
-                  className: "modal-title font-weigth-bold text-white",
-                  id: "exampleModalLabel",
-                  children: "Modal Log Out"
-                })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                 className: "modal-body",
                 children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h4", {
                   className: "text-white",
-                  children: "Apakah Anda Yakin Log Out!!!!"
+                  children: "Anda Yakin Ingin Log Out?"
                 })
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                 className: "modal-footer",
@@ -14027,7 +14057,7 @@ var Navbar = /*#__PURE__*/function (_Component) {
                   type: "button",
                   className: "btn btn-danger",
                   "data-dismiss": "modal",
-                  children: "Close"
+                  children: "Tidak"
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("a", {
                   href: "/logout",
                   className: "btn btn-success",
@@ -14061,9 +14091,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14138,252 +14168,252 @@ var Sidebar = /*#__PURE__*/function (_Component) {
 
       if (localStorage.length > 0) {
         if (localStorage.level == "Administrator") {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
             className: "sidebar",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("ul", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("ul", {
               className: "sidebar-menu",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Home"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: window.location.pathname == "/home" ? 'sidebar-item active' : 'sidebar-item',
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/home",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faHome
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faHome
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Home"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Management"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: window.location.pathname == "/pegawai" ? 'sidebar-item active' : 'sidebar-item',
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/pegawai",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faUserTie
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faUserTie
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Pegawai"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: window.location.pathname == "/nasabah" ? 'sidebar-item active' : 'sidebar-item',
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/nasabah",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faFileInvoice
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faFileInvoice
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Nasabah"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: window.location.pathname == "/user" ? 'sidebar-item active' : 'sidebar-item',
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/user",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faUsers
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faUsers
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "User"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Entri"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: window.location.pathname == "/rekening" || url[1] == "buka-rekening" ? 'sidebar-item active' : 'sidebar-item',
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/rekening",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faCreditCard
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faCreditCard
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Rekening"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: window.location.pathname == "/history" ? 'sidebar-item active' : 'sidebar-item',
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/history",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faHistory
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faHistory
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "History Transaksi"
                     })]
                   })
                 })
               })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
               className: "footer",
               children: "copyright \xA9 MyDeposits2021"
             })]
           });
         } else if (localStorage.level == "Operator") {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
             className: "sidebar",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("ul", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("ul", {
               className: "sidebar-menu",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Home"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: "sidebar-item active",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/home",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faHome
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faHome
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Home"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Management"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: "sidebar-item",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/nasabah",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faFileInvoice
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faFileInvoice
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Nasabah"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Entri"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: "sidebar-item",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/rekening",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faCreditCard
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faCreditCard
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Rekening"
                     })]
                   })
                 })
               })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
               className: "footer",
               children: "copyright \xA9 MyDeposits2021"
             })]
           });
         } else {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
             className: "sidebar",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("ul", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("ul", {
               className: "sidebar-menu",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Home"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: "sidebar-item active",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: "/home",
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faHome
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faHome
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Home"
                     })]
                   })
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                 className: "sidebar-title",
                 children: "Entri"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("li", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
                 className: "sidebar-item",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
                   to: '/buka-rekening/' + no_rekening,
                   className: "sidebar-link",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
                     className: "icon",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                       className: "sidebar-icon-box",
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faCreditCard
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faCreditCard
                       })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
                       children: "Rekening"
                     })]
                   })
                 })
               })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
               className: "footer",
               children: "copyright \xA9 MyDeposits2021"
             })]
           });
         }
       } else {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
           to: "/logout"
         });
       }
@@ -14411,9 +14441,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 /* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14547,11 +14577,11 @@ var History = /*#__PURE__*/function (_Component) {
       sortable: true,
       cell: function cell(record) {
         if (record.jenis_pembayaran == null) {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
             children: "-"
           });
         } else {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
             children: record.jenis_pembayaran
           });
         }
@@ -14563,11 +14593,11 @@ var History = /*#__PURE__*/function (_Component) {
       sortable: true,
       cell: function cell(record) {
         if (record.no_rekening == null) {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
             children: "-"
           });
         } else {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
             children: record.no_rekening
           });
         }
@@ -14578,7 +14608,7 @@ var History = /*#__PURE__*/function (_Component) {
       text: "Status",
       cell: function cell(record, index) {
         if (record.status == "menunggu konfirmasi") {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
             className: "btn btn-primary btn-md",
             onClick: function onClick() {
               _this.konfirmasi(record.id_transfer);
@@ -14586,7 +14616,7 @@ var History = /*#__PURE__*/function (_Component) {
             children: "Konfirmasi"
           });
         } else {
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
             className: "badge badge-success badge-md p-2",
             children: "Berhasil"
           });
@@ -14633,7 +14663,7 @@ var History = /*#__PURE__*/function (_Component) {
             status: "",
             message: ""
           });
-        }, 1500);
+        }, 3000);
       }
     }
   }, {
@@ -14648,7 +14678,7 @@ var History = /*#__PURE__*/function (_Component) {
           dateGenerate = _this$state.dateGenerate;
 
       if (localStorage.level != "Administrator") {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
           to: "/home"
         });
       }
@@ -14656,13 +14686,13 @@ var History = /*#__PURE__*/function (_Component) {
       var sendMessage = "";
 
       if (status == 200) {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
           className: "alert alert-success",
           role: "alert",
           children: message
         });
       } else if (status == "failed") {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
           className: "alert alert-danger",
           role: "alert",
           children: message
@@ -14674,56 +14704,56 @@ var History = /*#__PURE__*/function (_Component) {
       var buttonLaporan = "";
 
       if (localStorage.level == "Administrator") {
-        buttonLaporan = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        buttonLaporan = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
           className: "d-flex",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("a", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("a", {
             href: "http://" + window.location.host + "/api/exportExcelHistory",
             className: "btn btn-success btn-md mr-2",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__.faFileExcel
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__.faFileExcel
             }), " Export Excel"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("button", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("button", {
               className: "btn btn-danger",
               "data-target": "#modalPdf",
               "data-toggle": "modal",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
-                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__.faFilePdf
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__.FontAwesomeIcon, {
+                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__.faFilePdf
               }), " Export Pdf"]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
               className: "modal fade",
               id: "modalPdf",
               tabIndex: "-1",
               "aria-labelledby": "exampleModalLabel",
               "aria-hidden": "true",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
                 className: "modal-dialog col-md-12",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
                   className: "modal-content bg-dark",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
                     className: "modal-header",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h5", {
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h5", {
                       className: "modal-title font-weigth-bold",
                       id: "exampleModalLabel",
                       children: "Transaksi"
                     })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
                     className: "modal-body",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
                       className: "form-group",
-                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("label", {
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("label", {
                         htmlFor: "mulai_tanggal",
                         children: "Mulai Tanggal"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("input", {
                         type: "date",
                         className: "form-control bg-dark text-white",
                         name: "mulai_tanggal",
                         value: dateGenerate.mulai_tanggal,
                         onChange: this.onhandleDateGenerate
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("label", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("label", {
                         htmlFor: "mulai_tanggal",
                         children: "Sampai Tanggal"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("input", {
                         type: "date",
                         className: "form-control bg-dark text-white",
                         name: "sampai_tanggal",
@@ -14731,14 +14761,14 @@ var History = /*#__PURE__*/function (_Component) {
                         onChange: this.onhandleDateGenerate
                       })]
                     })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
                     className: "modal-footer",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
                       type: "button",
                       className: "btn btn-danger",
                       "data-dismiss": "modal",
                       children: "Tidak"
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
                       type: "button",
                       className: "btn btn-success",
                       onClick: function onClick() {
@@ -14757,21 +14787,21 @@ var History = /*#__PURE__*/function (_Component) {
         buttonLaporan = "";
       }
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
           className: "card bg-dark",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
             className: "card-header",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
               className: "d-flex justify-content-between align-items-center",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h4", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h4", {
                 children: "History Transaksi"
               }), buttonLaporan]
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
             className: "card-body",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
-              children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_2__.default, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+              children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_2__.default, {
                 className: "table table-dark table-bordered table-responsive",
                 records: transaksi,
                 columns: this.columns,
@@ -15177,6 +15207,9 @@ var EditNasabah = /*#__PURE__*/function (_Component) {
                     name: "nm_nasabah",
                     value: this.props.editNasabah.nm_nasabah,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.nm_nasabah
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
@@ -15189,6 +15222,9 @@ var EditNasabah = /*#__PURE__*/function (_Component) {
                     name: "email",
                     value: this.props.editNasabah.email,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.email
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
@@ -15202,10 +15238,13 @@ var EditNasabah = /*#__PURE__*/function (_Component) {
                     maxLength: "12",
                     value: this.props.editNasabah.no_hp,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.no_hp
                   })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                     className: "d-flex",
                     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                       className: "form-check mr-3",
@@ -15234,7 +15273,10 @@ var EditNasabah = /*#__PURE__*/function (_Component) {
                         children: "Perempuan"
                       })]
                     })]
-                  })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.jk
+                  })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
@@ -15261,7 +15303,7 @@ var EditNasabah = /*#__PURE__*/function (_Component) {
                   onClick: function onClick() {
                     return _this.props.updateNasabah();
                   },
-                  "data-dismiss": "modal",
+                  "data-dismiss": this.props.editNasabah.nm_nasabah != "" && this.props.editNasabah.email != "" && this.props.editNasabah.no_hp != "" && this.props.editNasabah.jk != "" ? 'modal' : '',
                   children: "Simpan"
                 })]
               })]
@@ -15292,12 +15334,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
-/* harmony import */ var _TambahNasabah__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./TambahNasabah */ "./resources/js/components/nasabah/TambahNasabah.js");
-/* harmony import */ var _EditNasabah__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./EditNasabah */ "./resources/js/components/nasabah/EditNasabah.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
+/* harmony import */ var _TambahNasabah__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./TambahNasabah */ "./resources/js/components/nasabah/TambahNasabah.js");
+/* harmony import */ var _EditNasabah__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./EditNasabah */ "./resources/js/components/nasabah/EditNasabah.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -15356,48 +15398,92 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
     _this.onChangeHandler = function (e) {
       var _this$state = _this.state,
           dataNasabahBaru = _this$state.dataNasabahBaru,
-          dataUsersBaru = _this$state.dataUsersBaru;
+          dataUsersBaru = _this$state.dataUsersBaru,
+          errors = _this$state.errors;
+      errors[e.target.name] = "";
       dataNasabahBaru[e.target.name] = e.target.value;
       dataUsersBaru[e.target.name] = e.target.value;
 
       _this.setState({
         dataNasabahBaru: dataNasabahBaru,
-        dataUsersBaru: dataUsersBaru
+        dataUsersBaru: dataUsersBaru,
+        errors: errors
       });
     };
 
-    _this.tambahNasabah = function (e) {
+    _this.tambahNasabah = function () {
       var _this$state2 = _this.state,
           dataNasabahBaru = _this$state2.dataNasabahBaru,
-          dataUsersBaru = _this$state2.dataUsersBaru;
-      axios.post("http://".concat(window.location.host, "/api/tambah-nasabah"), dataNasabahBaru, dataUsersBaru).then(function (response) {
+          dataUsersBaru = _this$state2.dataUsersBaru,
+          errors = _this$state2.errors;
+
+      if (dataNasabahBaru.nm_nasabah == "") {
+        errors.nm_nasabah = "Nama Harus Diisi";
+      }
+
+      if (dataNasabahBaru.jk == "") {
+        errors.jk = "Jenis Kelamin Harus Dipilih";
+      }
+
+      if (dataNasabahBaru.no_hp == "") {
+        errors.no_hp = "No Handphone Harus Diisi";
+      }
+
+      var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+      if (dataNasabahBaru.email == "" || reg.test(dataNasabahBaru.email) === false) {
+        errors.email = "Email Tidak Valid";
+      }
+
+      if (dataUsersBaru.username == "") {
+        errors.username = "Username Harus Diisi";
+      }
+
+      if (dataUsersBaru.password == "") {
+        errors.password = "Password Harus Diisi";
+      }
+
+      if (dataUsersBaru.pin == "") {
+        errors.pin = "Pin Harus Diisi";
+      }
+
+      if (errors.nm_nasabah || errors.jk || errors.no_hp || errors.email || errors.username || errors.password || errors.pin) {
         _this.setState({
-          dataNasabahBaru: {
-            kd_nasabah: "",
-            nm_nasabah: "",
-            jk: "",
-            no_hp: "",
-            email: "",
-            alamat: "",
-            id_users: ""
-          },
-          dataUsersBaru: {
-            id_users: "",
-            username: "",
-            password: "",
-            level: "",
-            pin: ""
-          },
-          status: response.status,
-          message: response.data.message
-        }, function () {
-          return _this.getNasabah();
+          errors: errors
         });
-      });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/tambah-nasabah"), dataNasabahBaru, dataUsersBaru).then(function (response) {
+          _this.setState({
+            dataNasabahBaru: {
+              kd_nasabah: "",
+              nm_nasabah: "",
+              jk: "",
+              no_hp: "",
+              email: "",
+              alamat: "",
+              id_users: ""
+            },
+            dataUsersBaru: {
+              id_users: "",
+              username: "",
+              password: "",
+              level: "",
+              pin: ""
+            },
+            status: response.data.status,
+            message: response.data.message
+          }, function () {
+            return _this.getNasabah();
+          });
+        });
+      }
     };
 
     _this.onChangeEditHandler = function (e) {
-      var editNasabah = _this.state.editNasabah;
+      var _this$state3 = _this.state,
+          editNasabah = _this$state3.editNasabah,
+          errorsEdit = _this$state3.errorsEdit;
+      errorsEdit[e.target.name] = "";
       editNasabah[e.target.name] = e.target.value;
 
       _this.setState({
@@ -15416,21 +15502,55 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
             email: response.data.data.email,
             alamat: response.data.data.alamat,
             id_users: response.data.data.id_users
+          },
+          errorsEdit: {
+            nm_nasabah: "",
+            jk: "",
+            no_hp: "",
+            email: "",
+            alamat: ""
           }
         });
       });
     };
 
     _this.updateNasabah = function () {
-      var editNasabah = _this.state.editNasabah;
-      axios.post("http://".concat(window.location.host, "/api/update-nasabah"), editNasabah).then(function (response) {
+      var _this$state4 = _this.state,
+          editNasabah = _this$state4.editNasabah,
+          errorsEdit = _this$state4.errorsEdit;
+
+      if (editNasabah.nm_nasabah == "") {
+        errorsEdit.nm_nasabah = "Nama Harus Diisi";
+      }
+
+      if (editNasabah.jk == "") {
+        errorsEdit.jk = "Jenis Kelamin Harus Dipilih";
+      }
+
+      if (editNasabah.no_hp == "") {
+        errorsEdit.no_hp = "No Handphone Harus Diisi";
+      }
+
+      var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+      if (editNasabah.email == "" || reg.test(editNasabah.email) === false) {
+        errorsEdit.email = "Email Tidak Valid";
+      }
+
+      if (errorsEdit.nm_nasabah || errorsEdit.jk || errorsEdit.no_hp || errorsEdit.email) {
         _this.setState({
-          status: response.status,
-          message: response.data.message
-        }, function () {
-          return _this.getNasabah();
+          errorsEdit: errorsEdit
         });
-      });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/update-nasabah"), editNasabah).then(function (response) {
+          _this.setState({
+            status: response.data.status,
+            message: response.data.message
+          }, function () {
+            return _this.getNasabah();
+          });
+        });
+      }
     };
 
     _this.columns = [{
@@ -15463,16 +15583,16 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       className: "status",
       text: "Status",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("label", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("label", {
             className: "switch",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
               type: "checkbox",
               onChange: function onChange() {
                 _this.changeStatus(record.kd_nasabah);
               },
               checked: record.status == "Aktif" ? "checked" : ""
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
               className: "slider round"
             })]
           })
@@ -15484,17 +15604,17 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       text: "Action",
       cell: function cell(record, index) {
         var kd_nasabah = record.kd_nasabah;
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "d-flex",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
             className: "btn btn-success btn-sm",
             "data-target": "#modalEdit",
             "data-toggle": "modal",
             onClick: function onClick() {
               _this.editNasabah(kd_nasabah);
             },
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faEdit
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faEdit
             }), " Edit"]
           })
         });
@@ -15517,12 +15637,29 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
         alamat: "",
         id_users: ""
       },
+      errors: {
+        nm_nasabah: "",
+        jk: "",
+        no_hp: "",
+        email: "",
+        alamat: "",
+        username: "",
+        password: "",
+        pin: ""
+      },
       dataUsersBaru: {
         id_users: "",
         username: "",
         password: "",
         level: "",
         pin: ""
+      },
+      errorsEdit: {
+        nm_nasabah: "",
+        jk: "",
+        no_hp: "",
+        email: "",
+        alamat: ""
       },
       editNasabah: {
         kd_nasabah: "",
@@ -15569,27 +15706,29 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
             status: "",
             message: ""
           });
-        }, 1500);
+        }, 3000);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this$state3 = this.state,
-          dataNasabahBaru = _this$state3.dataNasabahBaru,
-          dataUsersBaru = _this$state3.dataUsersBaru,
-          status = _this$state3.status,
-          message = _this$state3.message;
+      var _this$state5 = this.state,
+          dataNasabahBaru = _this$state5.dataNasabahBaru,
+          dataUsersBaru = _this$state5.dataUsersBaru,
+          status = _this$state5.status,
+          message = _this$state5.message,
+          errors = _this$state5.errors,
+          errorsEdit = _this$state5.errorsEdit;
       var sendMessage = "";
 
       if (status == 200) {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "alert alert-success",
           role: "alert",
           children: message
         });
       } else if (status == "failed") {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "alert alert-danger",
           role: "alert",
           children: message
@@ -15599,37 +15738,41 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       }
 
       if (localStorage.level == "nasabah") {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
           to: "/home"
         });
       }
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "container mb-5",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
             className: "card bg-dark mt-2",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
               className: "card-header d-flex justify-content-between align-items-center",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h4", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h4", {
                 children: "Data Nasabah"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_TambahNasabah__WEBPACK_IMPORTED_MODULE_4__.default, {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_TambahNasabah__WEBPACK_IMPORTED_MODULE_5__.default, {
                 tambahNasabah: this.tambahNasabah,
                 onChangeHandler: this.onChangeHandler,
                 dataNasabahBaru: dataNasabahBaru,
-                dataUsersBaru: dataUsersBaru
+                dataUsersBaru: dataUsersBaru,
+                errors: errors
               })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_EditNasabah__WEBPACK_IMPORTED_MODULE_5__.default, {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_EditNasabah__WEBPACK_IMPORTED_MODULE_6__.default, {
               editNasabah: this.state.editNasabah,
               onChangeEditHandler: this.onChangeEditHandler,
-              updateNasabah: this.updateNasabah
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              updateNasabah: this.updateNasabah,
+              errorsEdit: errorsEdit
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
               className: "card-body",
-              children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__.default, {
-                className: "table table-dark table-bordered",
-                config: this.config,
-                columns: this.columns,
-                records: this.state.nasabah
+              children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__.default, {
+                  className: "table table-dark table-bordered table-responsive",
+                  config: this.config,
+                  columns: this.columns,
+                  records: this.state.nasabah
+                })
               })]
             })]
           })
@@ -15745,6 +15888,9 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                       name: "username",
                       value: this.props.dataUsersBaru.username,
                       onChange: this.props.onChangeHandler
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                      className: "text-danger",
+                      children: this.props.errors.username
                     })]
                   }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                     className: "form-group",
@@ -15758,6 +15904,9 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                       name: "password",
                       value: this.props.dataUsersBaru.password,
                       onChange: this.props.onChangeHandler
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                      className: "text-danger",
+                      children: this.props.errors.password
                     })]
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
@@ -15771,6 +15920,9 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                     name: "nm_nasabah",
                     value: this.props.dataNasabahBaru.nm_nasabah,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.nm_nasabah
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
@@ -15783,6 +15935,9 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                     name: "email",
                     value: this.props.dataNasabahBaru.email,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.email
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
@@ -15796,10 +15951,13 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                     maxLength: "12",
                     value: this.props.dataNasabahBaru.no_hp,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.no_hp
                   })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                     className: "d-flex",
                     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                       className: "form-check mr-3",
@@ -15828,7 +15986,10 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                         children: "Perempuan"
                       })]
                     })]
-                  })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.jk
+                  })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("label", {
@@ -15840,6 +16001,9 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                     name: "alamat",
                     value: this.props.dataNasabahBaru.alamat,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.alamat
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
@@ -15854,6 +16018,9 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                     maxLength: "6",
                     value: this.props.dataUsersBaru.pin,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.pin
                   })]
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
@@ -15869,7 +16036,7 @@ var TambahNasabah = /*#__PURE__*/function (_React$Component) {
                   onClick: function onClick() {
                     return _this.props.tambahNasabah();
                   },
-                  "data-dismiss": "modal",
+                  "data-dismiss": this.props.dataUsersBaru.username != "" && this.props.dataUsersBaru.password != "" && this.props.dataUsersBaru.pin != "" && this.props.dataNasabahBaru.nm_nasabah != "" && this.props.dataNasabahBaru.email != "" && this.props.dataNasabahBaru.no_hp != "" && this.props.dataNasabahBaru.jk != "" ? 'modal' : '',
                   children: "Simpan"
                 })]
               })]
@@ -15973,6 +16140,9 @@ var EditPegawai = /*#__PURE__*/function (_Component) {
                     name: "nm_pegawai",
                     value: this.props.editPegawai.nm_pegawai,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.nm_pegawai
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
@@ -15985,6 +16155,9 @@ var EditPegawai = /*#__PURE__*/function (_Component) {
                     name: "email",
                     value: this.props.editPegawai.email,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.email
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
@@ -15998,10 +16171,13 @@ var EditPegawai = /*#__PURE__*/function (_Component) {
                     maxLength: "12",
                     value: this.props.editPegawai.no_hp,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.no_hp
                   })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                     className: "d-flex",
                     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                       className: "form-check mr-3",
@@ -16030,7 +16206,10 @@ var EditPegawai = /*#__PURE__*/function (_Component) {
                         children: "Perempuan"
                       })]
                     })]
-                  })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.jk
+                  })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
@@ -16057,7 +16236,7 @@ var EditPegawai = /*#__PURE__*/function (_Component) {
                   onClick: function onClick() {
                     return _this.props.updatePegawai();
                   },
-                  "data-dismiss": "modal",
+                  "data-dismiss": this.props.editPegawai.nm_pegawai != "" && this.props.editPegawai.email != "" && this.props.editPegawai.no_hp != "" && this.props.editPegawai.jk != "" ? "modal" : "",
                   children: "Simpan"
                 })]
               })]
@@ -16088,12 +16267,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
-/* harmony import */ var _TambahPegawai__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./TambahPegawai */ "./resources/js/components/pegawai/TambahPegawai.js");
-/* harmony import */ var _EditPegawai__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./EditPegawai */ "./resources/js/components/pegawai/EditPegawai.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
+/* harmony import */ var _TambahPegawai__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./TambahPegawai */ "./resources/js/components/pegawai/TambahPegawai.js");
+/* harmony import */ var _EditPegawai__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./EditPegawai */ "./resources/js/components/pegawai/EditPegawai.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -16154,7 +16333,9 @@ var Pegawai = /*#__PURE__*/function (_Component) {
     _this.onChangeHandler = function (e) {
       var _this$state = _this.state,
           dataPegawaiBaru = _this$state.dataPegawaiBaru,
-          dataUsersBaru = _this$state.dataUsersBaru;
+          dataUsersBaru = _this$state.dataUsersBaru,
+          errors = _this$state.errors;
+      errors[e.target.name] = "";
       dataPegawaiBaru[e.target.name] = e.target.value;
       dataUsersBaru[e.target.name] = e.target.value;
 
@@ -16167,30 +16348,68 @@ var Pegawai = /*#__PURE__*/function (_Component) {
     _this.tambahPegawai = function (e) {
       var _this$state2 = _this.state,
           dataPegawaiBaru = _this$state2.dataPegawaiBaru,
-          dataUsersBaru = _this$state2.dataUsersBaru;
-      axios.post("http://".concat(window.location.host, "/api/tambah-pegawai"), dataPegawaiBaru, dataUsersBaru).then(function (response) {
+          dataUsersBaru = _this$state2.dataUsersBaru,
+          errors = _this$state2.errors;
+
+      if (dataPegawaiBaru.nm_pegawai == "") {
+        errors.nm_pegawai = "Nama Harus Diisi";
+      }
+
+      if (dataPegawaiBaru.jk == "") {
+        errors.jk = "Jenis Kelamin Harus Dipilih";
+      }
+
+      if (dataPegawaiBaru.no_hp == "") {
+        errors.no_hp = "No Handphone Harus Diisi";
+      }
+
+      var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+      if (dataPegawaiBaru.email == "" || reg.test(dataPegawaiBaru.email) === false) {
+        errors.email = "Email Tidak Valid";
+      }
+
+      if (dataUsersBaru.username == "") {
+        errors.username = "Username Harus Diisi";
+      }
+
+      if (dataUsersBaru.password == "") {
+        errors.password = "Password Harus Diisi";
+      }
+
+      if (dataUsersBaru.pin == "") {
+        errors.pin = "Pin Harus Diisi";
+      }
+
+      if (errors.nm_pegawai || errors.jk || errors.no_hp || errors.email || errors.username || errors.password || errors.pin) {
         _this.setState({
-          dataPegawaiBaru: {
-            kd_pegawai: "",
-            nm_pegawai: "",
-            jk: "",
-            no_hp: "",
-            email: "",
-            alamat: "",
-            id_users: ""
-          },
-          dataUsersBaru: {
-            id_users: "",
-            username: "",
-            password: "",
-            level: ""
-          },
-          status: response.status,
-          message: response.data.message
-        }, function () {
-          return _this.getPegawai();
+          errors: errors
         });
-      });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/tambah-pegawai"), dataPegawaiBaru, dataUsersBaru).then(function (response) {
+          _this.setState({
+            dataPegawaiBaru: {
+              kd_pegawai: "",
+              nm_pegawai: "",
+              jk: "",
+              no_hp: "",
+              email: "",
+              alamat: "",
+              id_users: ""
+            },
+            dataUsersBaru: {
+              id_users: "",
+              username: "",
+              password: "",
+              level: ""
+            },
+            status: response.data.status,
+            message: response.data.message
+          }, function () {
+            return _this.getPegawai();
+          });
+        });
+      }
     };
 
     _this.editPegawai = function (kd_pegawai) {
@@ -16204,13 +16423,23 @@ var Pegawai = /*#__PURE__*/function (_Component) {
             email: response.data.data.email,
             alamat: response.data.data.alamat,
             id_users: response.data.data.id_users
+          },
+          errorsEdit: {
+            nm_pegawai: "",
+            jk: "",
+            no_hp: "",
+            email: "",
+            alamat: ""
           }
         });
       });
     };
 
     _this.onChangeEditHandler = function (e) {
-      var editPegawai = _this.state.editPegawai;
+      var _this$state3 = _this.state,
+          editPegawai = _this$state3.editPegawai,
+          errorsEdit = _this$state3.errorsEdit;
+      errorsEdit[e.target.name] = "";
       editPegawai[e.target.name] = e.target.value;
 
       _this.setState({
@@ -16219,15 +16448,42 @@ var Pegawai = /*#__PURE__*/function (_Component) {
     };
 
     _this.updatePegawai = function () {
-      var editPegawai = _this.state.editPegawai;
-      axios.post("http://".concat(window.location.host, "/api/update-pegawai"), editPegawai).then(function (response) {
+      var _this$state4 = _this.state,
+          editPegawai = _this$state4.editPegawai,
+          errorsEdit = _this$state4.errorsEdit;
+
+      if (editPegawai.nm_pegawai == "") {
+        errorsEdit.nm_pegawai = "Nama Harus Diisi";
+      }
+
+      if (editPegawai.jk == "") {
+        errorsEdit.jk = "Jenis Kelamin Harus Dipilih";
+      }
+
+      if (editPegawai.no_hp == "") {
+        errorsEdit.no_hp = "No Handphone Harus Diisi";
+      }
+
+      var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+      if (editPegawai.email == "" || reg.test(editPegawai.email) === false) {
+        errorsEdit.email = "Email Tidak Valid";
+      }
+
+      if (errorsEdit.nm_pegawai || errorsEdit.jk || errorsEdit.no_hp || errorsEdit.email) {
         _this.setState({
-          status: response.status,
-          message: response.data.message
-        }, function () {
-          return _this.getPegawai();
+          errorsEdit: errorsEdit
         });
-      });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/update-pegawai"), editPegawai).then(function (response) {
+          _this.setState({
+            status: response.data.status,
+            message: response.data.message
+          }, function () {
+            return _this.getPegawai();
+          });
+        });
+      }
     };
 
     _this.hapusPegawai = function (kd_pegawai) {
@@ -16271,16 +16527,16 @@ var Pegawai = /*#__PURE__*/function (_Component) {
       className: "status",
       text: "Status",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("label", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("label", {
             className: "switch",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
               type: "checkbox",
               onChange: function onChange() {
                 _this.changeStatus(record.kd_pegawai);
               },
               checked: record.status == "Aktif" ? "checked" : ""
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
               className: "slider round"
             })]
           })
@@ -16291,17 +16547,17 @@ var Pegawai = /*#__PURE__*/function (_Component) {
       className: "action",
       text: "Action",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "d-flex",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
             className: "btn btn-success btn-sm",
             "data-target": "#modalEdit",
             "data-toggle": "modal",
             onClick: function onClick() {
               _this.editPegawai(record.kd_pegawai);
             },
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faEdit
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faEdit
             }), " Edit"]
           })
         });
@@ -16324,6 +16580,15 @@ var Pegawai = /*#__PURE__*/function (_Component) {
         alamat: "",
         id_users: ""
       },
+      errors: {
+        nm_pegawai: "",
+        jk: "",
+        no_hp: "",
+        email: "",
+        alamat: "",
+        username: "",
+        password: ""
+      },
       dataUsersBaru: {
         id_users: "",
         username: "",
@@ -16338,6 +16603,13 @@ var Pegawai = /*#__PURE__*/function (_Component) {
         email: "",
         alamat: "",
         id_users: ""
+      },
+      errorsEdit: {
+        nm_pegawai: "",
+        jk: "",
+        no_hp: "",
+        email: "",
+        alamat: ""
       },
       status: "",
       message: ""
@@ -16384,27 +16656,29 @@ var Pegawai = /*#__PURE__*/function (_Component) {
             status: "",
             message: ""
           });
-        }, 1500);
+        }, 3000);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this$state3 = this.state,
-          dataPegawaiBaru = _this$state3.dataPegawaiBaru,
-          dataUsersBaru = _this$state3.dataUsersBaru,
-          status = _this$state3.status,
-          message = _this$state3.message;
+      var _this$state5 = this.state,
+          dataPegawaiBaru = _this$state5.dataPegawaiBaru,
+          dataUsersBaru = _this$state5.dataUsersBaru,
+          status = _this$state5.status,
+          message = _this$state5.message,
+          errors = _this$state5.errors,
+          errorsEdit = _this$state5.errorsEdit;
       var sendMessage = "";
 
       if (status == 200) {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "alert alert-success",
           role: "alert",
           children: message
         });
       } else if (status == "failed") {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "alert alert-danger",
           role: "alert",
           children: message
@@ -16414,31 +16688,33 @@ var Pegawai = /*#__PURE__*/function (_Component) {
       }
 
       if (localStorage.level == "Operator" || localStorage.level == "Nasabah") {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
           to: "/home"
         });
       }
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "card bg-dark",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
             className: "card-header d-flex justify-content-between align-items-center",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h4", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h4", {
               children: "Data Operator"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_TambahPegawai__WEBPACK_IMPORTED_MODULE_4__.default, {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_TambahPegawai__WEBPACK_IMPORTED_MODULE_5__.default, {
               tambahPegawai: this.tambahPegawai,
               dataPegawaiBaru: dataPegawaiBaru,
               dataUsersBaru: dataUsersBaru,
-              onChangeHandler: this.onChangeHandler
+              onChangeHandler: this.onChangeHandler,
+              errors: errors
             })]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_EditPegawai__WEBPACK_IMPORTED_MODULE_5__.default, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_EditPegawai__WEBPACK_IMPORTED_MODULE_6__.default, {
             editPegawai: this.state.editPegawai,
             onChangeEditHandler: this.onChangeEditHandler,
-            updatePegawai: this.updatePegawai
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            updatePegawai: this.updatePegawai,
+            errorsEdit: errorsEdit
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
             className: "card-body",
-            children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__.default, {
+            children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__.default, {
               className: "table table-dark table-bordered",
               config: this.config,
               columns: this.columns,
@@ -16557,6 +16833,9 @@ var TambahPegawai = /*#__PURE__*/function (_Component) {
                       name: "username",
                       value: this.props.dataUsersBaru.username,
                       onChange: this.props.onChangeHandler
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                      className: "text-danger",
+                      children: this.props.errors.username
                     })]
                   }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                     className: "form-group",
@@ -16570,6 +16849,9 @@ var TambahPegawai = /*#__PURE__*/function (_Component) {
                       name: "password",
                       value: this.props.dataUsersBaru.password,
                       onChange: this.props.onChangeHandler
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                      className: "text-danger",
+                      children: this.props.errors.password
                     })]
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
@@ -16583,6 +16865,9 @@ var TambahPegawai = /*#__PURE__*/function (_Component) {
                     name: "nm_pegawai",
                     value: this.props.dataPegawaiBaru.nm_pegawai,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.nm_pegawai
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
@@ -16595,6 +16880,9 @@ var TambahPegawai = /*#__PURE__*/function (_Component) {
                     name: "email",
                     value: this.props.dataPegawaiBaru.email,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.email
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
@@ -16608,10 +16896,13 @@ var TambahPegawai = /*#__PURE__*/function (_Component) {
                     maxLength: "12",
                     value: this.props.dataPegawaiBaru.no_hp,
                     onChange: this.props.onChangeHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.no_hp
                   })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                     className: "d-flex",
                     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                       className: "form-check mr-3",
@@ -16640,7 +16931,10 @@ var TambahPegawai = /*#__PURE__*/function (_Component) {
                         children: "Perempuan"
                       })]
                     })]
-                  })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errors.jk
+                  })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("label", {
@@ -16667,7 +16961,7 @@ var TambahPegawai = /*#__PURE__*/function (_Component) {
                   onClick: function onClick() {
                     return _this.props.tambahPegawai();
                   },
-                  "data-dismiss": "modal",
+                  "data-dismiss": this.props.dataUsersBaru.username != "" && this.props.dataUsersBaru.password != "" && this.props.dataPegawaiBaru.nm_pegawai != "" && this.props.dataPegawaiBaru.email != "" && this.props.dataPegawaiBaru.jk != "" && this.props.dataPegawaiBaru.no_hp != "" ? "modal" : "",
                   children: "Simpan"
                 })]
               })]
@@ -16698,12 +16992,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
-/* harmony import */ var _Rekening_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Rekening.css */ "./resources/js/components/rekening/Rekening.css");
-/* harmony import */ var _Transaksi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Transaksi */ "./resources/js/components/rekening/Transaksi.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
+/* harmony import */ var _Rekening_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Rekening.css */ "./resources/js/components/rekening/Rekening.css");
+/* harmony import */ var _Transaksi__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Transaksi */ "./resources/js/components/rekening/Transaksi.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -16928,21 +17222,30 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
           data: dateGenerate,
           responseType: 'blob'
         }).then(function (response) {
-          _this.setState({
-            dateGenerate: {
-              mulai_tanggal: "",
-              sampai_tanggal: ""
-            }
-          }, function () {
-            _this.getRekening();
-          });
+          if (response.data.status != "failed") {
+            _this.setState({
+              dateGenerate: {
+                mulai_tanggal: "",
+                sampai_tanggal: ""
+              }
+            }, function () {
+              _this.getRekening();
+            });
 
-          var url = window.URL.createObjectURL(new Blob([response.data]));
-          var link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', 'transaksi-laporan-' + params.no_rekening + '.pdf');
-          document.body.appendChild(link);
-          link.click();
+            var url = window.URL.createObjectURL(new Blob([response.data]));
+            var link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'transaksi-laporan-' + params.no_rekening + '.pdf');
+            document.body.appendChild(link);
+            link.click();
+          } else {
+            _this.setState({
+              status: response.data.status,
+              message: response.data.message
+            }, function () {
+              _this.getRekening();
+            });
+          }
         });
       } else {
         _this.setState({
@@ -16954,7 +17257,27 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       }
     };
 
+    _this.handleCetak = function (id_transaksi) {
+      axios({
+        url: "http://".concat(window.location.host, "/api/cetak-struk-transaksi/").concat(id_transaksi),
+        method: "GET",
+        responseType: 'blob'
+      }).then(function (response) {
+        var url = window.URL.createObjectURL(new Blob([response.data]));
+        var link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'cetak-struk-' + id_transaksi + '.pdf');
+        document.body.appendChild(link);
+        link.click();
+      });
+    };
+
     _this.columns = [{
+      key: "transaksi_id",
+      className: "transaksi_id",
+      text: "Id Transaksi",
+      sortable: true
+    }, {
       key: "waktu",
       className: "waktu",
       text: "Waktu",
@@ -16974,7 +17297,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       className: "status",
       text: "Status",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "badge badge-success p-2",
           children: "Berhasil"
         });
@@ -16984,11 +17307,13 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       className: "aksi",
       text: "Aksi",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("a", {
-          href: 'http://' + window.location.host + '/api/cetak-struk-transaksi/' + record.transaksi_id,
-          className: "btn btn-primary",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-            icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faPrint
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
+          onClick: function onClick() {
+            _this.handleCetak(record.transaksi_id);
+          },
+          className: "btn btn-primary btn-md",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+            icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faPrint
           }), " Print"]
         });
       }
@@ -17081,7 +17406,7 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
             status: "",
             message: ""
           });
-        }, 1500);
+        }, 3000);
       }
     }
   }, {
@@ -17125,13 +17450,13 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       var sendMessage = "";
 
       if (status == "failed") {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "alert alert-danger",
           role: "alert",
           children: message
         });
       } else if (status == 200) {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "alert alert-success",
           role: "alert",
           children: message
@@ -17144,18 +17469,18 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
           transaksi = "";
 
       if (localStorage.level != 'Nasabah') {
-        buttonTransaksi = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+        buttonTransaksi = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
           className: "btn btn-primary btn-md ml-2",
           "data-target": "#modalTransaksi",
           "data-toggle": "modal",
           onClick: function onClick() {
             _this5.detailRekening(params.no_rekening);
           },
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-            icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faMoneyBill
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+            icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faMoneyBill
           }), " Transaksi"]
         });
-        transaksi = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Transaksi__WEBPACK_IMPORTED_MODULE_5__.default, {
+        transaksi = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_Transaksi__WEBPACK_IMPORTED_MODULE_6__.default, {
           handleTransaksi: this.handleTransaksi,
           onChangeTransaksiHandler: this.onChangeTransaksiHandler,
           dataTransaksi: dataTransaksi
@@ -17167,56 +17492,56 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       var buttonLaporan = "";
 
       if (localStorage.level == "Administrator") {
-        buttonLaporan = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        buttonLaporan = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "d-flex",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("a", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("a", {
             className: "btn btn-success btn-md mr-2",
             href: 'http://' + window.location.host + '/api/exportExcelTransaksi/' + params.no_rekening,
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faFileExcel
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faFileExcel
             }), " Export Excel"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
               className: "btn btn-danger btn-md mr-2",
               "data-target": "#modalPdf",
               "data-toggle": "modal",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faFilePdf
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faFilePdf
               }), " Export PDF"]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "modal fade",
               id: "modalPdf",
               tabIndex: "-1",
               "aria-labelledby": "exampleModalLabel",
               "aria-hidden": "true",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
                 className: "modal-dialog col-md-12",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                   className: "modal-content bg-dark",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
                     className: "modal-header",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h5", {
                       className: "modal-title font-weigth-bold",
                       id: "exampleModalLabel",
                       children: "Transaksi"
                     })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
                     className: "modal-body",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                       className: "form-group",
-                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
                         htmlFor: "mulai_tanggal",
                         children: "Mulai Tanggal"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
                         type: "date",
                         className: "form-control bg-dark text-white",
                         name: "mulai_tanggal",
                         value: dateGenerate.mulai_tanggal,
                         onChange: this.onhandleDateGenerate
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
                         htmlFor: "mulai_tanggal",
                         children: "Sampai Tanggal"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
                         type: "date",
                         className: "form-control bg-dark text-white",
                         name: "sampai_tanggal",
@@ -17224,14 +17549,14 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                         onChange: this.onhandleDateGenerate
                       })]
                     })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                     className: "modal-footer",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
                       type: "button",
                       className: "btn btn-danger",
                       "data-dismiss": "modal",
                       children: "Tidak"
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
                       type: "button",
                       className: "btn btn-success",
                       onClick: function onClick() {
@@ -17253,12 +17578,12 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       var pin = "";
 
       if (localStorage.level == "Nasabah") {
-        pin = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        pin = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "form-group",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
             htmlFor: "pin",
             children: "PIN"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
             className: "form-control bg-dark text-white",
             name: "pin",
             type: "password",
@@ -17274,12 +17599,12 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       var tujuanTransfer = "";
 
       if (dataTransaksi.jenis_pembayaran == "Non Pembayaran") {
-        tujuanTransfer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        tujuanTransfer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "form-group",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
             htmlFor: "kirim_tabungan",
             children: "Transfer No Rekening"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
             type: "number",
             name: "kirim_tabungan",
             placeholder: "e.g 9875432123456",
@@ -17292,100 +17617,102 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         tujuanTransfer = "";
       }
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "d-flex justify-content-center",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
             className: "card bg-dark col-md-6 mr-1",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-header",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h5", {
                 children: "No Rekening"
               })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-body",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("h3", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("h3", {
                 className: "d-flex align-items-center",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
                   className: "box-icon mr-2",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faAddressCard
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faMoneyCheck
                   })
                 }), dataRekening.no_rekening]
               })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-footer",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("p", {
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                  icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faUser,
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                  icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faUser,
                   className: "mr-2"
                 }), " ", dataRekening.nm_nasabah]
               })
             })]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
             className: "card bg-dark col-md-6 ml-1",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-header",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h5", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h5", {
                 children: "Saldo Rekening"
               })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-body",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("h3", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("h3", {
                 className: "d-flex align-items-center",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
                   className: "box-icon mr-2",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-                    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_7__.faMoneyBill
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faMoneyBill
                   })
                 }), 'Rp.' + parseInt(dataRekening.saldo + saldoTransfer)]
               })
             })]
           })]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "d-flex justify-content-center",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
             className: "card bg-dark col-md-8 mr-1 mt-2 mb-5",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-header",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "d-flex justify-content-between",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h4", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h4", {
                   children: "Transaksi Terakhir"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                   className: "d-flex",
                   children: [buttonLaporan, buttonTransaksi]
                 })]
               })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
               className: "card-body",
-              children: [sendMessage, transaksi, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__.default, {
-                className: "table table-dark table-bordered",
-                columns: this.columns,
-                records: history,
-                config: this.config
+              children: [sendMessage, transaksi, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__.default, {
+                  className: "table table-dark table-bordered table-responsive",
+                  columns: this.columns,
+                  records: history,
+                  config: this.config
+                })
               })]
             })]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
             className: "card bg-dark col-md-4 ml-1 mt-2 mb-5",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-header",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h4", {
-                children: "Transfer Rekening Lain"
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h4", {
+                children: "Transfer"
               })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
               className: "card-body",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
                 type: "hidden",
                 name: "jenis_transaksi",
                 value: "Transfer",
                 onChange: this.onChangeTransaksiHandler
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "form-group",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
                   htmlFor: "no_rekening",
                   children: "No Rekening Anda"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
                   type: "text",
                   name: "no_rekening",
                   className: "form-control bg-dark text-white",
@@ -17393,41 +17720,41 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   onChange: this.onChangeTransaksiHandler,
                   readOnly: true
                 })]
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "form-group d-flex",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                   className: "form-check mr-3",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
                     type: "radio",
                     name: "jenis_pembayaran",
                     className: "form-check-input",
                     value: "Non Pembayaran",
                     onChange: this.onChangeTransaksiHandler,
                     checked: dataTransaksi.jenis_pembayaran == "Non Pembayaran" ? "checked" : ""
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
                     className: "form-check-label",
                     children: "Non Pembayaran"
                   })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                   className: "form-check",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
                     type: "radio",
                     name: "jenis_pembayaran",
                     className: "form-check-input",
                     value: "Pembayaran",
                     checked: dataTransaksi.jenis_pembayaran == "Pembayaran" ? "checked" : "",
                     onChange: this.onChangeTransaksiHandler
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
                     className: "form-check-label",
                     children: "Pembayaran"
                   })]
                 })]
-              }), tujuanTransfer, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              }), tujuanTransfer, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "form-group",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
                   htmlFor: "nominal",
                   children: "Nominal"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
                   type: "number",
                   name: "nominal",
                   placeholder: "e.g 200000",
@@ -17435,28 +17762,30 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   value: dataTransaksi.nominal,
                   onChange: this.onChangeTransaksiHandler
                 })]
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "form-group",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
                   htmlFor: "keterangan",
                   children: "Keterangan"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("textarea", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("textarea", {
                   name: "keterangan",
                   className: "form-control bg-dark text-white",
                   value: dataTransaksi.keterangan,
                   onChange: this.onChangeTransaksiHandler
                 })]
               }), pin]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
               className: "card-footer",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
                 className: "ml-auto",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
                   className: "btn btn-primary",
                   onClick: function onClick() {
                     _this5.handleTransaksi();
                   },
-                  children: "Transfer"
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faMoneyBill
+                  }), " Transfer"]
                 })
               })
             })]
@@ -17571,6 +17900,7 @@ var EditRekening = /*#__PURE__*/function (_Component) {
                     type: "password",
                     className: "form-control bg-dark text-white",
                     placeholder: "*******",
+                    maxLength: "6",
                     name: "pin_lama",
                     value: this.props.editRekening.pin_lama,
                     onChange: this.props.onChangeEditHandler
@@ -17584,6 +17914,7 @@ var EditRekening = /*#__PURE__*/function (_Component) {
                     type: "password",
                     className: "form-control bg-dark text-white",
                     placeholder: "*******",
+                    maxLength: "6",
                     name: "pin_baru",
                     value: this.props.editRekening.pin_baru,
                     onChange: this.props.onChangeEditHandler
@@ -17633,11 +17964,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
-/* harmony import */ var _EditRekening__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./EditRekening */ "./resources/js/components/rekening/EditRekening.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
+/* harmony import */ var _EditRekening__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./EditRekening */ "./resources/js/components/rekening/EditRekening.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -17704,6 +18035,11 @@ var Rekening = /*#__PURE__*/function (_Component) {
       var editRekening = _this.state.editRekening;
       axios.post("http://".concat(window.location.host, "/api/edit-rekening"), editRekening).then(function (response) {
         _this.setState({
+          editRekening: {
+            no_rekening: "",
+            pin_lama: "",
+            pin_baru: ""
+          },
           status: response.data.status,
           message: response.data.message
         }, function () {
@@ -17727,22 +18063,22 @@ var Rekening = /*#__PURE__*/function (_Component) {
       className: "action",
       text: "Action",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("a", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("a", {
             href: 'buka-rekening/' + record.no_rekening,
             className: "btn btn-primary btn-md ml-2",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faBookOpen
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faBookOpen
             }), " Buka Rekening"]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("button", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
             className: "btn btn-success btn-md ml-2",
             "data-target": "#modalEdit",
             "data-toggle": "modal",
             onClick: function onClick() {
               _this.editRekening(record.no_rekening);
             },
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faEdit
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faEdit
             }), " Edit"]
           })]
         });
@@ -17807,7 +18143,7 @@ var Rekening = /*#__PURE__*/function (_Component) {
                 status: "",
                 message: ""
               });
-            }, 2000);
+            }, 3000);
           }
         });
       }
@@ -17824,13 +18160,13 @@ var Rekening = /*#__PURE__*/function (_Component) {
       var sendMessage = "";
 
       if (status == 200) {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "alert alert-success",
           role: "alert",
           children: message
         });
       } else if (status == "failed") {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "alert alert-danger",
           role: "alert",
           children: message
@@ -17839,27 +18175,27 @@ var Rekening = /*#__PURE__*/function (_Component) {
         sendMessage = "";
       }
 
-      if (localStorage.level == "nasabah") {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
+      if (localStorage.level == "Nasabah") {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
           to: "/home"
         });
       }
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_EditRekening__WEBPACK_IMPORTED_MODULE_4__.default, {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_EditRekening__WEBPACK_IMPORTED_MODULE_5__.default, {
           updateRekening: this.updateRekening,
           onChangeEditHandler: this.onChangeEditHandler,
           editRekening: editRekening
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
           className: "card bg-dark",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
             className: "card-header",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h4", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h4", {
               children: "Data Rekening"
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
             className: "card-body",
-            children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_3__.default, {
+            children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_4__.default, {
               className: "table table-dark table-bordered",
               columns: this.columns,
               records: rekening,
@@ -18016,7 +18352,7 @@ var Transaksi = /*#__PURE__*/function (_Component) {
                         checked: this.props.dataTransaksi.jenis_transaksi == "Setor" ? 'checked' : ''
                       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
                         className: "form-check-label",
-                        children: "Setor"
+                        children: "Setor Tunai"
                       })]
                     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                       className: "form-check mr-3",
@@ -18029,7 +18365,7 @@ var Transaksi = /*#__PURE__*/function (_Component) {
                         checked: this.props.dataTransaksi.jenis_transaksi == "Tarik" ? 'checked' : ''
                       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
                         className: "form-check-label",
-                        children: "Tarik"
+                        children: "Tarik Tunai"
                       })]
                     })]
                   })
@@ -18162,6 +18498,9 @@ var EditProfile = /*#__PURE__*/function (_Component) {
                     name: "nm_users",
                     value: this.props.dataUsers.nm_users,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.nm_users
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
@@ -18174,6 +18513,9 @@ var EditProfile = /*#__PURE__*/function (_Component) {
                     name: "email",
                     value: this.props.dataUsers.email,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.email
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
@@ -18187,10 +18529,13 @@ var EditProfile = /*#__PURE__*/function (_Component) {
                     maxLength: "12",
                     value: this.props.dataUsers.no_hp,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.no_hp
                   })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                     className: "d-flex",
                     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                       className: "form-check mr-3",
@@ -18219,7 +18564,10 @@ var EditProfile = /*#__PURE__*/function (_Component) {
                         children: "Perempuan"
                       })]
                     })]
-                  })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.jk
+                  })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                   className: "form-group",
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("label", {
@@ -18246,7 +18594,7 @@ var EditProfile = /*#__PURE__*/function (_Component) {
                   onClick: function onClick() {
                     return _this.props.updateProfile();
                   },
-                  "data-dismiss": "modal",
+                  "data-dismiss": this.props.dataUsers.nm_users != "" && this.props.dataUsers.email != "" && this.props.dataUsers.no_hp != "" && this.props.dataUsers.jk != "" ? "modal" : "",
                   children: "Simpan"
                 })]
               })]
@@ -18350,6 +18698,9 @@ var EditUsers = /*#__PURE__*/function (_Component) {
                     name: "username",
                     value: this.props.editUsers.username,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.username
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                   className: "form-group",
@@ -18363,6 +18714,9 @@ var EditUsers = /*#__PURE__*/function (_Component) {
                     name: "password",
                     value: this.props.editUsers.password,
                     onChange: this.props.onChangeEditHandler
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+                    className: "text-danger",
+                    children: this.props.errorsEdit.password
                   })]
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
@@ -18378,7 +18732,7 @@ var EditUsers = /*#__PURE__*/function (_Component) {
                   onClick: function onClick() {
                     return _this.props.updateUsers();
                   },
-                  "data-dismiss": "modal",
+                  "data-dismiss": this.props.editUsers.username != "" && this.props.editUsers.password != "" ? 'modal' : '',
                   children: "Simpan"
                 })]
               })]
@@ -18454,32 +18808,56 @@ var Profile = /*#__PURE__*/function (_Component) {
     _this = _super.call(this, props);
 
     _this.onChangeUbahPassword = function (e) {
-      var dataUsers = _this.state.dataUsers;
+      var _this$state = _this.state,
+          dataUsers = _this$state.dataUsers,
+          errorsUbah = _this$state.errorsUbah;
+      errorsUbah[e.target.name] = "";
       dataUsers[e.target.name] = e.target.value;
 
       _this.setState({
-        dataUsers: dataUsers
+        dataUsers: dataUsers,
+        errorsUbah: errorsUbah
       });
     };
 
     _this.ubahPassword = function () {
-      var dataUsers = _this.state.dataUsers;
-      axios.post("http://".concat(window.location.host, "/api/ubah-password"), dataUsers).then(function (response) {
+      var _this$state2 = _this.state,
+          dataUsers = _this$state2.dataUsers,
+          errorsUbah = _this$state2.errorsUbah;
+
+      if (dataUsers.password_lama == "") {
+        errorsUbah.password_lama = "Password harus Diisi";
+      }
+
+      if (dataUsers.password_baru == "") {
+        errorsUbah.password_baru = "Password harus Diisi";
+      }
+
+      if (errorsUbah.password_lama || errorsUbah.password_baru) {
         _this.setState({
-          dataUsers: {
-            password_lama: "",
-            password_baru: ""
-          },
-          status: response.data.status,
-          message: response.data.message
-        }, function () {
-          return _this.getProfile();
+          errorsUbah: errorsUbah
         });
-      });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/ubah-password"), dataUsers).then(function (response) {
+          _this.setState({
+            dataUsers: {
+              password_lama: "",
+              password_baru: ""
+            },
+            status: response.data.status,
+            message: response.data.message
+          }, function () {
+            return _this.getProfile();
+          });
+        });
+      }
     };
 
     _this.onChangeEditHandler = function (e) {
-      var dataUsers = _this.state.dataUsers;
+      var _this$state3 = _this.state,
+          dataUsers = _this$state3.dataUsers,
+          errorsEdit = _this$state3.errorsEdit;
+      errorsEdit[e.target.name] = "";
       dataUsers[e.target.name] = e.target.value;
 
       _this.setState({
@@ -18488,15 +18866,42 @@ var Profile = /*#__PURE__*/function (_Component) {
     };
 
     _this.updateProfile = function () {
-      var dataUsers = _this.state.dataUsers;
-      axios.post("http://".concat(window.location.host, "/api/update-profile"), dataUsers).then(function (response) {
+      var _this$state4 = _this.state,
+          dataUsers = _this$state4.dataUsers,
+          errorsEdit = _this$state4.errorsEdit;
+
+      if (dataUsers.nm_users == "") {
+        errorsEdit.nm_users = "Nama Harus Diisi";
+      }
+
+      var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+      if (dataUsers.email == "" || reg.test(dataUsers.email) === false) {
+        errorsEdit.email = "Email Tidak Valid";
+      }
+
+      if (dataUsers.jk == "") {
+        errorsEdit.jk = "Jenis Kelamin Harus Dipilih";
+      }
+
+      if (dataUsers.no_hp == "") {
+        errorsEdit.no_hp = "No Handphone Harus Diisi";
+      }
+
+      if (errorsEdit.nm_users || errorsEdit.email || errorsEdit.jk || errorsEdit.no_hp) {
         _this.setState({
-          status: response.data.status,
-          message: response.data.message
-        }, function () {
-          return _this.getProfile();
+          errorsEdit: errorsEdit
         });
-      });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/update-profile"), dataUsers).then(function (response) {
+          _this.setState({
+            status: response.data.status,
+            message: response.data.message
+          }, function () {
+            return _this.getProfile();
+          });
+        });
+      }
     };
 
     _this.state = {
@@ -18512,6 +18917,16 @@ var Profile = /*#__PURE__*/function (_Component) {
         alamat: "",
         no_hp: "",
         level: ""
+      },
+      errorsUbah: {
+        password_lama: "",
+        password_baru: ""
+      },
+      errorsEdit: {
+        nm_users: "",
+        email: "",
+        jk: "",
+        no_hp: ""
       },
       status: "",
       message: ""
@@ -18543,7 +18958,9 @@ var Profile = /*#__PURE__*/function (_Component) {
               jk: response.data.data.jk,
               alamat: response.data.data.alamat,
               no_hp: response.data.data.no_hp,
-              level: response.data.data.level
+              level: response.data.data.level,
+              password_lama: "",
+              password_baru: ""
             }
           });
         });
@@ -18559,7 +18976,9 @@ var Profile = /*#__PURE__*/function (_Component) {
               jk: response.data.data.jk,
               alamat: response.data.data.alamat,
               no_hp: response.data.data.no_hp,
-              level: response.data.data.level
+              level: response.data.data.level,
+              password_lama: "",
+              password_baru: ""
             }
           });
         });
@@ -18571,7 +18990,7 @@ var Profile = /*#__PURE__*/function (_Component) {
             status: "",
             message: ""
           });
-        }, 1500);
+        }, 3000);
       }
     } // Ubah Password
 
@@ -18580,10 +18999,12 @@ var Profile = /*#__PURE__*/function (_Component) {
     value: function render() {
       var _this3 = this;
 
-      var _this$state = this.state,
-          dataUsers = _this$state.dataUsers,
-          status = _this$state.status,
-          message = _this$state.message;
+      var _this$state5 = this.state,
+          dataUsers = _this$state5.dataUsers,
+          status = _this$state5.status,
+          message = _this$state5.message,
+          errorsUbah = _this$state5.errorsUbah,
+          errorsEdit = _this$state5.errorsEdit;
       var gender = "";
 
       if (dataUsers.jk == 'Laki-Laki') {
@@ -18690,6 +19111,9 @@ var Profile = /*#__PURE__*/function (_Component) {
                     value: dataUsers.password_lama,
                     onChange: this.onChangeUbahPassword,
                     className: "form-control bg-dark text-white"
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    className: "text-danger",
+                    children: errorsUbah.password_lama
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
                   className: "form-group",
@@ -18701,6 +19125,9 @@ var Profile = /*#__PURE__*/function (_Component) {
                     value: dataUsers.password_baru,
                     onChange: this.onChangeUbahPassword,
                     className: "form-control bg-dark text-white"
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+                    className: "text-danger",
+                    children: errorsUbah.password_baru
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
                   className: "d-flex",
@@ -18716,7 +19143,8 @@ var Profile = /*#__PURE__*/function (_Component) {
                     updateProfile: this.updateProfile,
                     dataUsers: dataUsers,
                     editProfile: this.editProfile,
-                    onChangeEditHandler: this.onChangeEditHandler
+                    onChangeEditHandler: this.onChangeEditHandler,
+                    errorsEdit: errorsEdit
                   })]
                 })]
               })]
@@ -18748,10 +19176,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @ashvin27/react-datatable */ "./node_modules/@ashvin27/react-datatable/lib/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-/* harmony import */ var _EditUsers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./EditUsers */ "./resources/js/components/user/EditUsers.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+/* harmony import */ var _EditUsers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./EditUsers */ "./resources/js/components/user/EditUsers.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -18802,13 +19230,20 @@ var User = /*#__PURE__*/function (_Component) {
             id_users: response.data.data.id_users,
             username: response.data.data.username,
             password: ""
+          },
+          errorsEdit: {
+            username: "",
+            password: ""
           }
         });
       });
     };
 
     _this.onChangeEditHandler = function (e) {
-      var dataUsers = _this.state.dataUsers;
+      var _this$state = _this.state,
+          dataUsers = _this$state.dataUsers,
+          errorsEdit = _this$state.errorsEdit;
+      errorsEdit[e.target.name] = "";
       dataUsers[e.target.name] = e.target.value;
 
       _this.setState({
@@ -18817,15 +19252,32 @@ var User = /*#__PURE__*/function (_Component) {
     };
 
     _this.updateUsers = function () {
-      var dataUsers = _this.state.dataUsers;
-      axios.post("http://".concat(window.location.host, "/api/update-users"), dataUsers).then(function (response) {
+      var _this$state2 = _this.state,
+          dataUsers = _this$state2.dataUsers,
+          errorsEdit = _this$state2.errorsEdit;
+
+      if (dataUsers.username == "") {
+        errorsEdit.username = "Username Harus Diisi";
+      }
+
+      if (dataUsers.password == "") {
+        errorsEdit.password = "Password Harus Diisi";
+      }
+
+      if (errorsEdit.username || errorsEdit.password) {
         _this.setState({
-          status: response.data.status,
-          message: response.data.message
-        }, function () {
-          return _this.getUsers();
+          errorsEdit: errorsEdit
         });
-      });
+      } else {
+        axios.post("http://".concat(window.location.host, "/api/update-users"), dataUsers).then(function (response) {
+          _this.setState({
+            status: response.data.status,
+            message: response.data.message
+          }, function () {
+            return _this.getUsers();
+          });
+        });
+      }
     };
 
     _this.columns = [{
@@ -18839,21 +19291,26 @@ var User = /*#__PURE__*/function (_Component) {
       text: "Username",
       sortable: true
     }, {
+      key: "level",
+      className: "level",
+      text: "Level",
+      sortable: true
+    }, {
       key: "action",
       className: "action",
       text: "Action",
       cell: function cell(record, index) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "d-flex",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("button", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
             className: "btn btn-success btn-md",
             "data-target": "#modalEdit",
             "data-toggle": "modal",
             onClick: function onClick() {
               _this.editUsers(record.id_users);
             },
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
-              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__.faEdit
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_4__.FontAwesomeIcon, {
+              icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__.faEdit
             }), " Edit"]
           })
         });
@@ -18869,6 +19326,10 @@ var User = /*#__PURE__*/function (_Component) {
       users: [],
       dataUsers: {
         id_users: "",
+        username: "",
+        password: ""
+      },
+      errorsEdit: {
         username: "",
         password: ""
       },
@@ -18900,27 +19361,28 @@ var User = /*#__PURE__*/function (_Component) {
             status: "",
             message: ""
           });
-        }, 1500);
+        }, 3000);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this$state = this.state,
-          users = _this$state.users,
-          dataUsers = _this$state.dataUsers,
-          status = _this$state.status,
-          message = _this$state.message;
+      var _this$state3 = this.state,
+          users = _this$state3.users,
+          dataUsers = _this$state3.dataUsers,
+          status = _this$state3.status,
+          message = _this$state3.message,
+          errorsEdit = _this$state3.errorsEdit;
       var sendMessage = "";
 
       if (status == 200) {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "alert alert-success",
           role: "alert",
           children: message
         });
       } else if (status == "failed") {
-        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        sendMessage = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "alert alert-danger",
           role: "alert",
           children: message
@@ -18930,26 +19392,27 @@ var User = /*#__PURE__*/function (_Component) {
       }
 
       if (localStorage.level != 'Administrator') {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Redirect, {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Redirect, {
           to: "/home"
         });
       }
 
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
           className: "card bg-dark mb-2",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
             className: "card-header",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("h3", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h3", {
               children: "Data User"
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_EditUsers__WEBPACK_IMPORTED_MODULE_4__.default, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_EditUsers__WEBPACK_IMPORTED_MODULE_5__.default, {
             editUsers: dataUsers,
             onChangeEditHandler: this.onChangeEditHandler,
-            updateUsers: this.updateUsers
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            updateUsers: this.updateUsers,
+            errorsEdit: errorsEdit
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
             className: "card-body",
-            children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_1__.default, {
+            children: [sendMessage, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_ashvin27_react_datatable__WEBPACK_IMPORTED_MODULE_1__.default, {
               className: "table table-dark table-bordered",
               columns: this.columns,
               config: this.config,
@@ -23474,7 +23937,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "body {\n\toverflow: hidden;\n}\n\n/*Navbar*/\n.navbar {\n\tz-index: 1;\n\tbox-shadow: 3px 3px 3px rgba(0,0,0,0.2);\n}\n\n.navbar .navbar-brand {\n\tcolor: #018786;\n\tfont-size: 28px;\n\tfont-weight: 800;\n\tfont-family: 'Gergogia';\n\tfont-style: italic;\n\tletter-spacing: 2px;\n}\n\n.navbar-brand .logo-image {\n\theight: 7vh;\n}\n\n.navbar-brand:hover {\n\tcolor: #018778 !important;\n}\n\t\n.nav-item {\n\tfont-size: 20px;\n\twidth: 50px;\n\theight: 50px;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tbackground: #121212;\n\tborder-radius: 50%;\n\tpadding: 5px;\n\tmargin: 0 5px; \n}\n\n/*End Navbar*/\n\n/*Sidebar*/\n.sidebar {\n\tposition: fixed;\n\tleft: 0;\n\twidth: 20%;\n\theight: 100vh;\n\tbackground: #343a40;\n\toverflow-y: auto; \n\tborder-right: 3px solid #212121;\n}\n\n.sidebar-title {\n\tmargin-left: 10px;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.sidebar-menu {\n\twidth: 100%;\n\tlist-style: none;\n\tmargin: 20px 0;\n}\n\n.sidebar-item {\n\tpadding: 10px;\n\t/*border-right: 3px solid #018786;*/\n\tfont-size: 18px;\n}\n\n.sidebar-item:hover{\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\n.sidebar-item.active {\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\na.sidebar-link svg{\n\tcolor: rgba(255,255,255,.5);\n}\n\na.sidebar-link {\n\tcolor: #fff;\n\ttext-decoration: none;\n}\n\n.icon {\n\tdisplay: flex;\n\talign-items: center;\n\tpadding-right: 5px;\n}\n\n.icon .sidebar-icon-box {\n\twidth: 20px;\n\tmargin-right: 8px;\t\n\tfont-size: 20px;\n}\n\n.sidebar .footer {\n\tposition: fixed;\n\ttransform: translateX(15%);\n\tbottom: 0;\n\tfont-size: 16px;\n\tcolor: white;\n}\n/*End Sidebar*/\n\n.wrapper {\n\tmargin-left: auto; \n\twidth: 80%;\n\tpadding: 20px 50px 50px 50px;\n\theight: 100vh;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tbackground: #212121;\n\tcolor: white;\n}\n\n.asrt-page-length .input-group-addon {\n    background: #343a40 !important;\n}\n\n.asrt-page-length .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n\tborder-radius: 5px !important;\n}\n\n.asrt-page-length .input-group-addon .input-group-text {\n\tcolor:white;\n}\n\n.table_filter .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n\n.table_filter .form-control::-moz-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control:-ms-input-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control::placeholder {\n\tcolor: white;\n}\n\n.asrt-pagination .disabled.page-item .page-link{\n\tbackground: #343a40;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.asrt-pagination .page-item .page-link{\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.asrt-pagination .page-item .page-link input {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.switch {\n  position: relative;\n  display: inline-block;\n  width: 40px;\n  height: 16px;\n}\n\n.switch input {\n  opacity: 0;\n  width: 0;\n  height: 0;\n}\n\n/* The slider */\n.slider {\n  position: absolute;\n  cursor: pointer;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: red;\n  transition: .4s;\n}\n\n.slider:before {\n  position: absolute;\n  content: \"\";\n  height: 16px;\n  width: 16px;\n  background-color: white;\n  border: 1px solid #ccc;\n  transition: .4s;\n}\n\ninput:checked + .slider {\n  background-color: lime;\n}\n\ninput:focus + .slider {\n  box-shadow: 0 0 1px #2196F3;\n}\n\ninput:checked + .slider:before {\n  transform: translateX(26px);\n}\n\n/* Rounded sliders */\n.slider.round {\n  border-radius: 34px;\n}\n\n.slider.round:before {\n  border-radius: 50%;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "body {\n\toverflow: hidden;\n}\n\n/*Navbar*/\n.navbar {\n\tz-index: 1;\n\tbox-shadow: 3px 3px 3px rgba(0,0,0,0.2);\n}\n\n.navbar .navbar-brand {\n\tcolor: #018786;\n\tfont-size: 28px;\n\tfont-weight: 800;\n\tfont-family: 'Gergogia';\n\tfont-style: italic;\n\tletter-spacing: 2px;\n}\n\n.navbar-brand .logo-image {\n\theight: 7vh;\n}\n\n.navbar-brand:hover {\n\tcolor: #018778 !important;\n}\n\t\n.nav-item {\n\tfont-size: 20px;\n\twidth: 50px;\n\theight: 50px;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tbackground: #121212;\n\tborder-radius: 50%;\n\tpadding: 5px;\n\tmargin: 0 5px; \n}\n\n/*End Navbar*/\n\n/*Sidebar*/\n.sidebar {\n\tposition: fixed;\n\tleft: 0;\n\twidth: 20%;\n\theight: 100vh;\n\tbackground: #343a40;\n\toverflow-y: auto; \n\tborder-right: 3px solid #212121;\n}\n\n.sidebar-title {\n\tmargin-left: 10px;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.sidebar-menu {\n\twidth: 100%;\n\tlist-style: none;\n\tmargin: 20px 0;\n}\n\n.sidebar-item {\n\tpadding: 10px;\n\t/*border-right: 3px solid #018786;*/\n\tfont-size: 18px;\n}\n\n.sidebar-item:hover{\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\n.sidebar-item.active {\n\tbackground: rgba(255,255,255,0.1);\n\tborder-right: 3px solid #018786;\n}\n\na.sidebar-link svg{\n\tcolor: rgba(255,255,255,.5);\n}\n\na.sidebar-link {\n\tcolor: #fff;\n\ttext-decoration: none;\n}\n\n.icon {\n\tdisplay: flex;\n\talign-items: center;\n\tpadding-right: 5px;\n}\n\n.icon .sidebar-icon-box {\n\twidth: 20px;\n\tmargin-right: 8px;\t\n\tfont-size: 20px;\n}\n\n.sidebar .footer {\n\tposition: fixed;\n\ttransform: translateX(15%);\n\tbottom: 0;\n\tfont-size: 16px;\n\tcolor: white;\n}\n/*End Sidebar*/\n\n.wrapper {\n\tmargin-left: auto; \n\twidth: 80%;\n\tpadding: 20px 50px 50px 50px;\n\theight: 100vh;\n\toverflow-x: hidden;\n\toverflow-y: auto;\n\tbackground: #212121;\n\tcolor: white;\n}\n\n.asrt-page-length .input-group-addon {\n    background: #343a40 !important;\n}\n\n.asrt-page-length .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n\tborder-radius: 5px !important;\n}\n\n.asrt-page-length .input-group-addon .input-group-text {\n\tcolor:white;\n}\n\n.table_filter .form-control {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n\n.table_filter .form-control::-moz-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control:-ms-input-placeholder {\n\tcolor: white;\n}\n\n\n.table_filter .form-control::placeholder {\n\tcolor: white;\n}\n\n.asrt-pagination .disabled.page-item .page-link{\n\tbackground: #343a40;\n\tcolor: rgba(255,255,255,.5);\n}\n\n.asrt-pagination .page-item .page-link{\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.asrt-pagination .page-item .page-link input {\n\tbackground: #343a40;\n\tcolor: white;\n}\n\n.switch {\n  position: relative;\n  display: inline-block;\n  width: 50px;\n  height: 16px;\n  font-size: 12px;\n  color: black;\n}\n\n.switch input {\n  opacity: 0;\n  width: 0;\n  height: 0;\n}\n\n/* The slider */\n.slider {\n  position: absolute;\n  cursor: pointer;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: red;\n  transition: .4s;\n}\n\n.slider:before {\n  position: absolute;\n  content: \"\";\n  height: 16px;\n  width: 16px;\n  background-color: white;\n  border: 1px solid #ccc;\n  transition: .4s;\n}\n\ninput:checked + .slider {\n  background-color: lime;\n}\n\ninput:focus + .slider {\n  box-shadow: 0 0 1px #2196F3;\n}\n\ninput:checked + .slider:before {\n  transform: translateX(36px);\n}\n\n/* Rounded sliders */\n.slider.round {\n  border-radius: 34px;\n}\n\n.slider.round:before {\n  border-radius: 50%;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
