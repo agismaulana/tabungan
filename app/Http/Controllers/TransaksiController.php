@@ -90,7 +90,7 @@ class TransaksiController extends Controller
                                     <td>".$trans->jenis_transaksi."</td>
                                     <td>".$jenis_pembayaran."</td>
                                     <td>".$trans_rekening."</td>
-                                    <td>Rp.".$trans->nominal."</td>
+                                    <td>Rp.".number_format($trans->nominal, 0, 2, '.')."</td>
                                 </tr>";
         }
 
@@ -101,6 +101,13 @@ class TransaksiController extends Controller
                         <h1 align='center'>Laporan History Transaksi</h1>
                     </center>
                     <p>Tanggal : ".$date."</p>
+
+                    <p>
+                        Laporan Dari Tanggal 
+                        ".date_format(date_create($mulai_tanggal), 'd-m-Y')." 
+                        Sampai 
+                        ".date_format(date_create($sampai_tanggal), 'd-m-Y')."
+                    </p>
                     <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
                         <tr>
                             <td>Id Transaksi</td>
@@ -114,7 +121,7 @@ class TransaksiController extends Controller
                         ".$recordtransaksi."
                         <tr>
                             <td colspan='6'>Total Transaksi</td>
-                            <td>Rp.".$saldo->total."</td>
+                            <td>Rp.".number_format($saldo->total, 0, 2, '.')."</td>
                         </tr>
                     </table>
                 </div>";

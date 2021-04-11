@@ -48,11 +48,20 @@ class UsersController extends Controller
             $id = $request->id_users;
             $username = $request->username;
             $password = $request->password;
-        
-            $data = [
-                'username' => $username,
-                'password' => password_hash($password, PASSWORD_DEFAULT),
-            ];
+            
+            if($password != "") {
+                $data = [
+                    'username' => $username,
+                    'password' => password_hash($password, PASSWORD_DEFAULT),
+                ];
+            } else {
+                $user = Users::where('id_users', $id)->first();
+                $password = $user['password'];
+                $data = [
+                    'username' => $username,
+                    'password' => $password,
+                ];
+            }
 
             $update = Users::where('id_users', $id)->update($data);
             if(!is_null($update)) {

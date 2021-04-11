@@ -33,6 +33,10 @@ class History extends Component {
 				className: "nominal",
 				text: "Nominal",
 				sortable: true,
+				cell: (record, index) => {
+					let nominal = new Intl.NumberFormat('de-DE', {maximumSignificanDigits:3}).format(record.nominal);
+					return(<p>{'Rp.' + nominal}</p>)
+				}
 			},
 			{
 				key: "jenis_transaksi",

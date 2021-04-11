@@ -46,8 +46,7 @@ class EditUsers extends Component {
 				        			className="btn btn-success" 
 				        			onClick={()=>this.props.updateUsers()}
 				        			data-dismiss={
-				        				this.props.editUsers.username != "" 
-				        				&& this.props.editUsers.password != "" 
+				        				this.props.editUsers.username != ""
 				        				? 'modal' : ''
 				        			}
 				        		>

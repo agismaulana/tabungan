@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Users;
 use App\Models\Nasabah;
 use App\Models\Pegawai;
+use App\Models\Users;// error di hapus
 
 class AuthController extends Controller
 {
@@ -26,7 +26,7 @@ class AuthController extends Controller
                 $users = Nasabah::where('id_users', $user->id_users)->first();
             }
 
-    		if(password_verify($password, $user->password)) {
+    		if(password_verify($password, $user->password)) {// di tambah sha1
                 if($users->status == "Aktif") {
     		    	return response()->json(['status'=> $this->status,"success" => true,'user' => $user]);
                 } else {

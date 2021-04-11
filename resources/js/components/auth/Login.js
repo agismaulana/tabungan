@@ -155,7 +155,7 @@ class Login extends Component {
 
         return (
             <div className="login-wrap">
-                <div className="row col-md-6">
+                <div className="row col-md-5">
                     <div className="card col-md-12 bg-dark">
                         <div className="row">
                             <div className="col-md-12">

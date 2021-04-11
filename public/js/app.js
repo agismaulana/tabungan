@@ -13681,7 +13681,7 @@ var Login = /*#__PURE__*/function (_Component) {
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
         className: "login-wrap",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
-          className: "row col-md-6",
+          className: "row col-md-5",
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
             className: "card col-md-12 bg-dark",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
@@ -14564,7 +14564,15 @@ var History = /*#__PURE__*/function (_Component) {
       key: "nominal",
       className: "nominal",
       text: "Nominal",
-      sortable: true
+      sortable: true,
+      cell: function cell(record, index) {
+        var nominal = new Intl.NumberFormat('de-DE', {
+          maximumSignificanDigits: 3
+        }).format(record.nominal);
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("p", {
+          children: 'Rp.' + nominal
+        });
+      }
     }, {
       key: "jenis_transaksi",
       className: "jenis_transaksi",
@@ -15024,7 +15032,7 @@ var Home = /*#__PURE__*/function (_Component) {
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                 className: "d-flex justify-content-between",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
-                  icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__.faMoneyBill,
+                  icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__.faMoneyCheckAlt,
                   className: "fa-3x"
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h2", {
                   children: dataCount.saldoTransaksi
@@ -15077,10 +15085,10 @@ var Home = /*#__PURE__*/function (_Component) {
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
                 className: "d-flex justify-content-between",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
-                  icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__.faMoneyBill,
+                  icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__.faMoneyCheckAlt,
                   className: "fa-3x"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h2", {
-                  children: dataCount.saldoTransaksi
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("h2", {
+                  children: ["Rp. ", dataCount.saldoTransaksi]
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("hr", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h5", {
                 children: "Saldo Transaksi"
@@ -15103,7 +15111,8 @@ var Home = /*#__PURE__*/function (_Component) {
                 className: "d-flex justify-content-between",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
                   children: "Selamat Menggunakan Aplikasi MyDeposits"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h6", {
+                  className: "bg-primary p-3",
                   children: date
                 })]
               })]
@@ -15431,7 +15440,11 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
 
       var reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-      if (dataNasabahBaru.email == "" || reg.test(dataNasabahBaru.email) === false) {
+      if (dataNasabahBaru.email == "") {
+        errors.email = "Email Harus Diisi";
+      }
+
+      if (reg.test(dataNasabahBaru.email) === false) {
         errors.email = "Email Tidak Valid";
       }
 
@@ -15577,7 +15590,18 @@ var Nasabah = /*#__PURE__*/function (_React$Component) {
       key: "alamat",
       className: "alamat",
       text: "Alamat",
-      sortable: true
+      sortable: true,
+      cell: function cell(record, index) {
+        if (record.alamat == null || record.alamat == "") {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+            children: "-"
+          });
+        } else {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+            children: record.alamat
+          });
+        }
+      }
     }, {
       key: "status",
       className: "status",
@@ -16521,7 +16545,20 @@ var Pegawai = /*#__PURE__*/function (_Component) {
       key: "alamat",
       className: "alamat",
       text: "Alamat",
-      sortable: true
+      sortable: true,
+      cell: function cell(record, index) {
+        console.log(record.alamat);
+
+        if (record.alamat == null || record.alamat == "") {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+            children: "-"
+          });
+        } else {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+            children: record.alamat
+          });
+        }
+      }
     }, {
       key: "status",
       className: "status",
@@ -17059,12 +17096,30 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
           _this.getRekening();
         });
       });
+      document.getElementById('nominal').innerHTML = 'Rp.' + 0;
+      document.getElementById('nominalTransaksi').innerHTML = 'Rp.' + 0;
     };
 
     _this.onChangeTransaksiHandler = function (e) {
       var newDataTransaksi = _objectSpread({}, _this.state.dataTransaksi);
 
       var dataTransaksi = _this.state.dataTransaksi;
+
+      if (newDataTransaksi.jenis_transaksi == "Transfer") {
+        if (e.target.name == 'nominal') {
+          var nominal = document.getElementById('nominal');
+          var angka = e.target.value;
+          nominal.innerHTML = 'Rp.' + _this.numberFormat(parseInt(angka != "" ? angka : 0));
+        }
+      } else {
+        if (e.target.name == 'nominal') {
+          var _nominal = document.getElementById('nominalTransaksi');
+
+          var _angka = e.target.value;
+          _nominal.innerHTML = 'Rp.' + _this.numberFormat(parseInt(_angka != "" ? _angka : 0));
+        }
+      }
+
       newDataTransaksi[e.target.name] = e.target.value;
 
       _this.setState({
@@ -17190,13 +17245,37 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
               status: response.data.status,
               message: response.data.message
             }, function () {
-              _this.getRekening();
-
-              _this.getHistory();
+              _this.getRekening(), _this.getHistory();
             });
           });
         }
       }
+
+      document.getElementById('nominal').innerHTML = 'Rp.' + 0;
+      document.getElementById('nominalTransaksi').innerHTML = 'Rp.' + 0;
+    };
+
+    _this.tutupTransaksi = function () {
+      _this.setState({
+        dataTransaksi: {
+          nm_nasabah: "",
+          id_transaksi: "",
+          waktu: "",
+          nominal: "",
+          jenis_transaksi: "",
+          no_rekening: "",
+          kirim_tabungan: "",
+          jenis_pembayaran: "",
+          keterangan: "",
+          status: "",
+          pin: ""
+        }
+      }, function () {
+        _this.getRekening(), _this.getHistory();
+      });
+
+      document.getElementById('nominal').innerHTML = 'Rp.' + 0;
+      document.getElementById('nominalTransaksi').innerHTML = 'Rp.' + 0;
     };
 
     _this.onhandleDateGenerate = function (e) {
@@ -17291,7 +17370,15 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       key: "nominal",
       className: "nominal",
       text: "Nominal",
-      sortable: true
+      sortable: true,
+      cell: function cell(record, index) {
+        var nominal = new Intl.NumberFormat('de-DE', {
+          maximumSignificanDigits: 3
+        }).format(record.nominal);
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+          children: 'Rp.' + nominal
+        });
+      }
     }, {
       key: "status",
       className: "status",
@@ -17434,6 +17521,26 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
       });
     }
   }, {
+    key: "numberFormat",
+    value: function numberFormat() {
+      var number = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      var decimals = arguments.length > 1 ? arguments[1] : undefined;
+      var dec_point = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ',';
+      var thousands_point = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '.';
+
+      if (!decimals) {
+        var len = number.toString().split('.').length;
+        decimals = len > 1 ? len : 0;
+      }
+
+      number = parseFloat(number).toFixed(decimals);
+      number = number.replace(".", dec_point);
+      var splitNum = number.split(dec_point);
+      splitNum[0] = splitNum[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands_point);
+      number = splitNum.join(dec_point);
+      return number;
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this5 = this;
@@ -17483,7 +17590,8 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
         transaksi = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_Transaksi__WEBPACK_IMPORTED_MODULE_6__.default, {
           handleTransaksi: this.handleTransaksi,
           onChangeTransaksiHandler: this.onChangeTransaksiHandler,
-          dataTransaksi: dataTransaksi
+          dataTransaksi: dataTransaksi,
+          tutupTransaksi: this.tutupTransaksi
         });
       } else {
         buttonTransaksi, transaksi = "";
@@ -17663,7 +17771,9 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                   children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
                     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faMoneyBill
                   })
-                }), 'Rp.' + parseInt(dataRekening.saldo + saldoTransfer)]
+                }), 'Rp. ' + new Intl.NumberFormat('de-DE', {
+                  maximumSignificanDigits: 3
+                }).format(parseInt(dataRekening.saldo + saldoTransfer))]
               })
             })]
           })]
@@ -17751,11 +17861,15 @@ var BukaRekening = /*#__PURE__*/function (_Component) {
                 })]
               }), tujuanTransfer, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "form-group",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("label", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("label", {
                   htmlFor: "nominal",
-                  children: "Nominal"
+                  children: ["Nominal (", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+                    id: "nominal",
+                    className: "nominalTransaksi",
+                    children: "Rp.0"
+                  }), ")"]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
-                  type: "number",
+                  type: "text",
                   name: "nominal",
                   placeholder: "e.g 200000",
                   className: "form-control bg-dark text-white",
@@ -17873,7 +17987,7 @@ var EditRekening = /*#__PURE__*/function (_Component) {
                 children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h5", {
                   className: "modal-title font-weigth-bold",
                   id: "exampleModalLabel",
-                  children: "Transaksi"
+                  children: "Edit Rekening"
                 })
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
                 className: "modal-body",
@@ -18274,9 +18388,13 @@ var Transaksi = /*#__PURE__*/function (_Component) {
       if (this.props.dataTransaksi.jenis_transaksi == "Tarik" || this.props.dataTransaksi.jenis_transaksi == "Setor") {
         opsiTransaksi = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
           className: "form-group",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", {
             htmlFor: "nominal",
-            children: "Nominal"
+            children: ["Nominal (", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+              id: "nominalTransaksi",
+              className: "nominalTransaksi",
+              children: "Rp.0"
+            }), ")"]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
             className: "form-control bg-dark text-white",
             placeholder: "nominal",
@@ -18375,6 +18493,9 @@ var Transaksi = /*#__PURE__*/function (_Component) {
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
                   type: "button",
                   className: "btn btn-danger",
+                  onClick: function onClick() {
+                    return _this.props.tutupTransaksi();
+                  },
                   "data-dismiss": "modal",
                   children: "Tidak"
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
@@ -18732,7 +18853,7 @@ var EditUsers = /*#__PURE__*/function (_Component) {
                   onClick: function onClick() {
                     return _this.props.updateUsers();
                   },
-                  "data-dismiss": this.props.editUsers.username != "" && this.props.editUsers.password != "" ? 'modal' : '',
+                  "data-dismiss": this.props.editUsers.username != "" ? 'modal' : '',
                   children: "Simpan"
                 })]
               })]
@@ -19064,7 +19185,7 @@ var Profile = /*#__PURE__*/function (_Component) {
                     icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_4__.faMapMarkerAlt,
                     className: "fa-2x"
                   }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
-                    children: dataUsers.alamat
+                    children: dataUsers.alamat != "" ? dataUsers.alamat : '-'
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_1__.FontAwesomeIcon, {
@@ -19260,11 +19381,7 @@ var User = /*#__PURE__*/function (_Component) {
         errorsEdit.username = "Username Harus Diisi";
       }
 
-      if (dataUsers.password == "") {
-        errorsEdit.password = "Password Harus Diisi";
-      }
-
-      if (errorsEdit.username || errorsEdit.password) {
+      if (errorsEdit.username) {
         _this.setState({
           errorsEdit: errorsEdit
         });
@@ -19330,8 +19447,7 @@ var User = /*#__PURE__*/function (_Component) {
         password: ""
       },
       errorsEdit: {
-        username: "",
-        password: ""
+        username: ""
       },
       status: "",
       message: ""

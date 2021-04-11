@@ -291,7 +291,7 @@ class RekeningController extends Controller
                                     <td>".$trans->id_transaksi."</td>
                                     <td>".$trans->waktu."</td>
                                     <td>".$trans->jenis_transaksi."</td>
-                                    <td>Rp.".$trans->nominal."</td>
+                                    <td>Rp.".number_format($trans->nominal, 0, 2, '.')."</td>
                                 </tr>";
         }
 
@@ -304,13 +304,25 @@ class RekeningController extends Controller
         $transferSaldo = $saldoTransfer->saldo_transfer != 0 ? $saldoTransfer->saldo_transfer : 0;
 
         $html = "<div>
+                    <p>Tanggal : ".date('Y m d')."</p>
                     <center>
                         <p align='center'>My Deposits</p>
                         <h1 align='center'>Laporan Transaksi</h1>
+                        <h4 align='center'>No.".date('YmdHis').rand()."</h4>
                     </center>
-                    <h4>No Rekening : ".$no_rekening."</h4>
-                    <h4>Nama Nasabah : ".$nasabah->nm_nasabah."</h4>
-                    <h4>Tanggal : ".$mulai_tanggal." - ".$sampai_tanggal."</h4>
+                    <hr/>
+                    <h2>Data Nasabah</h2>
+                    <hr/>
+                    <p>No Rekening : ".$no_rekening."</p>
+                    <p>Nama Nasabah : ".$nasabah->nm_nasabah."</p>
+                    <hr/>
+                    <h4>
+                        Laporan Mulai Tanggal 
+                        ".date_format(date_create($mulai_tanggal), "d-m-Y")."
+                         - 
+                        ".date_format(date_create($sampai_tanggal), "d-m-Y")."
+                    </h4>
+                    <hr/>
                     <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
                         <tr>
                             <td>Id Transaksi</td>
@@ -321,19 +333,19 @@ class RekeningController extends Controller
                         ".$recordtransaksi."
                         <tr>
                             <td colspan='3'>Saldo Setor</td>
-                            <td>Rp.".$saldoSetor."</td>
+                            <td>Rp.".number_format($saldoSetor, 0, 2,'.')."</td>
                         </tr>
                         <tr>
                             <td colspan='3'>Saldo Transfer Dari Rekening Lain</td>
-                            <td>Rp.".$transferSaldo."</td>
+                            <td>Rp.".number_format($transferSaldo, 0, 2, '.')."</td>
                         </tr>
                         <tr>
                             <td colspan='3'>Saldo Penarikan Dan Transfer</td>
-                            <td>Rp.".$saldoPenarikan."</td>
+                            <td>Rp.".number_format($saldoPenarikan, 0, 2, '.')."</td>
                         </tr>
                         <tr>
                             <td colspan='3'>Saldo Tabungan</td>
-                            <td>Rp.".$saldoSetor + $transferSaldo - $saldoPenarikan."</td>
+                            <td>Rp.".number_format($saldoSetor + $transferSaldo - $saldoPenarikan, 0, 2, '.')."</td>
                         </tr>
                     </table>
                 </div>";
@@ -355,45 +367,81 @@ class RekeningController extends Controller
 
         $titleJenis = "";
         $jenisPembayaran = "";
+        $dataPenerima = "";
         if($transaksi->jenis_transaksi == "transfer") {
+
+            $rekeningPenerima = Rekening::join('nasabah', 'nasabah.kd_nasabah', '=', 'rekening.kd_nasabah')
+                                ->where('rekening.no_rekening', $transaksi->transfer_rekening)
+                                ->first();
+
+            $dataPenerima = "<hr/>
+                             <h2>Data Penerima</h2>
+                             <hr/>
+                             <table width='100%'>
+                                <tr>
+                                    <td>Rekening Penerima</td>
+                                    <td> : ".$rekeningPenerima->no_rekening."</td>
+                                </tr>
+                                <tr>
+                                    <td>Nama Pertama</td>
+                                    <td> : ".$rekeningPenerima->nm_nasabah."</td>
+                                </tr>
+                             </table>";
+
             $titleJenis      = "<td>Jenis Pembayaran</td>
                                  <td>Transfer No Rekening</td>";
             $jenisPembayaran = "<td>".$transaksi->jenis_pembayaran."</td>
                                  <td>".$transaksi->transfer_rekening."</td>";
-            $total = "<td colspan='4'>Total Transaksi</td>
-                      <td>Rp.".$transaksi->nominal."</td>";
+            $total = "<td colspan='3'>Total Transaksi</td>
+                      <td>Rp.".number_format($transaksi->nominal, 0, 2, '.')."</td>";
         } else {
-            $total = "<td colspan='2'>Total Transaksi</td>
-                      <td>Rp.".$transaksi->nominal."</td>";
+            $total = "<td>Total Transaksi</td>
+                      <td>Rp.".number_format($transaksi->nominal, 0, 2, '.')."</td>";
         }
 
         $html = "<div>
                     <center>
                         <p align='center'>My Deposits</p>
                         <h1 align='center'>Struk Transaksi</h1>
+                        <h4 align='center'>No. ".date('YmdHis').rand()."</h4>
                     </center>
-                    <pre>
-                    <h3>Id Transaksi : ".$transaksi->transaksi_id."</h3>
-                    <h3>Nama Nasabah : ".$transaksi->nm_nasabah."</h3>
-                    <h3>Tanggal      : ".date('d-m-Y')."</h3>
-                    </pre>
-                    <table border='1' cellspacing='0' cellpadding='5' style='width:100%;'>
+                    <hr/>
+                    <h2>Data Nasabah</h2>
+                    <hr/>
+                    <table width='100%'>
                         <tr>
-                            <td>Waktu Transaksi</td>
+                            <td>Tanggal & Waktu Transaksi </td>
+                            <td> : ".$transaksi->waktu."</td>
+                        </tr>
+                        <tr>
+                            <td>Id Transaksi</td>
+                            <td> : ".$transaksi->transaksi_id."</td>
+                        </tr>
+                        <tr>
+                            <td>Nama Nasabah</td>
+                            <td>: ".$transaksi->nm_nasabah."</td>
+                        </tr>
+                    </table>
+                    ".$dataPenerima."
+                    <hr/>
+                    <h2>Transaksi</h2>
+                    <hr/>
+                    <table border='0' cellspacing='0' cellpadding='5' style='width:100%;'>
+                        <tr>
                             <td>Jenis Transaksi</td>
                             ".$titleJenis."
                             <td>Nominal</td>
                         </tr>
                         <tr>
-                            <td>".$transaksi->waktu."</td>
                             <td>".$transaksi->jenis_transaksi."</td>
                             ".$jenisPembayaran."
-                            <td>Rp.".$transaksi->nominal."</td>
+                            <td>Rp.".number_format($transaksi->nominal, 0, 2, '.')."</td>
                         </tr>
                         <tr>
                             ".$total."
                         </tr>
                     </table>
+                    <hr/>
                 </div>";
         $mpdf->writeHTML($html);
         $file = $mpdf->output();

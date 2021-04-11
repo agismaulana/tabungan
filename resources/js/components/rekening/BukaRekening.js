@@ -35,6 +35,10 @@ class BukaRekening extends Component {
 				className: "nominal",
 				text: "Nominal",
 				sortable: true,
+				cell: (record, index) => {
+					let nominal = new Intl.NumberFormat('de-DE', {maximumSignificanDigits:3}).format(record.nominal);
+					return(<p>{'Rp.' + nominal}</p>)
+				}
 			},
 			{
 				key: "status",
@@ -180,13 +184,48 @@ class BukaRekening extends Component {
 				}
 			}, () => {this.getRekening()})
 		});
+
+		document.getElementById('nominal').innerHTML = 'Rp.' + 0;
+		document.getElementById('nominalTransaksi').innerHTML = 'Rp.' + 0;
 	}
 
 	onChangeTransaksiHandler = (e) => {
 		let newDataTransaksi = {...this.state.dataTransaksi}
 		let {dataTransaksi} = this.state;
+		
+		if(newDataTransaksi.jenis_transaksi == "Transfer") {
+			if(e.target.name == 'nominal') {
+				let nominal = document.getElementById('nominal');
+				let angka = e.target.value;
+				nominal.innerHTML = 'Rp.' + this.numberFormat(parseInt(angka != "" ? angka : 0));
+			}
+		} else {
+			if(e.target.name == 'nominal') {
+				let nominal = document.getElementById('nominalTransaksi');
+				let angka = e.target.value;
+				nominal.innerHTML = 'Rp.' + this.numberFormat(parseInt(angka != "" ? angka : 0));
+			}
+		}
 		newDataTransaksi[e.target.name] = e.target.value;
 		this.setState({dataTransaksi: newDataTransaksi});
+	}
+
+	numberFormat(number = 0, decimals, dec_point=',', thousands_point = '.') {
+
+	    if (!decimals) {
+	        var len = number.toString().split('.').length;
+	        decimals = len > 1 ? len : 0;
+	    }
+
+	    number = parseFloat(number).toFixed(decimals);
+
+	    number = number.replace(".", dec_point);
+
+	    var splitNum = number.split(dec_point);
+	    splitNum[0] = splitNum[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands_point);
+	    number = splitNum.join(dec_point);
+
+	    return number;
 	}
 
 	handleTransaksi = () => {
@@ -286,10 +325,34 @@ class BukaRekening extends Component {
 						},
 						status: response.data.status,
 						message: response.data.message,
-					}, () => {this.getRekening();this.getHistory()});
+					}, () => {this.getRekening(),this.getHistory()});
 				});
 			}
 		}
+
+		document.getElementById('nominal').innerHTML = 'Rp.' + 0;
+		document.getElementById('nominalTransaksi').innerHTML = 'Rp.' + 0;
+
+	}
+
+	tutupTransaksi = () => {
+		this.setState({
+			dataTransaksi: {
+				nm_nasabah: "",
+				id_transaksi: "",
+				waktu: "",
+				nominal: "",
+				jenis_transaksi: "",
+				no_rekening: "",
+				kirim_tabungan: "",
+				jenis_pembayaran: "",
+				keterangan: "",
+				status: "",
+				pin: "",
+			},
+		}, () => {this.getRekening(),this.getHistory()})
+		document.getElementById('nominal').innerHTML = 'Rp.' + 0;
+		document.getElementById('nominalTransaksi').innerHTML = 'Rp.' + 0;
 	}
 
 	onhandleDateGenerate = (e) => {
@@ -388,6 +451,7 @@ class BukaRekening extends Component {
 							handleTransaksi={this.handleTransaksi}
 							onChangeTransaksiHandler={this.onChangeTransaksiHandler}
 							dataTransaksi={dataTransaksi}
+							tutupTransaksi={this.tutupTransaksi}
 						/>;
 		} else {
 			buttonTransaksi, transaksi = "";
@@ -539,7 +603,7 @@ class BukaRekening extends Component {
 								<div className="box-icon mr-2">
 									<FontAwesomeIcon icon={faMoneyBill} />
 								</div> 
-								{'Rp.' + parseInt(dataRekening.saldo + saldoTransfer)}
+								{'Rp. ' + new Intl.NumberFormat('de-DE', {maximumSignificanDigits:3}).format(parseInt(dataRekening.saldo + saldoTransfer))}
 							</h3>
 						</div>
 					</div>
@@ -619,15 +683,16 @@ class BukaRekening extends Component {
 
 							{tujuanTransfer}
 							<div className="form-group">
-								<label htmlFor="nominal">Nominal</label>
+								<label htmlFor="nominal">Nominal (<span id="nominal" className="nominalTransaksi">Rp.0</span>)</label>
 								<input 
-									type="number"
+									type="text"
 									name="nominal"
 									placeholder="e.g 200000"
 									className="form-control bg-dark text-white"
 									value={dataTransaksi.nominal}
 									onChange={this.onChangeTransaksiHandler}
 								/>
+
 							</div>
 							
 							<div className="form-group">

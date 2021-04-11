@@ -41,6 +41,13 @@ class Nasabah extends React.Component{
 				className:"alamat",
 				text:"Alamat",
 				sortable: true,
+				cell: (record, index) => {
+					if(record.alamat == null || record.alamat == "") {
+						return <p>-</p>
+					} else {
+						return <p>{record.alamat}</p>
+					}
+				}
 			},
 			{
 				key:"status",
@@ -202,7 +209,11 @@ class Nasabah extends React.Component{
 
 		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-		if(dataNasabahBaru.email == "" || reg.test(dataNasabahBaru.email) === false) {
+		if(dataNasabahBaru.email == "") {
+			errors.email = "Email Harus Diisi";
+		}
+
+		if(reg.test(dataNasabahBaru.email) === false) {
 			errors.email = "Email Tidak Valid";
 		}
 

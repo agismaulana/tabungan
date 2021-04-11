@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 26, 2021 at 11:03 AM
+-- Generation Time: Mar 29, 2021 at 12:10 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.0
 
@@ -26,6 +26,10 @@ DELIMITER $$
 -- Procedures
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `NASABAH` ()  select * from nasabah$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pegawai` ()  select * from pegawai$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `transaksi_all` ()  select * from transaksi left join transfer on transaksi.id_transaksi = transfer.id_transaksi$$
 
 DELIMITER ;
 
@@ -51,13 +55,9 @@ CREATE TABLE `nasabah` (
 --
 
 INSERT INTO `nasabah` (`kd_nasabah`, `nm_nasabah`, `jk`, `no_hp`, `email`, `alamat`, `id_users`, `status`) VALUES
-(202103266, 'Agus', 'Laki-Laki', '088765432345', 'agus@gmail.com', 'Singaparna', 2021032668, 'Aktif'),
+(202103273, 'Rahmat Hidayat', 'Laki-Laki', '089875432123', 'rahmat@gmail.com', 'Cicarulang', 2021032796, 'Aktif'),
 (2021032523, 'SMK YPC TASIKMALAYA', 'Laki-Laki', '089876543212', 'smkypc@gmail.com', 'Jl. Garut-tasikmalaya Ds.Cikunten Kec.Singaparna Kab.Tasikmalaya', 2021032511, 'Aktif'),
-(2021032645, 'Tegar Purnama', 'Laki-Laki', '089876543234', 'tegar@gmail.com', 'Mangunreja', 2021032663, 'Aktif'),
-(2021032647, 'Agis Maulana', 'Laki-Laki', '081294574329', 'agismaulana112@gmail.com', 'Singaparna', 2021032676, 'Aktif'),
-(2021032651, 'Dede Devi', 'Perempuan', '089875432345', 'dedev@gmail.com', 'Puspahiang', 2021032671, 'Aktif'),
-(2021032670, 'Dadan', 'Laki-Laki', '088765432345', 'Dadan@gmail.com', 'Cikeusal', 2021032697, 'Aktif'),
-(2021032676, 'Rahmat', 'Laki-Laki', '088765432123', 'rahmat@gmail.com', 'Cicarulang', 2021032674, 'Aktif');
+(2021032753, 'Dede Devi', 'Perempuan', '081200987654', 'dedev@gmail.com', 'Puspahiang', 2021032747, 'Aktif');
 
 --
 -- Triggers `nasabah`
@@ -70,6 +70,23 @@ delete t1, t2 from rekening as t1 join transaksi as t2 on t1.no_rekening = t2.no
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `nasabah_all`
+-- (See below for the actual view)
+--
+CREATE TABLE `nasabah_all` (
+`kd_nasabah` int(11)
+,`nm_nasabah` varchar(255)
+,`jk` enum('Laki-Laki','Perempuan')
+,`no_hp` varchar(13)
+,`email` varchar(255)
+,`alamat` text
+,`id_users` int(11)
+,`status` varchar(255)
+);
 
 -- --------------------------------------------------------
 
@@ -94,10 +111,9 @@ CREATE TABLE `pegawai` (
 
 INSERT INTO `pegawai` (`kd_pegawai`, `nm_pegawai`, `jk`, `no_hp`, `email`, `alamat`, `id_users`, `status`) VALUES
 (202103139, 'Admin', 'Laki-Laki', '0', 'admin@gmail.com', '-', 2021031326, 'Aktif'),
-(2021031372, 'Agis Maulana', 'Laki-Laki', '085623454321', 'agismaulana112@gmail.com', 'Rancapeundeuy', 2021031365, 'Aktif'),
-(2021032440, 'Rahmat Hidayat', 'Laki-Laki', '085698765432', 'rahmat@gmail.com', 'Cicarulang', 2021032485, 'Aktif'),
-(2021032611, 'Gustopa MI', 'Laki-Laki', '089876543213', 'gustopaMI@gmail.com', 'Cicarulang', 2021032676, 'Aktif'),
-(2021032697, 'agis', 'Laki-Laki', '089843234567', 'agis@gmail.com', 'Singaparna', 202103261, 'Aktif');
+(2021032726, 'Agis Maulana', 'Laki-Laki', '089875432123', 'agis@gmail.com', 'Singaparna', 2021032795, 'Aktif'),
+(2021032910, 'Agis Maulana', 'Laki-Laki', '089898754321', 'agismaulana0603@gmail.com', NULL, 2021032954, 'Aktif'),
+(2021032985, 'Muhammad Iqbal', 'Laki-Laki', '081298765432', 'Iqbal@gmail.com', 'Pasir Pari', 2021032920, 'Aktif');
 
 --
 -- Triggers `pegawai`
@@ -127,12 +143,8 @@ CREATE TABLE `rekening` (
 
 INSERT INTO `rekening` (`no_rekening`, `pin`, `kd_nasabah`) VALUES
 ('20210325722833418', '$2y$10$NH3LJjEJDNsIMBc8PfC1..SnDA.9VPYBkmQfoMccP9oIabfg7EhNe', 2021032523),
-('202103261011155188', '$2y$10$4saCgvpc7xCfHEYhNQcPzuMRPgQhVkfzHxYPtWc56bsv0vpR/PuVS', 2021032651),
-('202103261482153272', '$2y$10$b1TwxOR.nYCMJYJDl/subed8Bofmu3tI6SGApncYlBuhld9blh8zC', 2021032676),
-('20210326186489970', '$2y$10$vh9ABHR1bzq3Qn4N0tnEeOnzelrUnF4MG4ENaJj/CMCi9Nu7cojUu', 2021032645),
-('202103261990327382', '$2y$10$QHNOdgeSUgmF9RhiwcsLNOSM3g1W3m74JuMvXt5bZC4YzeFMRo/R.', 202103266),
-('20210326430030007', '$2y$10$fmk7O1AQ2DdWO/4DtwtDWuatwe38O0QtPl5iyrz3GzcjypK8OrFvK', 2021032670),
-('20210326709983506', '$2y$10$yWXuG2wjUdRQovV5qx.rD.ddhqAIpk43a2hYRA2UCbbtlY0Ub.Lgu', 2021032647);
+('202103271091325997', '$2y$10$c8CYYJw61yzgodQ5HMc8WOUD7TfJjLoRdYrjzdpgFISjAINW49qfG', 202103273),
+('202103271979931962', '$2y$10$MoJxJXFAdetIj0Uun01quuYcY4gjGiOtAeSHmCxNM.rXDCCiJ5Pky', 2021032753);
 
 -- --------------------------------------------------------
 
@@ -153,17 +165,11 @@ CREATE TABLE `transaksi` (
 --
 
 INSERT INTO `transaksi` (`id_transaksi`, `waktu`, `nominal`, `jenis_transaksi`, `no_rekening`) VALUES
-(202103260700157, '2021-03-26 07:00:15', 20000, 'tarik', '20210326709983506'),
-(2021032509501235, '2021-03-25 09:50:12', 20000, 'transfer', '20210325509425802'),
-(2021032510031043, '2021-03-25 10:03:10', 20000, 'transfer', '20210325509425802'),
-(2021032607000429, '2021-03-26 07:00:04', 100000, 'setor', '20210326709983506'),
-(2021032607231098, '2021-03-26 07:23:10', 2000, 'transfer', '20210326709983506'),
-(2021032607292778, '2021-03-26 07:29:27', 2000, 'transfer', '20210325722833418'),
-(2021032607311077, '2021-03-26 07:31:10', 2000, 'transfer', '20210325722833418'),
-(2021032607312279, '2021-03-26 07:31:22', 20000, 'transfer', '20210325722833418'),
-(2021032607323054, '2021-03-26 07:32:30', 4000, 'transfer', '20210325722833418'),
-(2021032607324225, '2021-03-26 07:32:42', 4000, 'transfer', '20210325722833418'),
-(2021032607360588, '2021-03-26 07:36:05', 20000, 'setor', '20210325722833418');
+(2021032704165866, '2021-03-27 04:16:58', 20000, 'setor', '202103271979931962'),
+(2021032706462432, '2021-03-27 06:46:24', 12000, 'transfer', '202103271979931962'),
+(2021032908245566, '2021-03-29 08:24:55', 60000, 'setor', '202103271979931962'),
+(2021032910085421, '2021-03-29 10:08:54', 8000, 'tarik', '202103271979931962'),
+(2021032910100695, '2021-03-29 10:10:06', 10000, 'transfer', '202103271979931962');
 
 -- --------------------------------------------------------
 
@@ -185,14 +191,8 @@ CREATE TABLE `transfer` (
 --
 
 INSERT INTO `transfer` (`id_transfer`, `jenis_pembayaran`, `keterangan`, `id_transaksi`, `no_rekening`, `status`) VALUES
-(2021032509501266, 'Pembayaran', 'Pembayaran SPP', 2021032509501235, '20210325722833418', 'berhasil'),
-(2021032510031068, 'Pembayaran', 'Pembayaran SPP', 2021032510031043, '20210325722833418', 'berhasil'),
-(2021032607231068, 'Pembayaran', '-', 2021032607231098, '20210325722833418', 'berhasil'),
-(2021032607292710, 'Non Pembayaran', '-', 2021032607292778, '20210326709983506', 'berhasil'),
-(2021032607311050, 'Non Pembayaran', '-', 2021032607311077, '20210326709983506', 'berhasil'),
-(2021032607312253, 'Non Pembayaran', '-', 2021032607312279, '20210326709983506', 'berhasil'),
-(2021032607323043, 'Non Pembayaran', '-', 2021032607323054, '20210326709983506', 'berhasil'),
-(2021032607324224, 'Non Pembayaran', '-', 2021032607324225, '20210326709983506', 'berhasil');
+(2021032706462459, 'Pembayaran', 'Pembayaran Kas', 2021032706462432, '20210325722833418', 'berhasil'),
+(2021032910100617, 'Non Pembayaran', NULL, 2021032910100695, '202103271091325997', 'berhasil');
 
 -- --------------------------------------------------------
 
@@ -212,17 +212,22 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_users`, `username`, `password`, `level`) VALUES
-(202103261, 'agis', '$2y$10$HJjWhHrYakByu/2DDHDaEeYjoz7Lck/Vtim0Sdcp.KlAZ2W8aY98m', 'Operator'),
-(2021031326, 'admin', '$2y$10$u6kKlpIQ.F1iqJL0PU34e.B03vIUg3efoIAllYwqaBJ756Y2QG32y', 'Administrator'),
-(2021031365, 'agis', '$2y$10$Ze079BNqee1uIHFb2/5AzuSG1vRjruwZMZXzYeU63INga0hWTmEle', 'Operator'),
-(2021032485, 'rahmat', '$2y$10$jU0Gm.TjVwYwkyI2kdVCM.HbaRyjwTaWM0ZXwyYqrwKFDddrjjvY6', 'Operator'),
+(2021031326, 'admin', '$2y$10$rjJonQFbY5wr8z6gTsxt7.B8iyrpdKK/IgwKv8N2PbcPELE/dfgXy', 'Administrator'),
 (2021032511, 'lembaga', '$2y$10$jvgcT8BDO3eO5YpPnjxi8.3HO.YIbf0G66jmOkGfHeAgtQhzNHOgW', 'Nasabah'),
-(2021032663, 'tegar', '$2y$10$n0O4l1vAaHGFKSW8uOWxZuwVX.Z27xjlwKZxQV19ymPfNPuuyVLQC', 'Nasabah'),
-(2021032668, 'agus', '$2y$10$VX0hsfn1e5wnFdI7Th6TFePLS01CGmY5f8jjA2vMO58yK0rb1OayO', 'Nasabah'),
-(2021032671, 'dedev', '$2y$10$bXcZrQgPlUSJTjCKfqhwYeGa1.UamW9TFQ8dECkbkUFe63mApLMva', 'Nasabah'),
-(2021032674, 'rahmat', '$2y$10$4dY1q0ixwPm7Mte0qFEc6udhF1XtAcvW9koYbtP5WxDEVfUdXnrF6', 'Nasabah'),
-(2021032676, 'agismaulana', '$2y$10$9eCDuB1Kw7ucMOvmjggHqOjf4/M/MNRdOMCxRWyBGYZ92NSTnPttS', 'Nasabah'),
-(2021032697, 'dadan', '$2y$10$Lqa4mD.oyBh75.xrm27Y8Ouf6eXnwHsR3ttEIJ7yZffh0YWAyMeze', 'Nasabah');
+(2021032747, 'dedev', '$2y$10$MxdWt0/N4QO4SrI5.vYw7O/ldv1GBv7TPh0g7gNXnTeAynkl1uQCm', 'Nasabah'),
+(2021032795, 'agismaulana', '$2y$10$n1JEougKKMDRNz9cbRGJNucicSzxIwha3U00lAfOKD9RBm3u6rNOu', 'Operator'),
+(2021032796, 'rahmat', '$2y$10$CjbUZLK70sX2njVG3IakuuKtcF/O0rmpehghyD5OC6G4dCsbxmFG6', 'Nasabah'),
+(2021032920, 'petugas2', '$2y$10$miqTwIBUB7VGVeR5IRoFUeL6JC3Sf11zTPOetq.soZ9KidGxtqOLi', 'Operator'),
+(2021032954, 'petugas1', '$2y$10$Y42kiQgHSXREIP1IrRuSFeUV0ED9rdL0mktWrrPe/owtKBtAB88V6', 'Operator');
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `nasabah_all`
+--
+DROP TABLE IF EXISTS `nasabah_all`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `nasabah_all`  AS SELECT `nasabah`.`kd_nasabah` AS `kd_nasabah`, `nasabah`.`nm_nasabah` AS `nm_nasabah`, `nasabah`.`jk` AS `jk`, `nasabah`.`no_hp` AS `no_hp`, `nasabah`.`email` AS `email`, `nasabah`.`alamat` AS `alamat`, `nasabah`.`id_users` AS `id_users`, `nasabah`.`status` AS `status` FROM `nasabah` ;
 
 --
 -- Indexes for dumped tables

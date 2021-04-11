@@ -221,7 +221,7 @@ class Profile extends Component {
 								</div>
 								<div>
 									<FontAwesomeIcon icon={faMapMarkerAlt} className="fa-2x"/>
-									<p>{dataUsers.alamat}</p>
+									<p>{dataUsers.alamat != "" ? dataUsers.alamat : '-'}</p>
 								</div>
 								<div>
 									<FontAwesomeIcon icon={faPhone} className="fa-2x"/>

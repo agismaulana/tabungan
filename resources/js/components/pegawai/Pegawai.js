@@ -44,6 +44,14 @@ class Pegawai extends Component {
 				className:"alamat",
 				text:"Alamat",
 				sortable: true,
+				cell: (record, index) => {
+					console.log(record.alamat)
+					if(record.alamat == null || record.alamat == "") {
+						return <p>-</p>
+					} else {
+						return <p>{record.alamat}</p>
+					}
+				}
 			},
 			{
 				key:"status",

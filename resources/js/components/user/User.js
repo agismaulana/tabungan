@@ -68,7 +68,6 @@ class User extends Component {
 			},
 			errorsEdit: {
 				username: "",
-				password: "",
 			},
 			status: "",
 			message: "",
@@ -128,11 +127,7 @@ class User extends Component {
 			errorsEdit.username = "Username Harus Diisi";
 		}
 
-		if(dataUsers.password == "") {
-			errorsEdit.password = "Password Harus Diisi"
-		}
-
-		if(errorsEdit.username || errorsEdit.password) {
+		if(errorsEdit.username) {
 			this.setState({errorsEdit})
 		} else {
 			axios.post(`http://${window.location.host}/api/update-users`, dataUsers)

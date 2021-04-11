@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // Auth
-Route::post('/send-login', 'App\Http\Controllers\AuthController@login');
+Route::post('/send-login', 'App\Http\Controllers\AuthController@login');//diubah @login_
 
 //Home
 Route::get('/jumlah', 'App\Http\Controllers\HomeController@getCount');

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {faUsers, faUserTie, faMoneyBill} from '@fortawesome/free-solid-svg-icons';
+import {faUsers, faUserTie, faMoneyBill, faMoneyCheckAlt} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 class Home extends Component {
@@ -121,7 +121,7 @@ class Home extends Component {
 							<div className="card col-md-3 bg-success">
 								<div className="card-body">
 									<div className="d-flex justify-content-between">
-										<FontAwesomeIcon icon={faMoneyBill} className="fa-3x" />
+										<FontAwesomeIcon icon={faMoneyCheckAlt} className="fa-3x" />
 										<h2>{dataCount.saldoTransaksi}</h2>
 									</div>
 									<hr/>
@@ -154,8 +154,8 @@ class Home extends Component {
 							<div className="card col-md-4 bg-success">
 								<div className="card-body">
 									<div className="d-flex justify-content-between">
-										<FontAwesomeIcon icon={faMoneyBill} className="fa-3x" />
-										<h2>{dataCount.saldoTransaksi}</h2>
+										<FontAwesomeIcon icon={faMoneyCheckAlt} className="fa-3x" />
+										<h2>Rp. {dataCount.saldoTransaksi}</h2>
 									</div>
 									<hr/>
 									<h5>Saldo Transaksi</h5>
@@ -174,7 +174,7 @@ class Home extends Component {
 							<hr/>
 							<div className="d-flex justify-content-between">
 								<p>Selamat Menggunakan Aplikasi MyDeposits</p>
-								<p>{date}</p>
+								<h6 className="bg-primary p-3">{date}</h6>
 							</div>
 						</div>
 					</div>

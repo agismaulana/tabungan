@@ -8,7 +8,9 @@ class EditRekening extends Component {
 				  	<div className="modal-dialog col-md-12">
 				    	<div className="modal-content bg-dark">
 				      		<div className="modal-header">
-				        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">Transaksi</h5>
+				        		<h5 className="modal-title font-weigth-bold" id="exampleModalLabel">
+				        			Edit Rekening
+				        		</h5>
 				      		</div>
 				      		<div className="modal-body">
 		        				<div className="form-group">

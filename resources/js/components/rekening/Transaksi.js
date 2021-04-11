@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 
 class Transaksi extends Component {
+
 	render() {
 		let opsiTransaksi = "";
+
 		if(this.props.dataTransaksi.jenis_transaksi == "Tarik" || this.props.dataTransaksi.jenis_transaksi == "Setor") {
 			opsiTransaksi = <div className="form-group">
-			        			<label htmlFor="nominal">Nominal</label>
+			        			<label htmlFor="nominal">Nominal (<span id="nominalTransaksi" className="nominalTransaksi">Rp.0</span>)</label>
 			        			<input 
 			        				className="form-control bg-dark text-white" 
 			        				placeholder="nominal"
@@ -81,7 +83,8 @@ class Transaksi extends Component {
 				      		<div className="modal-footer">
 				        		<button 
 				        			type="button" 
-				        			className="btn btn-danger" 
+				        			className="btn btn-danger"
+				        			onClick={()=>this.props.tutupTransaksi()} 
 				        			data-dismiss="modal"
 				        		>
 				        			Tidak
